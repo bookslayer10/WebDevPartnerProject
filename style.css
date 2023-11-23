@@ -1,0 +1,13 @@
+/*Write your CSS in here*/
+
+.container {
+	position: relative;
+	z-index: 0;
+	background-color: #eee;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+	overflow: hidden;
+}

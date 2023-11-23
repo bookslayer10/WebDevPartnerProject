@@ -1,0 +1,33 @@
+{
+    "name": "[TEMPLATE]",
+    "short_name": "[TEMPLATE]",
+    "start_url": "https://",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
+    "description": "[TEMPLATE]",
+    "icons": [
+      {
+        "src": "/images/512img.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      },
+      {
+        "src": "/images/favicon.ico",
+        "sizes": "256x256",
+        "type": "image/ico"
+      },
+      {
+        "src": "/images/256img.png",
+        "sizes": "256x256",
+        "type": "image/png",
+        "purpose": "maskable"
+      }
+    ],
+    "related_applications": [
+      {
+        "platform": "play",
+        "url": "https://"
+      }
+    ]
+  }

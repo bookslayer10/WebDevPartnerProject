@@ -24,3 +24,32 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
+let passphrase = prompt("Game passphrase input");
+
+const numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
+
+let numberOfPlayers = null;
+let playerID = null;
+
+onValue(numberOfPlayersRef, (data) => {
+    numberOfPlayers = data.val();
+    
+    if(playerID == null && numberOfPlayers < 7){
+        numberOfPlayers++;
+        playerID = numberOfPlayers;
+
+        set(numberOfPlayersRef, numberOfPlayers);
+    }
+    
+}); // onValue numPlayers
+
+window.onunload = (event) => {
+    if(playerID != null){
+        numberOfPlayers--;
+
+        numberOfPlayers = Math.max(numberOfPlayers, 0);
+
+        set(numberOfPlayersRef, numberOfPlayers);
+    } // if
+} // onunload
+

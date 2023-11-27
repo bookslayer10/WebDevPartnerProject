@@ -55,3 +55,31 @@ window.onunload = (event) => {
 
     } // if
 } // onunload
+
+//AUTOMATE THE CREATION OF DIVS IN THE CONTAINER DIVS (CREATE FUNCTION).
+
+
+window.onload = function(){
+  let id = 1;
+  for(let k = 1; k < 13; k++){
+    let container = document.getElementById("c" + (k));
+	container.setAttribute("class","container");
+    for(let i = 1; i < 12 + k; i++){
+      let hexDiv = document.createElement("div"); 
+      hexDiv.setAttribute("id", "hex" + (id));
+      container.appendChild(hexDiv);
+      id++;
+    }
+  } 
+
+  for(let k = 1; k < 12; k++){
+    let container = document.getElementById("c" + (k + 12));
+    container.setAttribute("class","container");
+    for(let i = 1; i < 24 - k; i++){
+      let hexDiv = document.createElement("div"); 
+      hexDiv.setAttribute("id", "hex" + (id));
+      container.appendChild(hexDiv);
+      id++;
+    }
+  } 
+}

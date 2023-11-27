@@ -1,13 +1,40 @@
-/*Write your CSS in here*/
+
+body{
+	padding-top:200px;
+	padding-bottom:200px;
+}
+
+.main {
+	display:grid;
+	width:2850px;
+  --s: 40px;  /* size  */
+  --m: 1px;    /* margin */
+  --f: calc(var(--s) * 1.732 + 4 * var(--m) - 1px); 
+}
 
 .container {
-	position: relative;
-	z-index: 0;
-	background-color: #eee;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
-	min-height: 100vh;
-	overflow: hidden;
+  font-size: 0; /* disable white space between inline block element */
+  margin-left:auto;
+  margin-right:auto;
+  
 }
+
+
+.container div {
+  width: var(--s);
+  margin: var(--m);
+  height: calc(var(--s) * 1.1547);
+  display: inline-block;
+  font-size:initial;
+  clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+  margin-bottom: calc(var(--m) - var(--s) * 0.2885);
+  background-color:#333333;
+}
+
+.container::before {
+  content: "";
+  width: calc(var(--s) / 2 + var(--m));
+  float: left;
+  height: 120%; 
+  shape-outside: repeating-linear-gradient(#0000 0 calc(var(--f) - 3px), #000 0 var(--f));
+}/*https://css-tricks.com/hexagons-and-beyond-flexible-responsive-grid-patterns-sans-media-queries/*/

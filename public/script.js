@@ -46,10 +46,12 @@ onValue(numberOfPlayersRef, (data) => {
 window.onunload = (event) => {
     if(playerID != null){
         numberOfPlayers--;
+        
+        if(0 < numberOfPlayers){
+            set(numberOfPlayersRef, numberOfPlayers);
+        } else {
+            set(numberOfPlayersRef, null);
+        }
 
-        numberOfPlayers = Math.max(numberOfPlayers, 0);
-
-        set(numberOfPlayersRef, numberOfPlayers);
     } // if
 } // onunload
-

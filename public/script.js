@@ -6,9 +6,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebas
 import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js"
 let id = 1; // id number for the idividual hexagons
 let hexDiv; //variable to create hexs
-/////////////////////////////////
-/// GLOBAL VARS
-/////////////////////////////////
+
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -21,6 +19,28 @@ const firebaseConfig = {
     appId: "1:556366486052:web:860a1f7da246a91499d6b1"
 };
 
+
+
+// Declaration of hex
+class Hex {
+
+
+  constructor(element, color) {
+    this.element = element;
+    this.setColor(color);
+  }
+  
+  setColor(color){
+    console.log("setting color");
+    this.color = color;
+    this.element.style.backgroundColor = color;
+  }
+
+}
+
+// hex array
+let hexes = [null];
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
@@ -28,6 +48,7 @@ const database = getDatabase(app);
 let passphrase = prompt("Game passphrase input");
 
 const numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
+const hexesRef = ref(database, "hexes+" + passphrase);
 
 let numberOfPlayers = null;
 let playerID = null;
@@ -44,6 +65,18 @@ onValue(numberOfPlayersRef, (data) => {
     
 }); // onValue numPlayers
 
+onValue(hexesRef, (data) => {
+  hexes = data.val();
+  
+  if(playerID == null && numberOfPlayers < 7){
+      numberOfPlayers++;
+      playerID = numberOfPlayers;
+
+      set(numberOfPlayersRef, numberOfPlayers);
+  }
+  
+}); // onValue numPlayers
+
 window.onunload = (event) => {
     if(playerID != null){
         numberOfPlayers--;
@@ -58,18 +91,13 @@ window.onunload = (event) => {
 } // onunload
 
 //AUTOMATE THE CREATION OF DIVS IN THE CONTAINER DIVS (CREATE FUNCTION).
-
-
 window.onload = function(){
+
   for(let k = 1; k < 13; k++){
     let container = document.getElementById("c" + (k));
 	  container.setAttribute("class","container");
     for(let i = 1; i < 12 + k; i++){
-      hexDiv = document.createElement("div"); 
-      hexDiv.setAttribute("id", "hex" + (id));
-      hexDiv.addEventListener("click", changeHexColour);
-      container.appendChild(hexDiv);
-      id++;
+      createHex(container);
     }
   } 
 
@@ -77,15 +105,24 @@ window.onload = function(){
     let container = document.getElementById("c" + (k + 12));
     container.setAttribute("class","container");
     for(let i = 1; i < 24 - k; i++){
-      hexDiv = document.createElement("div"); 
-      hexDiv.setAttribute("id", "hex" + (id));
-      hexDiv.addEventListener("click", changeHexColour);
-      container.appendChild(hexDiv);
-      id++;
+      createHex(container);
     }
   } 
 }
 
-const changeHexColour = (e) => {
- e.target.style.backgroundColor = "#990000";
+function createHex(container){
+  hexDiv = document.createElement("div"); 
+  hexDiv.setAttribute("id", id);
+  hexDiv.addEventListener("click", changeHexColor);
+  container.appendChild(hexDiv);
+
+  hexes.push(new Hex(hexDiv, "#444444"));
+  id++;
+}
+
+const changeHexColor = (e) => {
+
+  console.log(hexes[e.target.id])
+
+  hexes[e.target.id].setColor("#990000");
 }

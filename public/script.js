@@ -4,7 +4,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebas
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js"
-
+let id = 1; // id number for the idividual hexagons
+let hexDiv; //variable to create hexs
 /////////////////////////////////
 /// GLOBAL VARS
 /////////////////////////////////
@@ -60,13 +61,13 @@ window.onunload = (event) => {
 
 
 window.onload = function(){
-  let id = 1;
   for(let k = 1; k < 13; k++){
     let container = document.getElementById("c" + (k));
-	container.setAttribute("class","container");
+	  container.setAttribute("class","container");
     for(let i = 1; i < 12 + k; i++){
-      let hexDiv = document.createElement("div"); 
+      hexDiv = document.createElement("div"); 
       hexDiv.setAttribute("id", "hex" + (id));
+      hexDiv.addEventListener("click", changeHexColour);
       container.appendChild(hexDiv);
       id++;
     }
@@ -76,10 +77,15 @@ window.onload = function(){
     let container = document.getElementById("c" + (k + 12));
     container.setAttribute("class","container");
     for(let i = 1; i < 24 - k; i++){
-      let hexDiv = document.createElement("div"); 
+      hexDiv = document.createElement("div"); 
       hexDiv.setAttribute("id", "hex" + (id));
+      hexDiv.addEventListener("click", changeHexColour);
       container.appendChild(hexDiv);
       id++;
     }
   } 
+}
+
+const changeHexColour = (e) => {
+ e.target.style.backgroundColor = "#990000";
 }

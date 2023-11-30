@@ -50,6 +50,8 @@ const database = getDatabase(app);
 let passphrase = prompt("Game passphrase input");
 
 const numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
+const hexesRef = ref(database, "hexes+" + passphrase);
+
 
 let numberOfPlayers = null;
 let playerID = null;

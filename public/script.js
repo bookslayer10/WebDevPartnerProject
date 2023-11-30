@@ -4,6 +4,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebas
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js"
+
 let hexDiv; //variable to create hexs
 
 // hex array
@@ -21,8 +22,6 @@ const firebaseConfig = {
     messagingSenderId: "556366486052",
     appId: "1:556366486052:web:860a1f7da246a91499d6b1"
 };
-
-
 
 // Declaration of hex
 class Hex {
@@ -51,7 +50,6 @@ const database = getDatabase(app);
 let passphrase = prompt("Game passphrase input");
 
 const numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
-const hexesRef = ref(database, "hexes+" + passphrase);
 
 let numberOfPlayers = null;
 let playerID = null;
@@ -103,13 +101,12 @@ window.onunload = (event) => {
 } // onunload
 
 //AUTOMATE THE CREATION OF DIVS IN THE CONTAINER DIVS (CREATE FUNCTION).
+
 window.onload = function(){
-
   let id = 1;
-
   for(let k = 1; k < 13; k++){
     let container = document.getElementById("c" + (k));
-	  container.setAttribute("class","container");
+	container.setAttribute("class","container");
     for(let i = 1; i < 12 + k; i++){
       createHexElement(container, id);
       id++;

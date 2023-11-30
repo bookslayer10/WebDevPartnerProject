@@ -37,7 +37,6 @@ class Hex {
   }
   
   updateColor(){
-    console.log("updatecolor" + this.color)
     this.element.style.backgroundColor = this.color;
   }
 
@@ -72,9 +71,8 @@ onValue(hexesRef, (data) => {
   
   if(data.val() == null){
     createHexArray();
+    console.log("createarray");
     set(hexesRef, hexes);
-    console.log("createarray:");
-    console.log(hexes)
   } else {
     hexes = new Array();
     hexes.push("test");   
@@ -82,7 +80,6 @@ onValue(hexesRef, (data) => {
       hexes.push(new Hex(data.val()[i].id, data.val()[i].color));
     }
     console.log("getarray");
-    console.log(hexes);
   }
 
   if(isBoardLoaded) updateGameBoard();
@@ -124,7 +121,6 @@ window.onload = function(){
     }
   }
 
-  console.log("window.onload finished")
 
   isBoardLoaded = true;
   updateGameBoard();
@@ -140,35 +136,24 @@ function createHexElement(container, id){
 }
 
 function createHexArray(){
-  console.log("create hex array");
   hexes = new Array();
   hexes.push(null);
   for(let i = 1; i < 398; i++){ // 397 elements from 1 to 397 inclusive
     hexes.push(new Hex(i + "", "#009900"));
   }
-
-  console.log(hexes);
 }
 
 const changeHexColor = (e) => {
-  console.log(hexes);
-  console.log(hexes[e.target.id]);
 
   hexes[e.target.id].assignElement();
-  console.log(hexes[e.target.id].element)
-
   hexes[e.target.id].color = "#990000";
 
   set(hexesRef, hexes);
 }
 
 function updateGameBoard(){
-  console.log("update");
-  console.log(hexes.length);
-  console.log(hexes)
   for(let i = 1; i < hexes.length; i++){
     hexes[i].assignElement();
-    console.log(hexes[i]);
     hexes[i].updateColor();
   }
 }

@@ -6,11 +6,11 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebas
 import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js"
 
 let hexDiv; //variable to create hexs
-
+let isUnloading = false;
 // hex array
 let hexes = new Array();
 hexes.push(null);
-let isBoardLoaded = false;
+let isBoardDivLoaded = false;
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -69,6 +69,10 @@ onValue(numberOfPlayersRef, (data) => {
 
 onValue(hexesRef, (data) => {
   
+  if(isUnloading){
+    return;
+  }
+
   if(data.val() == null){
     createHexArray();
     console.log("createarray");
@@ -82,21 +86,24 @@ onValue(hexesRef, (data) => {
     console.log("getarray");
   }
 
-  if(isBoardLoaded) updateGameBoard();
+  if(isBoardDivLoaded) updateGameBoard();
   
 }); // onValue numPlayers
 
 window.onunload = (event) => {
-    if(playerID != null){
-        numberOfPlayers--;
-        
-        if(0 < numberOfPlayers){
-            set(numberOfPlayersRef, numberOfPlayers);
-        } else {
-            set(numberOfPlayersRef, null);
-        }
+  isUnloading = true;
 
-    } // if
+  if(playerID != null){
+      numberOfPlayers--;
+      
+      if(0 < numberOfPlayers){
+          set(numberOfPlayersRef, numberOfPlayers);
+      } else {
+          set(numberOfPlayersRef, null);
+          set(hexesRef, null);
+      }
+
+  } // if
 } // onunload
 
 //AUTOMATE THE CREATION OF DIVS IN THE CONTAINER DIVS (CREATE FUNCTION).
@@ -122,7 +129,7 @@ window.onload = function(){
   }
 
 
-  isBoardLoaded = true;
+  isBoardDivLoaded = true;
   updateGameBoard();
 
   // 397 hexagon elements created

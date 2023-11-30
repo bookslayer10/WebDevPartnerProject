@@ -1,15 +1,31 @@
 
+#r1{
+	z-index:10;
+	margin-left:-8px;
+}
+
+#r2{
+	margin-top:-8px;
+	margin-left:-8px;
+}
+
 body{
-	padding-top:200px;
-	padding-bottom:200px;
+	overflow:scroll;
+}
+
+::-webkit-scrollbar {
+    display: none;
 }
 
 .main {
+	z-index:-1;
 	display:grid;
-	width:2850px;
-  --s: 40px;  /* size  */
+	width:2100px;
+  --s: 80px;  /* size  */
   --m: 1px;    /* margin */
-  --f: calc(var(--s) * 1.732 + 4 * var(--m) - 1px); 
+  --f: calc(var(--s) * 1.732 + 4 * var(--m) - 1px);
+  padding-bottom:80px;  
+  padding-top:80px;
 }
 
 .container {

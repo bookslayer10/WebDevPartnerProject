@@ -5,11 +5,17 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebas
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js"
 
+const BOARD_SIZE = 398;
+
 let hexDiv; //variable to create hexs
 let isUnloading = false;
 // hex array
 let hexes = new Array();
 hexes.push(null);
+
+let displayHexes = new Array();
+displayHexes.push(null);
+
 let isBoardDivLoaded = false;
 
 // Your web app's Firebase configuration
@@ -26,10 +32,12 @@ const firebaseConfig = {
 // Declaration of hex
 class Hex {
 
-  constructor(id, color) {
+  constructor(id, color, hidden) {
     this.id = id;
     this.color = color;
+    this.hidden = hidden;
     this.element = null;
+    this.ajacentHexes = this.getAjacentHexes();
   }
   
   assignElement(){
@@ -37,9 +45,21 @@ class Hex {
   }
   
   updateColor(){
-    this.element.style.backgroundColor = this.color;
+    if(this.hidden){
+      this.element.style.backgroundColor = "#ffffff";
+    } else {
+      this.element.style.backgroundColor = this.color;
+    }
   }
 
+  getAjacentHexes(){
+    let array = new Array(); // ajacentHexes is ordered as the 30, 90, 150, 210, 270, 330
+    
+
+
+
+    return array;
+  }
 }
 
 // Initialize Firebase
@@ -79,11 +99,15 @@ onValue(hexesRef, (data) => {
     set(hexesRef, hexes);
   } else {
     hexes = new Array();
-    hexes.push("test");   
-    for(let i = 1; i < data.val().length; i++){
-      hexes.push(new Hex(data.val()[i].id, data.val()[i].color));
+    hexes.push(null);
+    displayHexes = new Array();
+    displayHexes.push(null);
+    for(let i = 1; i < BOARD_SIZE; i++){
+      hexes.push(new Hex(data.val()[i].id, data.val()[i].color, false));
+      displayHexes.push(new Hex(hexes[i].id, hexes[i].color, (hexes[i].id % 5 == playerID)));
     }
-    console.log("getarray");
+    console.log("arrayRecieved");
+
   }
 
   if(isBoardDivLoaded) updateGameBoard();
@@ -139,18 +163,28 @@ function createHexElement(container, id){
   hexDiv = document.createElement("div"); 
   hexDiv.setAttribute("id", id);
   hexDiv.addEventListener("click", changeHexColor);
+  hexDiv.addEventListener("click", logHexName);
   container.appendChild(hexDiv);
 }
 
 function createHexArray(){
   hexes = new Array();
   hexes.push(null);
-  for(let i = 1; i < 398; i++){ // 397 elements from 1 to 397 inclusive
-    hexes.push(new Hex(i + "", "#009900"));
+  displayHexes = new Array();
+  displayHexes.push(null);
+
+  for(let i = 1; i < BOARD_SIZE; i++){ // 397 elements from 1 to 397 inclusive
+    hexes.push(new Hex(i + "", "#009900", false));
+
+    displayHexes.push(new Hex(hexes[i].id, hexes[i].color, false));
+
   }
+
 }
 
 const changeHexColor = (e) => {
+
+  console.log("changecolor");
 
   hexes[e.target.id].assignElement();
   hexes[e.target.id].color = "#990000";
@@ -158,9 +192,14 @@ const changeHexColor = (e) => {
   set(hexesRef, hexes);
 }
 
+const logHexName = (e) => {
+  console.log("ID of Hex clicked: " + e.target.id);
+}
+
 function updateGameBoard(){
-  for(let i = 1; i < hexes.length; i++){
-    hexes[i].assignElement();
-    hexes[i].updateColor();
+  console.log("updateGameBoard");
+  for(let i = 1; i < BOARD_SIZE; i++){
+    displayHexes[i].assignElement();
+    displayHexes[i].updateColor();
   }
 }

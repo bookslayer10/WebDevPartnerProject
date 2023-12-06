@@ -167,7 +167,7 @@ function createHexElement(container, id){
   hexDiv.addEventListener("click", logHexName);
 
   hexImg = document.createElement("img");
-  hexImg.setAttribute("src", "/images/testImage.svg");
+  hexImg.setAttribute("src", "/images/testImage2.svg");
 
   container.appendChild(hexDiv);
   hexDiv.appendChild(hexImg);

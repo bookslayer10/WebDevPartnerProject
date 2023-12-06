@@ -73,3 +73,7 @@ body{
   height: 120%; 
   shape-outside: repeating-linear-gradient(#0000 0 calc(var(--f) - 3px), #000 0 var(--f));
 }/*https://css-tricks.com/hexagons-and-beyond-flexible-responsive-grid-patterns-sans-media-queries/*/
+
+img{
+  position:absolute;
+}

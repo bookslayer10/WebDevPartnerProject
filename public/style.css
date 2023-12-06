@@ -1,12 +1,30 @@
 
 #r1{
 	z-index:10;
-	margin-left:-8px;
+	position:fixed;
+	left:0;
+	bottom:0;
 }
 
 #r2{
-	margin-top:-8px;
-	margin-left:-8px;
+	z-index:10;
+	position:fixed;
+	left:0;
+	top:0;
+}
+
+#r3{
+	z-index:10;
+	position:fixed;
+	left:0;
+	top:0;
+}
+
+#r4{
+	z-index:10;
+	position:fixed;
+	right:0;
+	top:0;
 }
 
 body{
@@ -17,14 +35,23 @@ body{
     display: none;
 }
 
-.main {
-	display:grid;
-	width:2100px;
-  --s: 80px;  /* size  */
+
+:root{
+	--p:0px;
+	--x: 0px;
+	  --s: 70px;  /* size  */
   --m: 1px;    /* margin */
   --f: calc(var(--s) * 1.732 + 4 * var(--m) - 1px);
-  padding-bottom:80px;  
-  padding-top:80px;
+}
+
+
+.main {
+	z-index:-1;
+	position:absolute;
+	display:grid;
+	width:2000px;
+  padding-top:200px;
+   padding-bottom:200px;
 }
 
 .container {
@@ -33,6 +60,7 @@ body{
   margin-right:auto;
   
 }
+
 
 .container div {
   width: var(--s);
@@ -52,3 +80,5 @@ body{
   height: 120%; 
   shape-outside: repeating-linear-gradient(#0000 0 calc(var(--f) - 3px), #000 0 var(--f));
 }/*https://css-tricks.com/hexagons-and-beyond-flexible-responsive-grid-patterns-sans-media-queries/*/
+
+

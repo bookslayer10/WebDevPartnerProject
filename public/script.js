@@ -87,7 +87,7 @@ for(let k = 1; k <= 23; k++){
       if(k <= 12){
         ajacentHexes.push(id - (11 + k));
       } else {
-        ajacentHexes.push(id - (10 - k));
+        ajacentHexes.push(id - (36 - k));
       }
     }
 
@@ -250,21 +250,26 @@ const changeHexColor = (e) => {
   hexes[e.target.id].assignElement();
   hexes[e.target.id].color = "#990000";
 
-  /*
-  console.log(ajacentHexStore);
   ajacentHexStore[e.target.id].forEach(
-    function(id) {
-      hexes[id].assignElement();
-      hexes[id].color = "#990000";
+    function(id2) {
+      hexes[id2].assignElement();
+      hexes[id2].color = "#990000";
+      ajacentHexStore[id2].forEach(
+        function(id3) {
+          hexes[id3].assignElement();
+          hexes[id3].color = "#990000";
+        }
+      );
     }
   );
-*/
+
   set(hexesRef, hexes);
 }
 
 const logHexName = (e) => {
   console.log("ID of Hex clicked: " + e.target.id);
   console.log(ajacentHexStore[e.target.id]);
+  
 }
 
 function updateGameBoard(){

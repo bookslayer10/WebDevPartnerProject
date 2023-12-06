@@ -8,6 +8,7 @@ import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/fir
 const BOARD_SIZE = 398;
 
 let hexDiv; //variable to create hexs
+let hexImg; //variable for the images within the hexes
 let isUnloading = false;
 // hex array
 let hexes = new Array();
@@ -164,7 +165,12 @@ function createHexElement(container, id){
   hexDiv.setAttribute("id", id);
   hexDiv.addEventListener("click", changeHexColor);
   hexDiv.addEventListener("click", logHexName);
+
+  hexImg = document.createElement("img");
+  hexImg.setAttribute("src", "/images/testImage.svg");
+
   container.appendChild(hexDiv);
+  hexDiv.appendChild(hexImg);
 }
 
 function createHexArray(){

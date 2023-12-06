@@ -17,7 +17,8 @@ self.addEventListener('install', function(event) {
         '/manifest.json',
         '/images/512img.png',
         '/images/favicon.ico',
-        '/images/256img.png'
+        '/images/256img.png',
+        '/images/testImage.svg'
       ]);
     })
   );

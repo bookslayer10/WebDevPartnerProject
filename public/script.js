@@ -19,6 +19,8 @@ displayHexes.push(null);
 
 let isBoardDivLoaded = false;
 
+let ajacentHexStore = new Array();
+ajacentHexStore.push(null);
 
 // k is the the column, i is the row
 let id = 1;

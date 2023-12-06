@@ -209,3 +209,89 @@ function updateGameBoard(){
     displayHexes[i].updateColor();
   }
 }
+
+
+let r = document.querySelector(':root');
+let num;
+let numz;
+
+/*function zoom(event) {
+  event.preventDefault();
+
+  scale += event.deltaY * -0.001;
+
+  // Restrict scale
+  scale = Math.min(Math.max(0.85, scale), 3.3);
+
+  // Apply scale transform
+  el.style.transform = `scale(${scale})`; //https://developer.mozilla.org/en-US/play
+}
+
+   /*  document.onkeydown = function(event) {
+         switch (event.keyCode) {
+            case 37:
+               left();
+            break;
+            case 38:
+               alert('Up key');
+            break;
+            case 39:
+               right();
+            break;
+            case 40:
+               alert('Down key');
+            break;
+         }
+      };*/
+
+
+function right (){
+	let rs = getComputedStyle(r);
+    num = rs.getPropertyValue('--x');
+	let num2 = parseInt(num);
+	console.log(num2);
+	if(num2<500){
+	 r.style.setProperty('--x', num2 +10 + "px");
+	}else if(num2<=0){
+		r.style.setProperty('--p', num2 +10 + "px");
+	}
+ 
+}
+
+function left() {
+	let rs = getComputedStyle(r);
+    num = rs.getPropertyValue('--x');
+	let num2 = parseInt(num);
+	console.log(num2);
+	if(num2>500){
+	 r.style.setProperty('--x', num2 -10 + "px");
+	}else if(num2<=0){
+		r.style.setProperty('--p', num2 +10 + "px");
+	}
+ 
+}
+
+//let scale = 1;
+//const el = document.getElementById("main");
+//el.onwheel = zoom;
+
+
+/*document.getElementById("main").onwheel = function(){
+	wheelTwo()
+	
+};*/
+
+function wheelTwo(){
+	
+	
+	
+	console.log("YO");
+	let rs = getComputedStyle(r);
+    let hex = rs.getPropertyValue('--s');
+	let hex2 = parseInt(hex);
+	console.log(hex2);
+	if(hex2>19){
+	 r.style.setProperty('--s', hex2-2 +"px");
+	}
+}
+//https://www.w3schools.com/css/tryit.asp?filename=trycss3_var_js

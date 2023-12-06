@@ -185,7 +185,7 @@ window.onunload = (event) => {
       numberOfPlayers--;
       
       if(0 < numberOfPlayers){
-          set(numberOfPlayersRef, numberOfPlayers);
+        set(numberOfPlayersRef, numberOfPlayers);
       } else {
         set(hexesRef, null);
         set(numberOfPlayersRef, null);

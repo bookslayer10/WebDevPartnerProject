@@ -6,10 +6,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebas
 import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js"
 
 const BOARD_SIZE = 398;
-
+let passphrase;
+let pass1 = document.getElementById("passphrase");
+let pass2 = document.getElementById("passphrase2");
 let hexDiv; //variable to create hexs
 let hexImg; //variable for the images within the hexes
 let isUnloading = false;
+let numPlayers2 = 0;
 // hex array
 let hexes = new Array();
 hexes.push(null);
@@ -18,84 +21,6 @@ let displayHexes = new Array();
 displayHexes.push(null);
 
 let isBoardDivLoaded = false;
-
-let ajacentHexStore = new Array();
-ajacentHexStore.push(null);
-
-// k is the the column, i is the row
-let id = 1;
-for(let k = 1; k <= 23; k++){
-  for(let i = 1; i <= 23 - Math.abs(k - 12); i++, id++){ // this for loop increment includes both i++ and id++
-
-    let edgesIsOn = new Array(); // 0 is top side, continue clockwise 0 - 5
-    edgesIsOn.push(k == 1);
-    edgesIsOn.push(i == 11 + k);
-    edgesIsOn.push(i == 35 - k);
-    edgesIsOn.push(k == 23);
-    edgesIsOn.push(i == 1 && 12 <= k);
-    edgesIsOn.push(i == 1 && k <= 12);
-
-    // hexagon is 12 across an edge, 23 across diameter, 23 columns, 12-23-12 rows
-    // array from 0 to 5 of the id of ajacent hexes, -1 if none ajacent
-    // ajacentHexes is ordered as the 30, 90, 150, 210, 270, 330
-    let ajacentHexes = new Array();
-
-    if(edgesIsOn[0] || edgesIsOn[1]){
-      ajacentHexes.push(-1);
-    } else {
-      if(k <= 12){
-        ajacentHexes.push(id - (10 + k));
-      } else {
-        ajacentHexes.push(id - (35 - k));
-      }
-    }
-
-    if(edgesIsOn[1] || edgesIsOn[2]){
-      ajacentHexes.push(-1);
-    } else {
-      ajacentHexes.push(id + 1);
-    }
-
-    if(edgesIsOn[2] || edgesIsOn[3]){
-      ajacentHexes.push(-1);
-    } else {
-      if(k <= 11){
-        ajacentHexes.push(id + (12 + k));
-      } else {
-        ajacentHexes.push(id + (35 - k));
-      }
-    }
-
-    if(edgesIsOn[3] || edgesIsOn[4]){
-      ajacentHexes.push(-1);
-    } else {
-      if(k <= 11){
-        ajacentHexes.push(id + (11 + k));
-      } else {
-        ajacentHexes.push(id + (34 - k));
-      }
-    }
-
-    if(edgesIsOn[4] || edgesIsOn[5]){
-      ajacentHexes.push(-1);
-    } else {
-      ajacentHexes.push(id - 1);
-    }
-
-    if(edgesIsOn[6] || edgesIsOn[0]){
-      ajacentHexes.push(-1);
-    } else {
-      if(k <= 12){
-        ajacentHexes.push(id - (11 + k));
-      } else {
-        ajacentHexes.push(id - (36 - k));
-      }
-    }
-
-    ajacentHexStore.push(ajacentHexes);
-  }
-} 
-
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -116,6 +41,7 @@ class Hex {
     this.color = color;
     this.hidden = hidden;
     this.element = null;
+    this.ajacentHexes = this.getAjacentHexes();
   }
   
   assignElement(){
@@ -129,13 +55,52 @@ class Hex {
       this.element.style.backgroundColor = this.color;
     }
   }
+
+  getAjacentHexes(){
+    let array = new Array(); // ajacentHexes is ordered as the 30, 90, 150, 210, 270, 330
+    
+
+
+
+    return array;
+  }
 }
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-let passphrase = prompt("Game passphrase input");
+
+
+document.getElementById("passbutton").addEventListener("click", passFunction);
+
+function passFunction(){
+	if(pass1.value != "" && pass2.value != ""){
+		passphrase = pass1.value + pass2.value;
+		console.log(passphrase + "ship");
+		document.getElementById("message").style.display = "none";
+		document.getElementById("lightbox").style.display = "none";
+		document.getElementById("pass1").innerHTML = "Lobby: " + pass1.value;
+		document.getElementById("pass2").innerHTML = "Passphrase: " + pass2.value;
+		document.getElementById("numplay").style.display = "initial";
+		document.getElementById("pass1").style.display = "initial";
+		document.getElementById("pass2").style.display = "initial";
+	}else if(pass1.value != "" && pass2.value == ""){
+		
+	document.getElementById("error").style.display = "initial";
+	document.getElementById("error").innerHTML = "Dude, put in a passphrase";
+		
+	}else if(pass1.value == "" && pass2.value != ""){
+		
+	document.getElementById("error").style.display = "initial";
+	document.getElementById("error").innerHTML = "Dude, put in a lobby name";
+	
+	}else{
+		console.log("no");
+		document.getElementById("error").style.display = "initial";
+		document.getElementById("error").innerHTML = "WTF";
+	}
+}
 
 const numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
 const hexesRef = ref(database, "hexes+" + passphrase);
@@ -152,9 +117,13 @@ onValue(numberOfPlayersRef, (data) => {
         playerID = numberOfPlayers;
 
         set(numberOfPlayersRef, numberOfPlayers);
+		
     }
+	document.getElementById("numplay").innerHTML = "Number of Players: " + numberOfPlayers;
+	console.log(numberOfPlayers);
     
 }); // onValue numPlayers
+
 
 onValue(hexesRef, (data) => {
   
@@ -163,7 +132,8 @@ onValue(hexesRef, (data) => {
   }
 
   if(data.val() == null){
-    createNewHexArray();
+    createHexArray();
+    console.log("createarray");
     set(hexesRef, hexes);
   } else {
     hexes = new Array();
@@ -174,6 +144,8 @@ onValue(hexesRef, (data) => {
       hexes.push(new Hex(data.val()[i].id, data.val()[i].color, false));
       displayHexes.push(new Hex(hexes[i].id, hexes[i].color, (hexes[i].id % 5 == playerID)));
     }
+    console.log("arrayRecieved");
+
   }
 
   if(isBoardDivLoaded) updateGameBoard();
@@ -187,10 +159,10 @@ window.onunload = (event) => {
       numberOfPlayers--;
       
       if(0 < numberOfPlayers){
-        set(numberOfPlayersRef, numberOfPlayers);
+          set(numberOfPlayersRef, numberOfPlayers);
       } else {
-        set(hexesRef, null);
-        set(numberOfPlayersRef, null);
+          set(numberOfPlayersRef, null);
+          set(hexesRef, null);
       }
 
   } // if
@@ -200,6 +172,7 @@ window.onunload = (event) => {
 
 window.onload = function(){
   let id = 1;
+	console.log(numberOfPlayers);
   for(let k = 1; k < 13; k++){
     let container = document.getElementById("c" + (k));
 	container.setAttribute("class","container");
@@ -238,18 +211,18 @@ function createHexElement(container, id){
   hexDiv.appendChild(hexImg);
 }
 
-function createNewHexArray(){
+function createHexArray(){
   hexes = new Array();
   hexes.push(null);
+  displayHexes = new Array();
+  displayHexes.push(null);
 
-  let id = 1;
+  for(let i = 1; i < BOARD_SIZE; i++){ // 397 elements from 1 to 397 inclusive
+    hexes.push(new Hex(i + "", "#009900", false));
 
-   // k is the the column, i is the row
-  for(let k = 1; k <= 23; k++){
-    for(let i = 1; i <= 23 - Math.abs(k - 12); i++, id++){ // this for loop increment includes both i++ and id++
-      hexes.push(new Hex(id + "", "#009900", false));
-    }
-  } 
+    displayHexes.push(new Hex(hexes[i].id, hexes[i].color, false));
+
+  }
 
 }
 
@@ -265,16 +238,16 @@ const changeHexColor = (e) => {
 
 const logHexName = (e) => {
   console.log("ID of Hex clicked: " + e.target.id);
-  console.log(ajacentHexStore[e.target.id]);
-  
 }
 
 function updateGameBoard(){
+  console.log("updateGameBoard");
   for(let i = 1; i < BOARD_SIZE; i++){
     displayHexes[i].assignElement();
     displayHexes[i].updateColor();
   }
 }
+
 
 
 let r = document.querySelector(':root');

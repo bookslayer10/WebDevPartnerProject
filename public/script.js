@@ -155,14 +155,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-
-let passphrase;
 let pass1 = document.getElementById("passphrase");
 let pass2 = document.getElementById("passphrase2");
 
-const numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
-const hexesRef = ref(database, "hexes+" + passphrase);
+let passphrase;
 
+let numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
+let hexesRef = ref(database, "hexes+" + passphrase);
 
 let numberOfPlayers = null;
 let playerID = null;
@@ -174,7 +173,10 @@ document.getElementById("passbutton").addEventListener("click", passFunction);
 function passFunction(){
 	if(pass1.value != "" && pass2.value != ""){
 		passphrase = pass1.value + pass2.value;
-		console.log(passphrase + "ship");
+
+    numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
+    hexesRef = ref(database, "hexes+" + passphrase);
+
 		document.getElementById("message").style.display = "none";
 		document.getElementById("lightbox").style.display = "none";
 		document.getElementById("pass1").innerHTML = "Lobby: " + pass1.value;
@@ -182,75 +184,78 @@ function passFunction(){
 		document.getElementById("numplay").style.display = "initial";
 		document.getElementById("pass1").style.display = "initial";
 		document.getElementById("pass2").style.display = "initial";
-	}else if(pass1.value != "" && pass2.value == ""){
-		
-	document.getElementById("error").style.display = "initial";
-	document.getElementById("error").innerHTML = "Dude, put in a passphrase";
-		
-	}else if(pass1.value == "" && pass2.value != ""){
-		
-	document.getElementById("error").style.display = "initial";
-	document.getElementById("error").innerHTML = "Dude, put in a lobby name";
-	
-	}else{
-		console.log("no");
-		document.getElementById("error").style.display = "initial";
-		document.getElementById("error").innerHTML = "WTF";
-	}
-}
-
-onValue(numberOfPlayersRef, (data) => {
-  numberOfPlayers = data.val();
+    onValue(numberOfPlayersRef, (data) => {
   
-  if(playerID == null && numberOfPlayers < 7){
-      numberOfPlayers++;
-      playerID = numberOfPlayers;
 
-      set(numberOfPlayersRef, numberOfPlayers);
-  }
-  
-	document.getElementById("numplay").innerHTML = "Number of Players: " + numberOfPlayers;
+      numberOfPlayers = data.val();
+      
+      if(playerID == null && numberOfPlayers < 7){
+          numberOfPlayers++;
+          playerID = numberOfPlayers;
     
-}); // onValue numPlayers
-
-onValue(hexesRef, (data) => {
-  
-  if(isUnloading){
-    return;
-  }
-
-  if(data.val() == null){
-    console.log("Null array in firebase");
-    createNewHexArray();
-    hexes[3].unit = (new Unit(1, "infantry", 3, 3));
-    hexes[60].unit = (new Unit(2, "infantry", 60, 3));
-    hexes[200].unit = (new Unit(1, "infantry", 200, 3));
-    hexes[300].unit = (new Unit(2, "infantry", 300, 3));
-    set(hexesRef, hexes);
-  } else {
-    console.log("Downloading array from firebase");
-    for(let i = 1; i < BOARD_SIZE; i++){
-      if(hexes[i] == undefined){
-        hexes[i] = new Hex();
-      }
-      hexes[i].id = data.val()[i].id;
-      hexes[i].backgroundImage = data.val()[i].backgroundImage;
-      hexes[i].foregroundImage = data.val()[i].foregroundImage;
-      hexes[i].hidden = data.val()[i].hidden;
-
-      let tempUnit = data.val()[i].unit;
-      if(tempUnit != undefined){
-        hexes[i].unit = tempUnit;
-      } else {
-        hexes[i].unit = null;
+          set(numberOfPlayersRef, numberOfPlayers);
       }
       
-    }
-  }
+      document.getElementById("numplay").innerHTML = "Number of Players: " + numberOfPlayers;
+        
+    }); // onValue numPlayers
+    
+    onValue(hexesRef, (data) => {
+      console.log("onvalue");
+    
+      if(isUnloading){
+        return;
+      }
+    
+      if(data.val() == null){
+        console.log("Null array in firebase");
+        createNewHexArray();
+        hexes[3].unit = (new Unit(1, "infantry", 3, 3));
+        hexes[60].unit = (new Unit(2, "infantry", 60, 3));
+        hexes[200].unit = (new Unit(1, "infantry", 200, 3));
+        hexes[300].unit = (new Unit(2, "infantry", 300, 3));
+        set(hexesRef, hexes);
+      } else {
+        console.log("Downloading array from firebase");
+        for(let i = 1; i < BOARD_SIZE; i++){
+          if(hexes[i] == undefined){
+            hexes[i] = new Hex();
+          }
+          hexes[i].id = data.val()[i].id;
+          hexes[i].backgroundImage = data.val()[i].backgroundImage;
+          hexes[i].foregroundImage = data.val()[i].foregroundImage;
+          hexes[i].hidden = data.val()[i].hidden;
+    
+          let tempUnit = data.val()[i].unit;
+          if(tempUnit != undefined){
+            hexes[i].unit = tempUnit;
+          } else {
+            hexes[i].unit = null;
+          }
+          
+        }
+      }
+    
+      if(isBoardDivLoaded) updateGameBoard();
+      
+    }); // onValue numPlayers
 
-  if(isBoardDivLoaded) updateGameBoard();
-  
-}); // onValue numPlayers
+
+    if(isBoardDivLoaded) updateGameBoard();
+
+    
+		
+	}else if(pass1.value != "" && pass2.value == ""){
+    document.getElementById("error").style.display = "initial";
+    document.getElementById("error").innerHTML = "Please put in a passphrase";
+	}else if(pass1.value == "" && pass2.value != ""){
+    document.getElementById("error").style.display = "initial";
+    document.getElementById("error").innerHTML = "Please put in a lobby name";
+	}else{
+		document.getElementById("error").style.display = "initial";
+		document.getElementById("error").innerHTML = "Please enter a lobby name and passphrase";
+	}
+}
 
 window.onbeforeunload = (event) => {
   isUnloading = true;
@@ -291,6 +296,7 @@ window.onload = function(){
 
 
   isBoardDivLoaded = true;
+  
   updateGameBoard();
 
   // 397 hexagon elements created
@@ -361,6 +367,18 @@ const moveUnit = (e) => {
 }
 
 function updateGameBoard(){
+
+  console.log("update board");
+
+  // if hexes aren't defined, then don't try to update the board
+  if(hexes[1] == undefined){
+    return;
+    
+  }
+
+
+  console.log("update board successfuly");
+
 
   for(let i = 1; i < BOARD_SIZE; i++){
     if(displayHexes[i] == undefined){

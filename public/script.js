@@ -176,7 +176,6 @@ function passFunction(){
 
     numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
     hexesRef = ref(database, "hexes+" + passphrase);
-
 		document.getElementById("message").style.display = "none";
 		document.getElementById("lightbox").style.display = "none";
 		document.getElementById("pass1").innerHTML = "Lobby: " + pass1.value;
@@ -186,7 +185,6 @@ function passFunction(){
 		document.getElementById("pass2").style.display = "initial";
     onValue(numberOfPlayersRef, (data) => {
   
-
       numberOfPlayers = data.val();
       
       if(playerID == null && numberOfPlayers < 7){
@@ -376,10 +374,6 @@ function updateGameBoard(){
     
   }
 
-
-  console.log("update board successfuly");
-
-
   for(let i = 1; i < BOARD_SIZE; i++){
     if(displayHexes[i] == undefined){
       displayHexes[i] = new Hex();
@@ -505,6 +499,3 @@ function wheelTwo(){
 	}
 }
 //https://www.w3schools.com/css/tryit.asp?filename=trycss3_var_js
-
-
-/**/

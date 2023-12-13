@@ -145,19 +145,35 @@ input{
 }
 
 
-#pass1,#pass2,#numplay{
+#infodiv{
 	z-index:101;
 	position:fixed;
-	color:white;
-	font-size:30px;
-	margin-left: auto;
-    margin-right: auto;
     left: 0;
     right: 0;
+	top:5vh;
+	display:grid;
+	grid-template-areas: 
+	'one two three';
+}
+
+#pass1,#pass2,#numplay{
+	z-index:101;
+	color:white;
+	font-size:3vh;
+	margin-left: auto;
+    margin-right: auto;
     text-align: center;
 	display:none;
 }
 
 #numplay{
-	top:80px;
+	grid-area:three;
+}
+
+#pass2{
+	grid-area:two;
+}
+
+#pass1{
+	grid-area:one;
 }

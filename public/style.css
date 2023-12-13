@@ -1,3 +1,87 @@
+
+#r1{
+	z-index:10;
+	position:fixed;
+	left:0;
+	bottom:0;
+}
+
+#r2{
+	z-index:10;
+	position:fixed;
+	left:0;
+	top:0;
+}
+
+#r3{
+	z-index:10;
+	position:fixed;
+	left:0;
+	top:0;
+}
+
+#r4{
+	z-index:10;
+	position:fixed;
+	right:0;
+	top:0;
+}
+
+body{
+	overflow:scroll;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.main {
+	display:grid;
+	position:absolute;
+	width:2100px;
+  --s: 80px;  /* size  */
+  --m: 1px;    /* margin */
+  --f: calc(var(--s) * 1.732 + 4 * var(--m) - 1px);
+  padding-top:200px;
+  padding-bottom:200px;
+  user-select: none;
+}
+
+.container {
+  font-size: 0; /* disable white space between inline block element */
+  margin-left:auto;
+  margin-right:auto;
+  
+}
+
+.container div {
+  width: var(--s);
+  margin: var(--m);
+  height: calc(var(--s) * 1.1547);
+  display: inline-block;
+  font-size:initial;
+  clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+  margin-bottom: calc(var(--m) - var(--s) * 0.2885);
+  background-color: white;
+}
+
+.container::before {
+  content: "";
+  width: calc(var(--s) / 2 + var(--m));
+  float: left;
+  height: 120%; 
+  shape-outside: repeating-linear-gradient(#0000 0 calc(var(--f) - 3px), #000 0 var(--f));
+}/*https://css-tricks.com/hexagons-and-beyond-flexible-responsive-grid-patterns-sans-media-queries/*/
+
+img{
+  position:absolute;
+  pointer-events: none;
+}
+
+.hidden{
+  display:none;
+}
+
 #passbutton{
 	width:215px;
 	height:50px;
@@ -61,97 +145,35 @@ input{
 }
 
 
-#pass1,#pass2,#numplay{
+#infodiv{
 	z-index:101;
 	position:fixed;
-	color:white;
-	font-size:30px;
-	margin-left: auto;
-    margin-right: auto;
     left: 0;
     right: 0;
+	top:5vh;
+	display:grid;
+	grid-template-areas: 
+	'one two three';
+}
+
+#pass1,#pass2,#numplay{
+	z-index:101;
+	color:white;
+	font-size:3vh;
+	margin-left: auto;
+    margin-right: auto;
     text-align: center;
 	display:none;
 }
 
 #numplay{
-	top:80px;
+	grid-area:three;
 }
 
-#r1{
-	z-index:10;
-	position:fixed;
-	left:0;
-	bottom:0;
+#pass2{
+	grid-area:two;
 }
 
-#r2{
-	z-index:10;
-	position:fixed;
-	left:0;
-	top:0;
-}
-
-#r3{
-	z-index:10;
-	position:fixed;
-	left:0;
-	top:0;
-}
-
-#r4{
-	z-index:10;
-	position:fixed;
-	right:0;
-	top:0;
-}
-
-body{
-	overflow:scroll;
-}
-
-::-webkit-scrollbar {
-    display: none;
-}
-
-.main {
-	z-index:-1;
-	display:grid;
-	position:absolute;
-	width:2100px;
-  --s: 80px;  /* size  */
-  --m: 1px;    /* margin */
-  --f: calc(var(--s) * 1.732 + 4 * var(--m) - 1px);
-  padding-top:130px;
-   padding-bottom:200px;
-}
-
-.container {
-  font-size: 0; /* disable white space between inline block element */
-  margin-left:auto;
-  margin-right:auto;
-  
-}
-
-.container div {
-  width: var(--s);
-  margin: var(--m);
-  height: calc(var(--s) * 1.1547);
-  display: inline-block;
-  font-size:initial;
-  clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
-  margin-bottom: calc(var(--m) - var(--s) * 0.2885);
-  background-color:#333333;
-}
-
-.container::before {
-  content: "";
-  width: calc(var(--s) / 2 + var(--m));
-  float: left;
-  height: 120%; 
-  shape-outside: repeating-linear-gradient(#0000 0 calc(var(--f) - 3px), #000 0 var(--f));
-}/*https://css-tricks.com/hexagons-and-beyond-flexible-responsive-grid-patterns-sans-media-queries/*/
-
-img{
-  position:absolute;
+#pass1{
+	grid-area:one;
 }

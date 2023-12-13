@@ -29,6 +29,7 @@
 
 body{
 	overflow:scroll;
+	background-color: black;
 }
 
 ::-webkit-scrollbar {
@@ -62,7 +63,7 @@ body{
   font-size:initial;
   clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
   margin-bottom: calc(var(--m) - var(--s) * 0.2885);
-  background-color: white;
+  background-color: #777777;
 }
 
 .container::before {

@@ -5,22 +5,140 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebas
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js"
 
+// Declaration of hex
+class Hex {
+
+  constructor(id, backgroundImage, foregroundImage, hidden) {
+    this.id = id;
+    this.hidden = hidden;
+    this.divElement = null;
+    this.imgElement = null;
+    this.backgroundImage = backgroundImage;
+    this.foregroundImage = foregroundImage;
+    this.unit = null;
+  }
+  
+  assignElements(){
+    this.divElement = document.getElementById(this.id);
+    this.imgElement = document.getElementById("img" + this.id);
+  }
+  
+  updateImages(){
+    if(this.hidden){
+      this.imgElement.classList.add("hidden");
+      this.imgElement.setAttribute("src", "/images/testImage.svg");
+    } else {
+      this.imgElement.classList.remove("hidden");
+      this.imgElement.setAttribute("src", this.foregroundImage);
+    }
+
+    // right now, just use a colored background
+    //this.divElement.style.backgroundImage = "url(" + this.backgroundImage + ")";
+
+  }
+}
+
+class Unit {
+  constructor(ownerID, unitType, idPosition, health) {
+    this.ownerID = ownerID;
+    this.unitType = unitType;
+    this.idPosition = idPosition;
+    this.health = health;
+  }
+
+}
+
 const BOARD_SIZE = 398;
-let passphrase;
-let pass1 = document.getElementById("passphrase");
-let pass2 = document.getElementById("passphrase2");
+
 let hexDiv; //variable to create hexs
 let hexImg; //variable for the images within the hexes
 let isUnloading = false;
-let numPlayers2 = 0;
-// hex array
-let hexes = new Array();
-hexes.push(null);
+//let numPlayers2 = 0;
 
-let displayHexes = new Array();
-displayHexes.push(null);
+// hex array
+let hexes = new Array(BOARD_SIZE);
+hexes[0] = null;
+let displayHexes = new Array(hexes.length);
+displayHexes[0] = null;
 
 let isBoardDivLoaded = false;
+
+let ajacentHexStore = new Array();
+ajacentHexStore.push(null);
+
+// k is the the column, i is the row
+let id = 1;
+for(let k = 1; k <= 23; k++){
+  for(let i = 1; i <= 23 - Math.abs(k - 12); i++, id++){ // this for loop increment includes both i++ and id++
+
+    let edgesIsOn = new Array(); // 0 is top side, continue clockwise 0 - 5
+    edgesIsOn.push(k == 1);
+    edgesIsOn.push(i == 11 + k);
+    edgesIsOn.push(i == 35 - k);
+    edgesIsOn.push(k == 23);
+    edgesIsOn.push(i == 1 && 12 <= k);
+    edgesIsOn.push(i == 1 && k <= 12);
+
+    // hexagon is 12 across an edge, 23 across diameter, 23 columns, 12-23-12 rows
+    // array from 0 to 5 of the id of ajacent hexes, -1 if none ajacent
+    // ajacentHexes is ordered as the 30, 90, 150, 210, 270, 330
+    let ajacentHexes = new Array();
+
+    if(edgesIsOn[0] || edgesIsOn[1]){
+      ajacentHexes.push(-1);
+    } else {
+      if(k <= 12){
+        ajacentHexes.push(id - (10 + k));
+      } else {
+        ajacentHexes.push(id - (35 - k));
+      }
+    }
+
+    if(edgesIsOn[1] || edgesIsOn[2]){
+      ajacentHexes.push(-1);
+    } else {
+      ajacentHexes.push(id + 1);
+    }
+
+    if(edgesIsOn[2] || edgesIsOn[3]){
+      ajacentHexes.push(-1);
+    } else {
+      if(k <= 11){
+        ajacentHexes.push(id + (12 + k));
+      } else {
+        ajacentHexes.push(id + (35 - k));
+      }
+    }
+
+    if(edgesIsOn[3] || edgesIsOn[4]){
+      ajacentHexes.push(-1);
+    } else {
+      if(k <= 11){
+        ajacentHexes.push(id + (11 + k));
+      } else {
+        ajacentHexes.push(id + (34 - k));
+      }
+    }
+
+    if(edgesIsOn[4] || edgesIsOn[5]){
+      ajacentHexes.push(-1);
+    } else {
+      ajacentHexes.push(id - 1);
+    }
+
+    if(edgesIsOn[5] || edgesIsOn[0]){
+      ajacentHexes.push(-1);
+    } else {
+      if(k <= 12){
+        ajacentHexes.push(id - (11 + k));
+      } else {
+        ajacentHexes.push(id - (36 - k));
+      }
+    }
+
+    ajacentHexStore.push(ajacentHexes);
+  }
+} 
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -33,44 +151,23 @@ const firebaseConfig = {
     appId: "1:556366486052:web:860a1f7da246a91499d6b1"
 };
 
-// Declaration of hex
-class Hex {
-
-  constructor(id, color, hidden) {
-    this.id = id;
-    this.color = color;
-    this.hidden = hidden;
-    this.element = null;
-    this.ajacentHexes = this.getAjacentHexes();
-  }
-  
-  assignElement(){
-    this.element = document.getElementById(this.id);
-  }
-  
-  updateColor(){
-    if(this.hidden){
-      this.element.style.backgroundColor = "#ffffff";
-    } else {
-      this.element.style.backgroundColor = this.color;
-    }
-  }
-
-  getAjacentHexes(){
-    let array = new Array(); // ajacentHexes is ordered as the 30, 90, 150, 210, 270, 330
-    
-
-
-
-    return array;
-  }
-}
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
 
+let passphrase;
+let pass1 = document.getElementById("passphrase");
+let pass2 = document.getElementById("passphrase2");
+
+const numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
+const hexesRef = ref(database, "hexes+" + passphrase);
+
+
+let numberOfPlayers = null;
+let playerID = null;
+
+let selectedUnit = null;
 
 document.getElementById("passbutton").addEventListener("click", passFunction);
 
@@ -102,28 +199,19 @@ function passFunction(){
 	}
 }
 
-const numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
-const hexesRef = ref(database, "hexes+" + passphrase);
-
-
-let numberOfPlayers = null;
-let playerID = null;
-
 onValue(numberOfPlayersRef, (data) => {
-    numberOfPlayers = data.val();
-    
-    if(playerID == null && numberOfPlayers < 7){
-        numberOfPlayers++;
-        playerID = numberOfPlayers;
+  numberOfPlayers = data.val();
+  
+  if(playerID == null && numberOfPlayers < 7){
+      numberOfPlayers++;
+      playerID = numberOfPlayers;
 
-        set(numberOfPlayersRef, numberOfPlayers);
-		
-    }
+      set(numberOfPlayersRef, numberOfPlayers);
+  }
+  
 	document.getElementById("numplay").innerHTML = "Number of Players: " + numberOfPlayers;
-	console.log(numberOfPlayers);
     
 }); // onValue numPlayers
-
 
 onValue(hexesRef, (data) => {
   
@@ -132,39 +220,50 @@ onValue(hexesRef, (data) => {
   }
 
   if(data.val() == null){
-    createHexArray();
-    console.log("createarray");
+    console.log("Null array in firebase");
+    createNewHexArray();
+    hexes[3].unit = (new Unit(1, "infantry", 3, 3));
+    hexes[60].unit = (new Unit(2, "infantry", 60, 3));
+    hexes[200].unit = (new Unit(1, "infantry", 200, 3));
+    hexes[300].unit = (new Unit(2, "infantry", 300, 3));
     set(hexesRef, hexes);
   } else {
-    hexes = new Array();
-    hexes.push(null);
-    displayHexes = new Array();
-    displayHexes.push(null);
+    console.log("Downloading array from firebase");
     for(let i = 1; i < BOARD_SIZE; i++){
-      hexes.push(new Hex(data.val()[i].id, data.val()[i].color, false));
-      displayHexes.push(new Hex(hexes[i].id, hexes[i].color, (hexes[i].id % 5 == playerID)));
-    }
-    console.log("arrayRecieved");
+      if(hexes[i] == undefined){
+        hexes[i] = new Hex();
+      }
+      hexes[i].id = data.val()[i].id;
+      hexes[i].backgroundImage = data.val()[i].backgroundImage;
+      hexes[i].foregroundImage = data.val()[i].foregroundImage;
+      hexes[i].hidden = data.val()[i].hidden;
 
+      let tempUnit = data.val()[i].unit;
+      if(tempUnit != undefined){
+        hexes[i].unit = tempUnit;
+      } else {
+        hexes[i].unit = null;
+      }
+      
+    }
   }
 
   if(isBoardDivLoaded) updateGameBoard();
   
 }); // onValue numPlayers
 
-window.onunload = (event) => {
+window.onbeforeunload = (event) => {
   isUnloading = true;
 
   if(playerID != null){
       numberOfPlayers--;
       
       if(0 < numberOfPlayers){
-          set(numberOfPlayersRef, numberOfPlayers);
+        set(numberOfPlayersRef, numberOfPlayers);
       } else {
-          set(numberOfPlayersRef, null);
-          set(hexesRef, null);
+        set(hexesRef, null);
+        set(numberOfPlayersRef, null);
       }
-
   } // if
 } // onunload
 
@@ -172,7 +271,6 @@ window.onunload = (event) => {
 
 window.onload = function(){
   let id = 1;
-	console.log(numberOfPlayers);
   for(let k = 1; k < 13; k++){
     let container = document.getElementById("c" + (k));
 	container.setAttribute("class","container");
@@ -201,37 +299,41 @@ window.onload = function(){
 function createHexElement(container, id){
   hexDiv = document.createElement("div"); 
   hexDiv.setAttribute("id", id);
-  hexDiv.addEventListener("click", changeHexColor);
+  hexDiv.addEventListener("click", moveUnit);
   hexDiv.addEventListener("click", logHexName);
 
   hexImg = document.createElement("img");
-  hexImg.setAttribute("src", "/images/testImage2.svg");
+  hexImg.setAttribute("src", "/images/testImage.svg");
+  hexImg.setAttribute("id", "img" + id);
 
   container.appendChild(hexDiv);
   hexDiv.appendChild(hexImg);
 }
 
-function createHexArray(){
-  hexes = new Array();
-  hexes.push(null);
-  displayHexes = new Array();
-  displayHexes.push(null);
+function createNewHexArray(){
+  
+  let createID = 1;
 
-  for(let i = 1; i < BOARD_SIZE; i++){ // 397 elements from 1 to 397 inclusive
-    hexes.push(new Hex(i + "", "#009900", false));
-
-    displayHexes.push(new Hex(hexes[i].id, hexes[i].color, false));
-
+   // k is the the column, i is the row
+  for(let k = 1; k <= 23; k++){
+    for(let i = 1; i <= 23 - Math.abs(k - 12); i++, createID++){ // this for loop increment includes both i++ and id++
+      if(hexes[createID] == undefined){
+        hexes[createID] = new Hex();
+      }
+      hexes[createID].id = createID;
+      hexes[createID].backgroundImage = "images/testImage2.svg";
+      hexes[createID].foregroundImage = "images/testImage2.svg";
+      hexes[createID].hidden = false;
+      
+    }
   }
-
 }
 
-const changeHexColor = (e) => {
+const changeHexImage = (e) => {
 
-  console.log("changecolor");
+  //console.log("change image");
 
-  hexes[e.target.id].assignElement();
-  hexes[e.target.id].color = "#990000";
+  hexes[e.target.id].hidden = !(hexes[e.target.id].hidden);
 
   set(hexesRef, hexes);
 }
@@ -240,14 +342,65 @@ const logHexName = (e) => {
   console.log("ID of Hex clicked: " + e.target.id);
 }
 
-function updateGameBoard(){
-  console.log("updateGameBoard");
-  for(let i = 1; i < BOARD_SIZE; i++){
-    displayHexes[i].assignElement();
-    displayHexes[i].updateColor();
+const moveUnit = (e) => {
+  
+
+  // move unit, otherwise select unit
+  if(hexes[e.target.id].unit == null && selectedUnit != null && ajacentHexStore[selectedUnit].includes(parseInt(e.target.id))){
+    console.log("moving unit");
+
+    hexes[e.target.id].unit = hexes[selectedUnit].unit;
+    hexes[selectedUnit].unit = null;
+    selectedUnit = null;
+    set(hexesRef, hexes);
+  } else if(hexes[e.target.id].unit != null && hexes[e.target.id].unit.ownerID == playerID){
+    console.log("selecting unit");
+
+    selectedUnit = e.target.id;
   }
 }
 
+function updateGameBoard(){
+
+  for(let i = 1; i < BOARD_SIZE; i++){
+    if(displayHexes[i] == undefined){
+      displayHexes[i] = new Hex();
+    }
+    displayHexes[i].id = hexes[i].id;
+    displayHexes[i].backgroundImage = hexes[i].backgroundImage;
+    displayHexes[i].foregroundImage = hexes[i].foregroundImage;
+    displayHexes[i].hidden = hexes[i].hidden;
+
+    
+    displayHexes[i].hidden = true;
+  }
+  
+  for(let i = 1; i < BOARD_SIZE; i++){
+    if(hexes[i].unit != null){ //  && hexes[i].unit.ownerID == playerID
+      displayHexes[i].foregroundImage = "images/testImage.svg";
+
+      if(hexes[i].unit.ownerID == playerID){
+        displayHexes[i].hidden = false;
+        ajacentHexStore[i].forEach(function(j){
+          if(j != -1){
+            displayHexes[j].hidden = false;
+            ajacentHexStore[j].forEach(function(k){
+              if(k != -1){
+                displayHexes[k].hidden = false;
+                
+              }
+            });
+          }
+        });
+      }
+    }
+  }
+
+  for(let i = 1; i < BOARD_SIZE; i++){
+    displayHexes[i].assignElements();
+    displayHexes[i].updateImages();
+  }
+}
 
 
 let r = document.querySelector(':root');
@@ -334,3 +487,6 @@ function wheelTwo(){
 	}
 }
 //https://www.w3schools.com/css/tryit.asp?filename=trycss3_var_js
+
+
+/**/

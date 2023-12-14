@@ -38,6 +38,10 @@ class Hex {
   }
 }
 
+const INFANTRY = 0;
+const ARMOUR = 1;
+const ARTILLERY = 2;
+
 class Unit {
   constructor(ownerID, unitType, idPosition, health) {
     this.ownerID = ownerID;
@@ -207,10 +211,10 @@ function passFunction(){
       if(data.val() == null){
         console.log("Null array in firebase");
         createNewHexArray();
-        hexes[3].unit = (new Unit(1, "infantry", 3, 3));
-        hexes[60].unit = (new Unit(2, "infantry", 60, 3));
-        hexes[200].unit = (new Unit(1, "infantry", 200, 3));
-        hexes[300].unit = (new Unit(2, "infantry", 300, 3));
+        hexes[3].unit = (new Unit(1, INFANTRY, 3, 3));
+        hexes[60].unit = (new Unit(1, ARTILLERY, 60, 3));
+        hexes[200].unit = (new Unit(2, INFANTRY, 200, 3));
+        hexes[300].unit = (new Unit(2, ARTILLERY, 300, 3));
         set(hexesRef, hexes);
       } else {
         console.log("Downloading array from firebase");
@@ -427,14 +431,19 @@ function updateGameBoard(){
         ajacentHexStore[i].forEach(function(j){
           if(j != -1){
             displayHexes[j].hidden = false;
-            ajacentHexStore[j].forEach(function(k){
-              if(k != -1){
-                displayHexes[k].hidden = false;
-                
-              }
-            });
+            
+            if(hexes[i].unit.unitType == INFANTRY){
+              ajacentHexStore[j].forEach(function(k){
+                if(k != -1){
+                  displayHexes[k].hidden = false;
+                  
+                }
+              });
+            }
+            
           }
         });
+
       }
     }
   }

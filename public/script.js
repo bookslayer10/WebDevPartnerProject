@@ -45,7 +45,6 @@ class Unit {
     this.idPosition = idPosition;
     this.health = health;
   }
-
 }
 
 const BOARD_SIZE = 398;
@@ -303,7 +302,8 @@ window.onload = function(){
 function createHexElement(container, id){
   hexDiv = document.createElement("div"); 
   hexDiv.setAttribute("id", id);
-  hexDiv.addEventListener("click", moveUnit);
+  hexDiv.addEventListener("click", hexClick);
+  hexDiv.addEventListener("contextmenu", hexRightClick);
   hexDiv.addEventListener("click", logHexName);
 
   hexImg = document.createElement("img");
@@ -333,21 +333,13 @@ function createNewHexArray(){
   }
 }
 
-const changeHexImage = (e) => {
-
-  //console.log("change image");
-
-  hexes[e.target.id].hidden = !(hexes[e.target.id].hidden);
-
-  set(hexesRef, hexes);
-}
-
 const logHexName = (e) => {
   console.log("ID of Hex clicked: " + e.target.id);
 }
 
-const moveUnit = (e) => {
-  
+const hexClick = (e) => {
+  e.preventDefault();
+  //console.log(e);
 
   // move unit, otherwise select unit
   if(hexes[e.target.id].unit == null && selectedUnit != null && ajacentHexStore[selectedUnit].includes(parseInt(e.target.id))){
@@ -355,9 +347,48 @@ const moveUnit = (e) => {
 
     hexes[e.target.id].unit = hexes[selectedUnit].unit;
     hexes[selectedUnit].unit = null;
-    selectedUnit = null;
+
     set(hexesRef, hexes);
-  } else if(hexes[e.target.id].unit != null && hexes[e.target.id].unit.ownerID == playerID){
+  }
+  
+  if(hexes[e.target.id].unit != null && hexes[e.target.id].unit.ownerID == playerID){
+    console.log("selecting unit");
+
+    selectedUnit = e.target.id;
+  }
+}
+
+const hexRightClick = (e) => {
+  e.preventDefault();
+  //console.log(e);
+
+  // fire unit, otherwise select unit
+  if(hexes[e.target.id].unit != null && hexes[e.target.id].unit.ownerID != playerID && selectedUnit != null){
+
+    let isInRange = false;
+    ajacentHexStore[selectedUnit].forEach(function(i){
+      if(e.target.id == i) {
+        isInRange = true;
+      }
+      ajacentHexStore[i].forEach(function(k){
+        if(e.target.id == k) {
+          isInRange = true;
+        }
+      });
+    });
+
+    if(isInRange){
+      console.log("firing unit");
+
+      hexes[e.target.id].unit.health -= 1;
+      if(hexes[e.target.id].unit.health < 1){
+        hexes[e.target.id].unit = null;
+      }
+      set(hexesRef, hexes);
+    }
+  }
+  
+  if(hexes[e.target.id].unit != null && hexes[e.target.id].unit.ownerID == playerID){
     console.log("selecting unit");
 
     selectedUnit = e.target.id;

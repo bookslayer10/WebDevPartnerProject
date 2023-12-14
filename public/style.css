@@ -32,13 +32,15 @@ body{
 	background-color: black;
 }
 
-::-webkit-scrollbar {
-    display: none;
-}
+
 
 .main {
 	display:grid;
 	position:absolute;
+	left:50%;
+	top:50%;
+	transform: translate(-50%, -50%);
+	
 	width:2100px;
   --s: 80px;  /* size  */
   --m: 1px;    /* margin */

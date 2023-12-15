@@ -43,10 +43,9 @@ const ARMOUR = 1;
 const ARTILLERY = 2;
 
 class Unit {
-  constructor(ownerID, unitType, idPosition, health) {
+  constructor(ownerID, unitType, health) {
     this.ownerID = ownerID;
     this.unitType = unitType;
-    this.idPosition = idPosition;
     this.health = health;
   }
 }
@@ -211,10 +210,12 @@ function passFunction(){
       if(data.val() == null){
         console.log("Null array in firebase");
         createNewHexArray();
-        hexes[3].unit = (new Unit(1, INFANTRY, 3, 3));
-        hexes[60].unit = (new Unit(1, ARTILLERY, 60, 3));
-        hexes[200].unit = (new Unit(2, INFANTRY, 200, 3));
-        hexes[300].unit = (new Unit(2, ARTILLERY, 300, 3));
+        hexes[3].unit = (new Unit(1, INFANTRY, 3));
+        hexes[60].unit = (new Unit(1, ARTILLERY, 3));
+        hexes[100].unit = (new Unit(1, ARMOUR, 3));
+        hexes[200].unit = (new Unit(2, INFANTRY, 3));
+        hexes[300].unit = (new Unit(2, ARTILLERY, 3));
+        hexes[370].unit = (new Unit(2, ARMOUR, 3));
         set(hexesRef, hexes);
       } else {
         console.log("Downloading array from firebase");
@@ -346,13 +347,44 @@ const hexClick = (e) => {
   //console.log(e);
 
   // move unit, otherwise select unit
-  if(hexes[e.target.id].unit == null && selectedUnit != null && ajacentHexStore[selectedUnit].includes(parseInt(e.target.id))){
-    console.log("moving unit");
+  if(hexes[e.target.id].unit == null && selectedUnit != null){
+    let isInRange = false;
+    ajacentHexStore[selectedUnit].forEach(function(i){
+      if(e.target.id == i) {
+        isInRange = true;
+        return;
+      }
 
-    hexes[e.target.id].unit = hexes[selectedUnit].unit;
-    hexes[selectedUnit].unit = null;
+      if(i != -1 && hexes[selectedUnit].unit.unitType == ARMOUR){
+        ajacentHexStore[i].forEach(function(j){
+          if(e.target.id == j) {
+            isInRange = true;
+            return;
+          }
 
-    set(hexesRef, hexes);
+          if(j != -1){
+            if (hexes[selectedUnit].unit.unitType == ARMOUR){
+              ajacentHexStore[j].forEach(function(k){
+                if(e.target.id == k) {
+                  isInRange = true;
+                  return;
+                }
+                
+              });
+            }
+          }
+        });
+      }
+    });
+
+    if(isInRange){
+      console.log("moving unit");
+
+      hexes[e.target.id].unit = hexes[selectedUnit].unit;
+      hexes[selectedUnit].unit = null;
+
+      set(hexesRef, hexes);
+    }
   }
   
   if(hexes[e.target.id].unit != null && hexes[e.target.id].unit.ownerID == playerID){
@@ -375,22 +407,37 @@ const hexRightClick = (e) => {
         isInRange = true;
         return;
       }
-      ajacentHexStore[i].forEach(function(j){
-        if(e.target.id == j) {
-          isInRange = true;
-          return;
-        }
-        
-        if (hexes[selectedUnit].unit.unitType == ARTILLERY){
-          ajacentHexStore[j].forEach(function(k){
-            if(e.target.id == k) {
-              isInRange = true;
-              return;
-            }
-            
-          });
-        }
-      });
+
+      if(i != -1){
+        ajacentHexStore[i].forEach(function(j){
+          if(e.target.id == j) {
+            isInRange = true;
+            return;
+          }
+
+          if(j != -1 && hexes[selectedUnit].unit.unitType == ARTILLERY){
+            ajacentHexStore[j].forEach(function(k){
+              if(e.target.id == k) {
+                isInRange = true;
+                return;
+              }
+
+              if(k != -1 && hexes[selectedUnit].unit.unitType == ARTILLERY){
+              
+                ajacentHexStore[k].forEach(function(l){
+                  if(e.target.id == l) {
+                    isInRange = true;
+                    return;
+                  }
+                  
+                });
+                
+              }
+              
+            });
+          }
+        });
+      }
     });
 
     if(isInRange){
@@ -438,7 +485,7 @@ function updateGameBoard(){
   }
   
   for(let i = 1; i < BOARD_SIZE; i++){
-    if(hexes[i].unit != null){ //  && hexes[i].unit.ownerID == playerID
+    if(hexes[i].unit != null){
       displayHexes[i].foregroundImage = "images/testImage.svg";
 
       if(hexes[i].unit.ownerID == playerID){
@@ -447,11 +494,19 @@ function updateGameBoard(){
           if(j != -1){
             displayHexes[j].hidden = false;
             
-            if(hexes[i].unit.unitType == INFANTRY){
+            if(hexes[i].unit.unitType == INFANTRY || hexes[i].unit.unitType == ARMOUR){
               ajacentHexStore[j].forEach(function(k){
                 if(k != -1){
                   displayHexes[k].hidden = false;
-                  
+
+                  if(hexes[i].unit.unitType == INFANTRY){
+                    ajacentHexStore[k].forEach(function(l){
+                      if(l != -1){
+                        displayHexes[l].hidden = false;
+                        
+                      }
+                    });
+                  }
                 }
               });
             }

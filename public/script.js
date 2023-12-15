@@ -367,16 +367,28 @@ const hexRightClick = (e) => {
   //console.log(e);
 
   // fire unit, otherwise select unit
-  if(hexes[e.target.id].unit != null && hexes[e.target.id].unit.ownerID != playerID && selectedUnit != null){
+  if(selectedUnit != null && (hexes[e.target.id].unit == null || hexes[e.target.id].unit.ownerID != playerID)){
 
     let isInRange = false;
     ajacentHexStore[selectedUnit].forEach(function(i){
       if(e.target.id == i) {
         isInRange = true;
+        return;
       }
-      ajacentHexStore[i].forEach(function(k){
-        if(e.target.id == k) {
+      ajacentHexStore[i].forEach(function(j){
+        if(e.target.id == j) {
           isInRange = true;
+          return;
+        }
+        
+        if (hexes[selectedUnit].unit.unitType == ARTILLERY){
+          ajacentHexStore[j].forEach(function(k){
+            if(e.target.id == k) {
+              isInRange = true;
+              return;
+            }
+            
+          });
         }
       });
     });
@@ -384,10 +396,13 @@ const hexRightClick = (e) => {
     if(isInRange){
       console.log("firing unit");
 
-      hexes[e.target.id].unit.health -= 1;
-      if(hexes[e.target.id].unit.health < 1){
-        hexes[e.target.id].unit = null;
+      if(hexes[e.target.id].unit != null){
+        hexes[e.target.id].unit.health -= 1;
+        if(hexes[e.target.id].unit.health < 1){
+          hexes[e.target.id].unit = null;
+        }
       }
+
       set(hexesRef, hexes);
     }
   }

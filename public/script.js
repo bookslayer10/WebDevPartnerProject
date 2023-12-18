@@ -35,7 +35,6 @@ class Hex {
     }
 
     // right now, just use a colored background
-    //this.divElement.style.backgroundImage = "url(" + this.backgroundImage + ")";
 
   }
 }

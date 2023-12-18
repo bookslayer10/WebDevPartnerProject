@@ -1,182 +1,182 @@
-
-#r1{
-	z-index:10;
-	position:fixed;
-	left:0;
-	bottom:0;
+#r1 {
+	z-index: 10;
+	position: fixed;
+	left: 0;
+	bottom: 0;
 }
 
-#r2{
-	z-index:10;
-	position:fixed;
-	left:0;
-	top:0;
+#r2 {
+	z-index: 10;
+	position: fixed;
+	left: 0;
+	top: 0;
 }
 
-#r3{
-	z-index:10;
-	position:fixed;
-	left:0;
-	top:0;
+#r3 {
+	z-index: 10;
+	position: fixed;
+	left: 0;
+	top: 0;
 }
 
-#r4{
-	z-index:10;
-	position:fixed;
-	right:0;
-	top:0;
+#r4 {
+	z-index: 10;
+	position: fixed;
+	right: 0;
+	top: 0;
 }
 
-body{
-	overflow:scroll;
+body {
+	overflow: scroll;
 	background-color: black;
 }
 
 
 
 .main {
-	display:grid;
-	position:absolute;
-	left:50%;
-	top:50%;
+	display: grid;
+	position: absolute;
+	left: 50%;
+	top: 50%;
 	transform: translate(-50%, -50%);
-	
-	width:2100px;
-  --s: 80px;  /* size  */
-  --m: 1px;    /* margin */
-  --f: calc(var(--s) * 1.732 + 4 * var(--m) - 1px);
-  padding-top:200px;
-  padding-bottom:200px;
-  user-select: none;
+
+	width: 1050px;
+	--s: 40px;
+	/* size  */
+	--m: 0.5px;
+	/* margin */
+	--f: calc(var(--s) * 1.732 + 4 * var(--m) - 1px);
+	user-select: none;
 }
 
 .container {
-  font-size: 0; /* disable white space between inline block element */
-  margin-left:auto;
-  margin-right:auto;
-  
+	font-size: 0;
+	/* disable white space between inline block element */
+	margin-left: auto;
+	margin-right: auto;
+
 }
 
 .container div {
-  width: var(--s);
-  margin: var(--m);
-  height: calc(var(--s) * 1.1547);
-  display: inline-block;
-  font-size:initial;
-  clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
-  margin-bottom: calc(var(--m) - var(--s) * 0.2885);
-  background-color: #777777;
+	width: var(--s);
+	margin: var(--m);
+	height: calc(var(--s) * 1.1547);
+	display: inline-block;
+	font-size: initial;
+	clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+	margin-bottom: calc(var(--m) - var(--s) * 0.2885);
+	background-color: #777777;
+	background-size: 100% 100%;
 }
 
-.container::before {
-  content: "";
-  width: calc(var(--s) / 2 + var(--m));
-  float: left;
-  height: 120%; 
-  shape-outside: repeating-linear-gradient(#0000 0 calc(var(--f) - 3px), #000 0 var(--f));
-}/*https://css-tricks.com/hexagons-and-beyond-flexible-responsive-grid-patterns-sans-media-queries/*/
 
-img{
-  position:absolute;
-  pointer-events: none;
+/*https://css-tricks.com/hexagons-and-beyond-flexible-responsive-grid-patterns-sans-media-queries/*/
+
+img {
+	position: absolute;
+	pointer-events: none;
+	width: var(--s);
+	height: var(--s);
 }
 
-.hidden{
-  display:none;
+.hidden {
+	display: none;
 }
 
-#passbutton{
-	width:215px;
-	height:50px;
-	padding:5px;
-    font-size:15px;
+#passbutton {
+	width: 215px;
+	height: 50px;
+	padding: 5px;
+	font-size: 15px;
 }
 
-#text{
-	font-size:20px;
-	color:white;
+#text {
+	font-size: 20px;
+	color: white;
 }
 
-#error{
-	font-size:18px;
-	color:red;
-	display:none;
-	font-weight:800;
+#error {
+	font-size: 18px;
+	color: red;
+	display: none;
+	font-weight: 800;
 }
 
-h1{
-	font-size:40px;
-	color:white;
+h1 {
+	font-size: 40px;
+	color: white;
 }
 
-input{
-	width:200px;
-	height:45px;
-	padding-left:5px;
-	padding-right:5px;
-	font-size:20px;
-	text-align:center;
+input {
+	width: 200px;
+	height: 45px;
+	padding-left: 5px;
+	padding-right: 5px;
+	font-size: 20px;
+	text-align: center;
 }
 
 #lightbox {
-  z-index:100;
-  position:fixed;
-  top:0px;
-  left:0px;
-  width:100%;
-  height:100%;
-  background-color:rgba(0,0,0,1); 
+	z-index: 100;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 1);
 }
 
 #message {
-    width:80%;
-    background-color:#777777;
-	border:3px solid white;
-    text-align:center;
-    font-family: 'PT Mono', monospace;
-    
-    /* Center the message in the lightbox */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding-left:20px;
-	padding-right:20px;
-	padding-top:100px;
-	padding-bottom:100px;
-	font-size:14px;
+	width: 80%;
+	background-color: #777777;
+	border: 3px solid white;
+	text-align: center;
+	font-family: 'PT Mono', monospace;
+
+	/* Center the message in the lightbox */
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	padding-left: 20px;
+	padding-right: 20px;
+	padding-top: 100px;
+	padding-bottom: 100px;
+	font-size: 14px;
 }
 
 
-#infodiv{
-	z-index:101;
-	position:fixed;
-    left: 0;
-    right: 0;
-	top:5vh;
-	display:grid;
-	grid-template-areas: 
-	'one two three';
+#infodiv {
+	z-index: 101;
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 5vh;
+	display: grid;
+	grid-template-areas:
+		'one two three';
 }
 
-#pass1,#pass2,#numplay{
-	z-index:101;
-	color:white;
-	font-size:3vh;
+#pass1,
+#pass2,
+#numplay {
+	z-index: 101;
+	color: white;
+	font-size: 3vh;
 	margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-	display:none;
+	margin-right: auto;
+	text-align: center;
+	display: none;
 }
 
-#numplay{
-	grid-area:three;
+#numplay {
+	grid-area: three;
 }
 
-#pass2{
-	grid-area:two;
+#pass2 {
+	grid-area: two;
 }
 
-#pass1{
-	grid-area:one;
+#pass1 {
+	grid-area: one;
 }

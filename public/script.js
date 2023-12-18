@@ -164,10 +164,12 @@ let pass2 = document.getElementById("passphrase2");
 let passphrase;
 
 let numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
+let turnNumberRef = ref(database, "turnNumber+" + passphrase);
 let hexesRef = ref(database, "hexes+" + passphrase);
 
 let numberOfPlayers = null;
 let playerID = null;
+let turnNumber = null;
 
 let selectedUnit = null;
 
@@ -186,6 +188,7 @@ function passFunction() {
     document.getElementById("numplay").style.display = "initial";
     document.getElementById("pass1").style.display = "initial";
     document.getElementById("pass2").style.display = "initial";
+
     onValue(numberOfPlayersRef, (data) => {
 
       numberOfPlayers = data.val();
@@ -200,6 +203,16 @@ function passFunction() {
       document.getElementById("numplay").innerHTML = "Number of Players: " + numberOfPlayers;
 
     }); // onValue numPlayers
+
+    onValue(turnNumberRef, (data) => {
+
+      turnNumber = data.val();
+      if(turnNumber == null || turnNumber > numberOfPlayers){
+        console.log("trigger");
+        turnNumber = 1;
+      }
+
+    }); // onValue turnNumberRef
 
     onValue(hexesRef, (data) => {
       console.log("onvalue");
@@ -242,6 +255,7 @@ function passFunction() {
       if (isBoardDivLoaded) updateGameBoard();
 
     }); // onValue numPlayers
+
 
 
     if (isBoardDivLoaded) updateGameBoard();
@@ -341,11 +355,15 @@ function createNewHexArray() {
 
 const logHexName = (e) => {
   console.log("ID of Hex clicked: " + e.target.id);
+  console.log(turnNumber);
 }
 
 const hexClick = (e) => {
   e.preventDefault();
-  //console.log(e);
+  
+  if(turnNumber != playerID){
+    return;
+  }
 
   // move unit, otherwise select unit
   if (hexes[e.target.id].unit == null && selectedUnit != null) {
@@ -380,6 +398,8 @@ const hexClick = (e) => {
 
     if (isInRange) {
       console.log("moving unit");
+      turnNumber++;
+      set(turnNumberRef, turnNumber);
 
       hexes[e.target.id].unit = hexes[selectedUnit].unit;
       hexes[selectedUnit].unit = null;
@@ -397,7 +417,10 @@ const hexClick = (e) => {
 
 const hexRightClick = (e) => {
   e.preventDefault();
-  //console.log(e);
+  
+  if(turnNumber != playerID){
+    return;
+  }
 
   // fire unit, otherwise select unit
   if (selectedUnit != null && (hexes[e.target.id].unit == null || hexes[e.target.id].unit.ownerID != playerID)) {
@@ -443,6 +466,8 @@ const hexRightClick = (e) => {
 
     if (isInRange) {
       console.log("firing unit");
+      turnNumber++;
+      set(turnNumberRef, turnNumber);
 
       if (hexes[e.target.id].unit != null) {
         hexes[e.target.id].unit.health -= 1;

@@ -26,10 +26,12 @@ class Hex {
   updateImages(){
     if(this.hidden){
       this.imgElement.classList.add("hidden");
-      this.imgElement.setAttribute("src", "/images/testImage.svg");
+      this.divElement.style.backgroundImage = "none";
+      //this.imgElement.setAttribute("src", "/images/testImage.svg");
     } else {
       this.imgElement.classList.remove("hidden");
       this.imgElement.setAttribute("src", this.foregroundImage);
+      this.divElement.style.backgroundImage = "url(" + this.backgroundImage + ")";
     }
 
     // right now, just use a colored background
@@ -486,7 +488,18 @@ function updateGameBoard(){
   
   for(let i = 1; i < BOARD_SIZE; i++){
     if(hexes[i].unit != null){
-      displayHexes[i].foregroundImage = "images/testImage.svg";
+      switch (hexes[i].unit.unitType){
+        case INFANTRY:
+          displayHexes[i].foregroundImage = "images/soldier.svg";
+          break;
+        case ARMOUR:
+          displayHexes[i].foregroundImage = "images/tank.svg";
+          break;
+        case ARTILLERY:
+          displayHexes[i].foregroundImage = "images/artillery.svg";
+          break;
+      }
+      
 
       if(hexes[i].unit.ownerID == playerID){
         displayHexes[i].hidden = false;

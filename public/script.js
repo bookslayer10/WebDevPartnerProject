@@ -398,7 +398,6 @@ function createNewHexArray() {
 
 const logHexName = (e) => {
   console.log("ID of Hex clicked: " + e.target.id);
-  console.log(turnNumber);
 }
 
 const hexClick = (e) => {
@@ -488,7 +487,6 @@ const hexRightClick = (e) => {
                 isInRange = true;
                 return;
               }
-
               if (k != -1 && hexes[selectedUnit].unit.unitType == ARTILLERY) {
 
                 ajacentHexStore[k].forEach(function (l) {
@@ -573,7 +571,6 @@ function updateGameBoard() {
         ajacentHexStore[i].forEach(function (j) {
           if (j != -1) {
             displayHexes[j].hidden = false;
-
             if (hexes[i].unit.unitType == INFANTRY || hexes[i].unit.unitType == ARMOUR) {
               ajacentHexStore[j].forEach(function (k) {
                 if (k != -1) {

@@ -163,15 +163,21 @@ let pass2 = document.getElementById("passphrase2");
 
 let passphrase;
 
-let numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
-let turnNumberRef = ref(database, "turnNumber+" + passphrase);
-let hexesRef = ref(database, "hexes+" + passphrase);
+let numberOfPlayersRef;
+let turnNumberRef;
+let hexesRef;
 
 let numberOfPlayers = null;
 let playerID = null;
 let turnNumber = null;
 
 let selectedUnit = null;
+
+let mainStyle = document.getElementById("main").style;
+let scale = 1.5;
+let boardX = 50;
+let boardY = 50;
+mainStyle.setProperty("--scale", scale);
 
 document.getElementById("passbutton").addEventListener("click", passFunction);
 
@@ -181,6 +187,7 @@ function passFunction() {
 
     numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
     hexesRef = ref(database, "hexes+" + passphrase);
+    turnNumberRef = ref(database, "turnNumber+" + passphrase);
     document.getElementById("message").style.display = "none";
     document.getElementById("lightbox").style.display = "none";
     document.getElementById("pass1").innerHTML = "Lobby: " + pass1.value;
@@ -210,8 +217,10 @@ function passFunction() {
       if(turnNumber == null || turnNumber > numberOfPlayers){
         console.log("trigger");
         turnNumber = 1;
+        set(turnNumberRef, turnNumber)
       }
 
+      console.log("turn number: " + turnNumber);
     }); // onValue turnNumberRef
 
     onValue(hexesRef, (data) => {
@@ -260,8 +269,6 @@ function passFunction() {
 
     if (isBoardDivLoaded) updateGameBoard();
 
-
-
   } else if (pass1.value != "" && pass2.value == "") {
     document.getElementById("error").style.display = "initial";
     document.getElementById("error").innerHTML = "Please put in a passphrase";
@@ -274,6 +281,39 @@ function passFunction() {
   }
 }
 
+window.onkeydown = (e) => {
+  if(passphrase == undefined){
+    return;
+  }
+
+  if(e.key == 'q'){
+    scale *= 0.95;
+    scale = Math.max(scale, 0.1);
+    mainStyle.setProperty('--scale', scale);
+  } else if(e.key == 'e'){
+    scale *= 1.05;
+    scale = Math.min(scale, 4);
+    mainStyle.setProperty('--scale', scale);
+  } else if(e.key == 's'){
+    boardY -= 0.5 * scale;
+    boardY = Math.max(boardY, -50);
+    mainStyle.setProperty("top", boardY + "%");
+  } else if(e.key == 'w'){
+    boardY += 0.5 * scale;
+    boardY = Math.min(boardY, 150);
+    mainStyle.setProperty("top", boardY + "%");
+  } else if(e.key == 'd'){
+    boardX -= 0.5 * scale;
+    boardX = Math.max(boardX, -50);
+    mainStyle.setProperty("left", boardX + "%");
+  } else if(e.key == 'a'){
+    boardX += 0.5 * scale;
+    boardX = Math.min(boardX, 150);
+    mainStyle.setProperty("left", boardX + "%");
+  }
+
+}
+
 window.onbeforeunload = (event) => {
   isUnloading = true;
 
@@ -284,6 +324,7 @@ window.onbeforeunload = (event) => {
       set(numberOfPlayersRef, numberOfPlayers);
     } else {
       set(hexesRef, null);
+      set(turnNumberRef, null);
       set(numberOfPlayersRef, null);
     }
   } // if
@@ -315,6 +356,7 @@ window.onload = function () {
   isBoardDivLoaded = true;
 
   updateGameBoard();
+  //set(turnNumberRef, turnNumber);
 
   // 397 hexagon elements created
 }
@@ -560,89 +602,3 @@ function updateGameBoard() {
     displayHexes[i].updateImages();
   }
 }
-
-
-let r = document.querySelector(':root');
-let num;
-let numz;
-
-/*function zoom(event) {
-  event.preventDefault();
-
-  scale += event.deltaY * -0.001;
-
-  // Restrict scale
-  scale = Math.min(Math.max(0.85, scale), 3.3);
-
-  // Apply scale transform
-  el.style.transform = `scale(${scale})`; //https://developer.mozilla.org/en-US/play
-}
-
-   /*  document.onkeydown = function(event) {
-         switch (event.keyCode) {
-            case 37:
-               left();
-            break;
-            case 38:
-               alert('Up key');
-            break;
-            case 39:
-               right();
-            break;
-            case 40:
-               alert('Down key');
-            break;
-         }
-      };*/
-
-
-function right() {
-  let rs = getComputedStyle(r);
-  num = rs.getPropertyValue('--x');
-  let num2 = parseInt(num);
-  console.log(num2);
-  if (num2 < 500) {
-    r.style.setProperty('--x', num2 + 10 + "px");
-  } else if (num2 <= 0) {
-    r.style.setProperty('--p', num2 + 10 + "px");
-  }
-
-}
-
-function left() {
-  let rs = getComputedStyle(r);
-  num = rs.getPropertyValue('--x');
-  let num2 = parseInt(num);
-  console.log(num2);
-  if (num2 > 500) {
-    r.style.setProperty('--x', num2 - 10 + "px");
-  } else if (num2 <= 0) {
-    r.style.setProperty('--p', num2 + 10 + "px");
-  }
-
-}
-
-//let scale = 1;
-//const el = document.getElementById("main");
-//el.onwheel = zoom;
-
-
-/*document.getElementById("main").onwheel = function(){
-  wheelTwo()
-	
-};*/
-
-function wheelTwo() {
-
-
-
-  console.log("YO");
-  let rs = getComputedStyle(r);
-  let hex = rs.getPropertyValue('--s');
-  let hex2 = parseInt(hex);
-  console.log(hex2);
-  if (hex2 > 19) {
-    r.style.setProperty('--s', hex2 - 2 + "px");
-  }
-}
-//https://www.w3schools.com/css/tryit.asp?filename=trycss3_var_js

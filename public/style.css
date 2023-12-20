@@ -27,26 +27,28 @@
 }
 
 body {
-	overflow: scroll;
+	overflow: hidden;
 	background-color: black;
 }
 
 
 
-.main {
+#main {
 	display: grid;
 	position: absolute;
 	left: 50%;
 	top: 50%;
 	transform: translate(-50%, -50%);
 
-	width: 1050px;
-	--s: 40px;
+	--scale: 1;
+	--s: calc(var(--scale) * 40px);
 	/* size  */
-	--m: 0.5px;
+	--m: calc(var(--scale) * 1px);
 	/* margin */
 	--f: calc(var(--s) * 1.732 + 4 * var(--m) - 1px);
 	user-select: none;
+
+	width: 4200px;
 }
 
 .container {

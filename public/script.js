@@ -26,16 +26,18 @@ class Hex {
   updateImages() {
     if (this.hidden) {
       this.imgElement.classList.add("hidden");
-      this.divElement.style.backgroundImage = "none";
-      //this.imgElement.setAttribute("src", "/images/testImage.svg");
+      this.divElement.style.backgroundImage = "none"; // using colored background for now instead of fog of war image
     } else {
-      this.imgElement.classList.remove("hidden");
-      this.imgElement.setAttribute("src", this.foregroundImage);
-      this.divElement.style.backgroundImage = "url(" + this.backgroundImage + ")";
+
+      if (this.foregroundImage != false) {
+        this.imgElement.classList.remove("hidden");
+        this.imgElement.setAttribute("src", this.foregroundImage);
+        this.divElement.style.backgroundImage = "url(" + this.backgroundImage + ")";
+      } else {
+        this.imgElement.classList.add("hidden");
+        this.divElement.style.backgroundImage = "url(" + this.backgroundImage + ")";
+      }
     }
-
-    // right now, just use a colored background
-
   }
 }
 
@@ -214,7 +216,7 @@ function passFunction() {
     onValue(turnNumberRef, (data) => {
 
       turnNumber = data.val();
-      if(turnNumber == null || turnNumber > numberOfPlayers){
+      if (turnNumber == null || turnNumber > numberOfPlayers) {
         console.log("trigger");
         turnNumber = 1;
         set(turnNumberRef, turnNumber)
@@ -282,31 +284,31 @@ function passFunction() {
 }
 
 window.onkeydown = (e) => {
-  if(passphrase == undefined){
+  if (passphrase == undefined) {
     return;
   }
 
-  if(e.key == 'q'){
+  if (e.key == 'q') {
     scale *= 0.95;
     scale = Math.max(scale, 0.1);
     mainStyle.setProperty('--scale', scale);
-  } else if(e.key == 'e'){
+  } else if (e.key == 'e') {
     scale *= 1.05;
     scale = Math.min(scale, 4);
     mainStyle.setProperty('--scale', scale);
-  } else if(e.key == 's'){
+  } else if (e.key == 's') {
     boardY -= 0.5 * scale;
     boardY = Math.max(boardY, -50);
     mainStyle.setProperty("top", boardY + "%");
-  } else if(e.key == 'w'){
+  } else if (e.key == 'w') {
     boardY += 0.5 * scale;
     boardY = Math.min(boardY, 150);
     mainStyle.setProperty("top", boardY + "%");
-  } else if(e.key == 'd'){
+  } else if (e.key == 'd') {
     boardX -= 0.5 * scale;
     boardX = Math.max(boardX, -50);
     mainStyle.setProperty("left", boardX + "%");
-  } else if(e.key == 'a'){
+  } else if (e.key == 'a') {
     boardX += 0.5 * scale;
     boardX = Math.min(boardX, 150);
     mainStyle.setProperty("left", boardX + "%");
@@ -387,8 +389,8 @@ function createNewHexArray() {
         hexes[createID] = new Hex();
       }
       hexes[createID].id = createID;
-      hexes[createID].backgroundImage = "images/testImage2.svg";
-      hexes[createID].foregroundImage = "images/testImage2.svg";
+      hexes[createID].backgroundImage = "images/grassTile1.svg";
+      hexes[createID].foregroundImage = false;
       hexes[createID].hidden = false;
 
     }
@@ -402,8 +404,8 @@ const logHexName = (e) => {
 
 const hexClick = (e) => {
   e.preventDefault();
-  
-  if(turnNumber != playerID){
+
+  if (turnNumber != playerID) {
     return;
   }
 
@@ -459,8 +461,8 @@ const hexClick = (e) => {
 
 const hexRightClick = (e) => {
   e.preventDefault();
-  
-  if(turnNumber != playerID){
+
+  if (turnNumber != playerID) {
     return;
   }
 

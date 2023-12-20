@@ -88,55 +88,56 @@ body{
 
 
 
-.main {
-	display:grid;
-	position:absolute;
-	left:50%;
-	top:50%;
+#main {
+	display: grid;
+	position: absolute;
+	left: 50%;
+	top: 50%;
 	transform: translate(-50%, -50%);
-	
-	width:2100px;
-  --s: 80px;  /* size  */
-  --m: 1px;    /* margin */
-  --f: calc(var(--s) * 1.732 + 4 * var(--m) - 1px);
-  padding-top:200px;
-  padding-bottom:200px;
-  user-select: none;
+
+	--scale: 1;
+	--s: calc(var(--scale) * 40px);
+	/* size  */
+	--m: calc(var(--scale) * 1px);
+	/* margin */
+	--f: calc(var(--s) * 1.732 + 4 * var(--m) - 1px);
+	user-select: none;
+
+	width: 4200px;
 }
 
 .container {
-  font-size: 0; /* disable white space between inline block element */
-  margin-left:auto;
-  margin-right:auto;
-  
+	font-size: 0;
+	/* disable white space between inline block element */
+	margin-left: auto;
+	margin-right: auto;
+
 }
 
 .container div {
-  width: var(--s);
-  margin: var(--m);
-  height: calc(var(--s) * 1.1547);
-  display: inline-block;
-  font-size:initial;
-  clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
-  margin-bottom: calc(var(--m) - var(--s) * 0.2885);
-  background-color: #777777;
+	width: var(--s);
+	margin: var(--m);
+	height: calc(var(--s) * 1.1547);
+	display: inline-block;
+	font-size: initial;
+	clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+	margin-bottom: calc(var(--m) - var(--s) * 0.2885);
+	background-image: url(images/fogTile.svg);
+	background-size: 100% 100%;
 }
 
-.container::before {
-  content: "";
-  width: calc(var(--s) / 2 + var(--m));
-  float: left;
-  height: 120%; 
-  shape-outside: repeating-linear-gradient(#0000 0 calc(var(--f) - 3px), #000 0 var(--f));
-}/*https://css-tricks.com/hexagons-and-beyond-flexible-responsive-grid-patterns-sans-media-queries/*/
 
-img{
-  position:absolute;
-  pointer-events: none;
+/*https://css-tricks.com/hexagons-and-beyond-flexible-responsive-grid-patterns-sans-media-queries/*/
+
+img {
+	position: absolute;
+	pointer-events: none;
+	width: var(--s);
+	height: var(--s);
 }
 
-.hidden{
-  display:none;
+.hidden {
+	display: none;
 }
 
 #passbutton{
@@ -162,11 +163,11 @@ img{
 	font-family:'Black Ops One', cursive;
 }
 
-#error{
-	font-size:18px;
-	color:red;
-	display:none;
-	font-weight:800;
+#error {
+	font-size: 18px;
+	color: red;
+	display: none;
+	font-weight: 800;
 }
 
 h1{
@@ -175,13 +176,13 @@ h1{
 	font-family: 'Stalinist One', cursive;
 }
 
-input{
-	width:200px;
-	height:45px;
-	padding-left:5px;
-	padding-right:5px;
-	font-size:20px;
-	text-align:center;
+input {
+	width: 200px;
+	height: 45px;
+	padding-left: 5px;
+	padding-right: 5px;
+	font-size: 20px;
+	text-align: center;
 }
 
 #lightbox {
@@ -257,18 +258,19 @@ input{
 	z-index:101;
 	color:white;
 	font-size:2.5vh;
+
 	margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-	display:none;
+	margin-right: auto;
+	text-align: center;
+	display: none;
 }
 
-#numplay{
-	grid-area:three;
+#numplay {
+	grid-area: three;
 }
 
-#pass2{
-	grid-area:two;
+#pass2 {
+	grid-area: two;
 }
 
 #pass1{

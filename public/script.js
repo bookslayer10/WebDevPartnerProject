@@ -26,7 +26,7 @@ class Hex {
   updateImages() {
     if (this.hidden) {
       this.imgElement.classList.add("hidden");
-      this.divElement.style.backgroundImage = "none"; // using colored background for now instead of fog of war image
+      this.divElement.style.backgroundImage = "images/fogTile.svg"; // using colored background for now instead of fog of war image
     } else {
 
       if (this.foregroundImage != false) {

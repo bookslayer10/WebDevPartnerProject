@@ -24,9 +24,10 @@ class Hex {
   }
 
   updateImages() {
-    if (this.hidden) {
+    if (this.hidden == true) {
       this.imgElement.classList.add("hidden");
-      this.divElement.style.backgroundImage = "images/fogTile.svg"; // using colored background for now instead of fog of war image
+      this.divElement.style.backgroundImage = "url(images/fogTile.svg)"; // using colored background for now instead of fog of war image
+      console.log(this.id);
     } else {
 
       if (this.foregroundImage != false) {
@@ -217,12 +218,10 @@ function passFunction() {
 
       turnNumber = data.val();
       if (turnNumber == null || turnNumber > numberOfPlayers) {
-        console.log("trigger");
         turnNumber = 1;
         set(turnNumberRef, turnNumber)
       }
 
-      console.log("turn number: " + turnNumber);
     }); // onValue turnNumberRef
 
     onValue(hexesRef, (data) => {

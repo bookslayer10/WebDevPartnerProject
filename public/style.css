@@ -1,43 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Stalinist+One&display=swap');
+/*https://pixabay.com/illustrations/camouflage-military-texture-1541188/*/
+
 
 #r1{
 	z-index:10;
 	position:fixed;
 	left:0;
 	bottom:0;
+	background-image: url('/images/camo.jpg');
+	background-size: cover;
+	width:100vw;
+	height:12vh;
+	border-top:thick solid white;
+	
+}
+
+
+body::-webkit-scrollbar{
+	display:none;
 }
 
 #r2{
 	z-index:10;
+	background-image: url('/images/camo.jpg');
+	background-size: cover;
 	position:fixed;
 	left:0;
 	top:0;
+	width:100vw;
+	height:16vh;
+	border-bottom:thick solid white;
 }
 
 #r3{
-	z-index:10;
+	z-index:11;
+	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url('/images/camo.jpg');
+	background-size: cover;
 	position:fixed;
 	left:0;
 	top:0;
+	width:9vw;
+	height:100vh;
+	border-right:thick solid white;
 }
 
 #r4{
-	z-index:10;
+	z-index:11;
+	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url('/images/camo.jpg');
+	background-size: cover;
 	position:fixed;
 	right:0;
 	top:0;
+	width:9vw;
+	height:100vh;
+	border-left:thick solid white;
 }
+
+#r5{
+	z-index:13;
+	position:fixed;
+	left:0;
+	bottom:0;
+	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url('/images/camo.jpg');
+	background-size: cover;
+	width:100vw;
+	height:12vh;
+}
+
+
+#r6{
+	z-index:13;
+	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/images/camo.jpg');/*https://www.youtube.com/watch?v=a2UnYs9AA_M*/
+	background-size: cover;
+	position:fixed;
+	left:0;
+	top:0;
+	width:100vw;
+	height:16vh;
+}
+
 
 body{
 	overflow:scroll;
+	background-color: black;
 }
 
-::-webkit-scrollbar {
-    display: none;
-}
+
 
 .main {
 	display:grid;
 	position:absolute;
+	left:50%;
+	top:50%;
+	transform: translate(-50%, -50%);
+	
 	width:2100px;
   --s: 80px;  /* size  */
   --m: 1px;    /* margin */
@@ -62,7 +119,7 @@ body{
   font-size:initial;
   clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
   margin-bottom: calc(var(--m) - var(--s) * 0.2885);
-  background-color: white;
+  background-color: #777777;
 }
 
 .container::before {
@@ -86,12 +143,23 @@ img{
 	width:215px;
 	height:50px;
 	padding:5px;
-    font-size:15px;
+    font-size:20px;
+	background-color:#222222;
+	border:2px solid white;
+	color:white;
+	font-family:'Black Ops One', cursive;
+}
+
+#passbutton:hover{
+	background-color:white;
+	border:2px solid #222222;
+	color:black;
 }
 
 #text{
 	font-size:20px;
 	color:white;
+	font-family:'Black Ops One', cursive;
 }
 
 #error{
@@ -102,8 +170,9 @@ img{
 }
 
 h1{
-	font-size:40px;
+	font-size:25px;
 	color:white;
+	font-family: 'Stalinist One', cursive;
 }
 
 input{
@@ -122,11 +191,13 @@ input{
   left:0px;
   width:100%;
   height:100%;
-  background-color:rgba(0,0,0,1); 
+  background-color:rgba(0,0,0,1);
+
 }
 
 #message {
-    width:80%;
+    width:70%;
+	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url('/images/camo.jpg');
     background-color:#777777;
 	border:3px solid white;
     text-align:center;
@@ -137,8 +208,8 @@ input{
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding-left:20px;
-	padding-right:20px;
+    padding-left:10px;
+	padding-right:10px;
 	padding-top:100px;
 	padding-bottom:100px;
 	font-size:14px;
@@ -150,16 +221,42 @@ input{
 	position:fixed;
     left: 0;
     right: 0;
-	top:5vh;
+	top:3vh;
 	display:grid;
 	grid-template-areas: 
-	'one two three';
+	'one'
+	'two'
+	'three';
+}
+
+#infantinfo{
+	grid-area:soldier;
+}
+
+#tankinfo{
+	grid-area:tank;
+}
+
+#artinfo{
+	grid-area:artillery;
+}
+
+#armydiv{
+	z-index:101;
+	position:fixed;
+    left: 0;
+    right: 0;
+	bottom:5vh;
+	display:grid;
+	grid-template-areas: 
+	'soldier tank artillery';
 }
 
 #pass1,#pass2,#numplay{
+	font-family:'Black Ops One', cursive;
 	z-index:101;
 	color:white;
-	font-size:3vh;
+	font-size:2.5vh;
 	margin-left: auto;
     margin-right: auto;
     text-align: center;
@@ -176,4 +273,89 @@ input{
 
 #pass1{
 	grid-area:one;
+}
+
+@media only screen and (min-width: 460px) {
+	
+	#message{
+		padding-left:30px;
+		padding-right:30px;
+	}
+
+}
+
+@media only screen and (min-width: 600px) {
+	
+	#r1,#r5{
+		height:16vh;
+	}
+	
+	#r3{
+		width:11vw;
+	}
+	
+	#r4{
+		width:11vw;
+	}
+	
+
+}
+
+@media only screen and (min-width: 800px) {
+	#infodiv{
+	top:5.5vh;
+	width:80vw;
+	right:50%;
+	left:10%;
+	text-align:center;
+	grid-template-areas: 
+	'one two three';
+}
+
+#message {
+    width:50%;
+}
+
+#passbutton{
+	font-size:25px;
+}
+
+h1{
+	font-size:30px;
+}
+
+#text{
+	font-size:25px;
+}
+
+#error{
+	font-size:23px;
+}
+
+}
+
+@media only screen and (min-width: 1000px) {
+	#pass1,#pass2,#numplay{
+	font-size:3vh;
+}
+
+#passbutton{
+	margin-top:10px;
+	padding:9px;
+}
+
+}
+
+@media only screen and (min-width: 1200px) {
+	#pass1,#pass2,#numplay{
+	font-size:3.5vh;
+}
+
+}
+
+@media only screen and (min-width: 1400px) {
+#message {
+    width:30%;
+}
+
 }

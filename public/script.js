@@ -262,15 +262,15 @@ function passFunction() {
       if (data.val() == null) {
         console.log("Null array in firebase");
         createNewHexArray();
-        hexes[1].unit = (new Unit(1, INFANTRY, 1));
-        hexes[2].unit = (new Unit(1, ARTILLERY, 1));
-        hexes[3].unit = (new Unit(1, ARMOUR, 1));
-        hexes[200].unit = (new Unit(3, INFANTRY, 1));
-        hexes[201].unit = (new Unit(3, ARTILLERY, 1));
-        hexes[202].unit = (new Unit(3, ARMOUR, 1));
-        hexes[397].unit = (new Unit(2, INFANTRY, 1));
-        hexes[396].unit = (new Unit(2, ARTILLERY, 1));
-        hexes[395].unit = (new Unit(2, ARMOUR, 1));
+        hexes[1].unit = (new Unit(1, INFANTRY));
+        hexes[2].unit = (new Unit(1, ARTILLERY));
+        hexes[3].unit = (new Unit(1, ARMOUR));
+        hexes[200].unit = (new Unit(3, INFANTRY));
+        hexes[201].unit = (new Unit(3, ARTILLERY));
+        hexes[202].unit = (new Unit(3, ARMOUR));
+        hexes[397].unit = (new Unit(2, INFANTRY));
+        hexes[396].unit = (new Unit(2, ARTILLERY));
+        hexes[395].unit = (new Unit(2, ARMOUR));
         set(hexesRef, hexes);
       } else {
         console.log("Downloading array from firebase");

@@ -197,6 +197,12 @@ let turnNumber = null;
 let thisPlayerUnits = [];
 
 let selectedUnit = null;
+let audioI = new Audio('images/infantry.mp3');
+let audioT = new Audio('images/tank.mp3');
+let audioA = new Audio('images/artillery.mp3');
+let audioDeath = new Audio('images/death.wav');
+let audioMove = new Audio('images/piece.wav');
+
 
 let mainStyle = document.getElementById("main").style;
 let scale = 1.5;
@@ -474,6 +480,16 @@ const hexClick = (e) => {
 
     if (isInRange) {
       console.log("moving unit");
+	  audioMove.play();
+	  
+	  	  /*if(hexes[selectedUnit].unit.unitType == INFANTRY){
+		  audioI.play();
+	  }else if(hexes[selectedUnit].unit.unitType == ARMOUR){
+		  audioT.play();
+	  }else if(hexes[selectedUnit].unit.unitType == ARTILLERY){
+		 audioA.play();
+	  }*/
+	  
       turnNumber++;
       set(turnNumberRef, turnNumber);
 
@@ -542,11 +558,24 @@ const hexRightClick = (e) => {
     if (isInRange) {
       console.log("firing unit");
       turnNumber++;
+	  
+	  if(hexes[selectedUnit].unit.unitType == INFANTRY){
+		  audioI.play();
+	  }else if(hexes[selectedUnit].unit.unitType == ARMOUR){
+		  audioT.play();
+	  }else if(hexes[selectedUnit].unit.unitType == ARTILLERY){
+		 audioA.play();
+	  }
+	  
+	  
+
+		  
       set(turnNumberRef, turnNumber);
 
       if (hexes[e.target.id].unit != null) {
         hexes[e.target.id].unit.health -= 1;
         if (hexes[e.target.id].unit.health < 1) {
+		 audioDeath.play();
           hexes[e.target.id].unit = null;
         }
       }

@@ -175,6 +175,12 @@ let playerID = null;
 let turnNumber = null;
 
 let selectedUnit = null;
+let audioI = new Audio('images/infantry.mp3');
+let audioT = new Audio('images/tank.mp3');
+let audioA = new Audio('images/artillery.mp3');
+let audioDeath = new Audio('images/death.wav');
+let audioMove = new Audio('images/piece.wav');
+
 
 let mainStyle = document.getElementById("main").style;
 let scale = 1.5;
@@ -234,12 +240,15 @@ function passFunction() {
       if (data.val() == null) {
         console.log("Null array in firebase");
         createNewHexArray();
-        hexes[3].unit = (new Unit(1, INFANTRY, 3));
-        hexes[60].unit = (new Unit(1, ARTILLERY, 3));
-        hexes[100].unit = (new Unit(1, ARMOUR, 3));
-        hexes[200].unit = (new Unit(2, INFANTRY, 3));
-        hexes[300].unit = (new Unit(2, ARTILLERY, 3));
-        hexes[370].unit = (new Unit(2, ARMOUR, 3));
+        hexes[1].unit = (new Unit(1, INFANTRY, 1));
+        hexes[2].unit = (new Unit(1, ARTILLERY, 1));
+        hexes[3].unit = (new Unit(1, ARMOUR, 1));
+        hexes[200].unit = (new Unit(3, INFANTRY, 1));
+        hexes[201].unit = (new Unit(3, ARTILLERY, 1));
+        hexes[202].unit = (new Unit(3, ARMOUR, 1));
+        hexes[397].unit = (new Unit(2, INFANTRY, 1));
+        hexes[396].unit = (new Unit(2, ARTILLERY, 1));
+        hexes[395].unit = (new Unit(2, ARMOUR, 1));
         set(hexesRef, hexes);
       } else {
         console.log("Downloading array from firebase");
@@ -289,26 +298,26 @@ window.onkeydown = (e) => {
 
   if (e.key == 'q') {
     scale *= 0.95;
-    scale = Math.max(scale, 0.1);
+    scale = Math.max(scale, 0.3);
     mainStyle.setProperty('--scale', scale);
   } else if (e.key == 'e') {
     scale *= 1.05;
     scale = Math.min(scale, 4);
     mainStyle.setProperty('--scale', scale);
   } else if (e.key == 's') {
-    boardY -= 0.5 * scale;
+    boardY -= 0.8 * scale;
     boardY = Math.max(boardY, -50);
     mainStyle.setProperty("top", boardY + "%");
   } else if (e.key == 'w') {
-    boardY += 0.5 * scale;
+    boardY += 0.8 * scale;
     boardY = Math.min(boardY, 150);
     mainStyle.setProperty("top", boardY + "%");
   } else if (e.key == 'd') {
-    boardX -= 0.5 * scale;
+    boardX -= 0.8 * scale;
     boardX = Math.max(boardX, -50);
     mainStyle.setProperty("left", boardX + "%");
   } else if (e.key == 'a') {
-    boardX += 0.5 * scale;
+    boardX += 0.8 * scale;
     boardX = Math.min(boardX, 150);
     mainStyle.setProperty("left", boardX + "%");
   }
@@ -378,7 +387,7 @@ function createHexElement(container, id) {
 }
 
 function createNewHexArray() {
-
+  let grassArray = ["images/grassTile1.svg", "images/grassTile2.svg", "images/grassTile3.svg"];
   let createID = 1;
 
   // k is the the column, i is the row
@@ -388,7 +397,7 @@ function createNewHexArray() {
         hexes[createID] = new Hex();
       }
       hexes[createID].id = createID;
-      hexes[createID].backgroundImage = "images/grassTile1.svg";
+      hexes[createID].backgroundImage = grassArray[Math.floor(Math.random()*3)];
       hexes[createID].foregroundImage = false;
       hexes[createID].hidden = false;
 
@@ -424,7 +433,7 @@ const hexClick = (e) => {
           }
 
           if (j != -1) {
-            if (hexes[selectedUnit].unit.unitType == ARMOUR) {
+            if (false) { // hexes[selectedUnit].unit.unitType == ARMOUR
               ajacentHexStore[j].forEach(function (k) {
                 if (e.target.id == k) {
                   isInRange = true;
@@ -440,6 +449,16 @@ const hexClick = (e) => {
 
     if (isInRange) {
       console.log("moving unit");
+	  audioMove.play();
+	  
+	  	  /*if(hexes[selectedUnit].unit.unitType == INFANTRY){
+		  audioI.play();
+	  }else if(hexes[selectedUnit].unit.unitType == ARMOUR){
+		  audioT.play();
+	  }else if(hexes[selectedUnit].unit.unitType == ARTILLERY){
+		 audioA.play();
+	  }*/
+	  
       turnNumber++;
       set(turnNumberRef, turnNumber);
 
@@ -508,11 +527,24 @@ const hexRightClick = (e) => {
     if (isInRange) {
       console.log("firing unit");
       turnNumber++;
+	  
+	  if(hexes[selectedUnit].unit.unitType == INFANTRY){
+		  audioI.play();
+	  }else if(hexes[selectedUnit].unit.unitType == ARMOUR){
+		  audioT.play();
+	  }else if(hexes[selectedUnit].unit.unitType == ARTILLERY){
+		 audioA.play();
+	  }
+	  
+	  
+
+		  
       set(turnNumberRef, turnNumber);
 
       if (hexes[e.target.id].unit != null) {
         hexes[e.target.id].unit.health -= 1;
         if (hexes[e.target.id].unit.health < 1) {
+		 audioDeath.play();
           hexes[e.target.id].unit = null;
         }
       }

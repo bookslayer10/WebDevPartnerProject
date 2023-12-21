@@ -27,7 +27,6 @@ class Hex {
     if (this.hidden == true) {
       this.imgElement.classList.add("hidden");
       this.divElement.style.backgroundImage = "url(images/fogTile.svg)"; // using colored background for now instead of fog of war image
-      console.log(this.id);
     } else {
 
       if (this.foregroundImage != false) {
@@ -45,12 +44,34 @@ class Hex {
 const INFANTRY = 0;
 const ARMOUR = 1;
 const ARTILLERY = 2;
+const BASE = 3;
 
 class Unit {
-  constructor(ownerID, unitType, health) {
+  constructor(ownerID, unitType) {
     this.ownerID = ownerID;
     this.unitType = unitType;
-    this.health = health;
+
+    if(unitType == INFANTRY) {
+      this.actionMax = 2;
+      this.health = 3;
+      this.damage = 1;
+    } else if(unitType == ARMOUR) {
+      this.actionMax = 3;
+      this.health = 4;
+      this.damage = 1;
+    } else if(unitType == ARTILLERY) {
+      this.actionMax = 1;
+      this.health = 2;
+      this.damage = 4;
+    } else if(unitType == BASE) {
+      this.actionMax = 0;
+      this.health = 20;
+    } else {
+      this.actionMax = 0;
+      this.health = 2;
+    }
+
+    this.actions = this.actionMax;
   }
 }
 
@@ -173,6 +194,7 @@ let hexesRef;
 let numberOfPlayers = null;
 let playerID = null;
 let turnNumber = null;
+let thisPlayerUnits = [];
 
 let selectedUnit = null;
 
@@ -217,7 +239,7 @@ function passFunction() {
     onValue(turnNumberRef, (data) => {
 
       turnNumber = data.val();
-      if (turnNumber == null || turnNumber > numberOfPlayers) {
+      if (turnNumber > numberOfPlayers) {
         turnNumber = 1;
         set(turnNumberRef, turnNumber)
       }
@@ -265,6 +287,13 @@ function passFunction() {
         }
       }
 
+      for (let i = 1; i < BOARD_SIZE; i++) {
+        if(hexes[i].unit != undefined && hexes[i].unit.ownerID == playerID){
+          thisPlayerUnits.push(i);
+        }
+      }
+
+      console.log(thisPlayerUnits);
       if (isBoardDivLoaded) updateGameBoard();
 
     }); // onValue numPlayers
@@ -397,6 +426,8 @@ function createNewHexArray() {
 
     }
   }
+
+  set(turnNumberRef, 1);
 }
 
 const logHexName = (e) => {

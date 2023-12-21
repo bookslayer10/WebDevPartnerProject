@@ -427,7 +427,7 @@ const hexClick = (e) => {
           }
 
           if (j != -1) {
-            if (hexes[selectedUnit].unit.unitType == ARMOUR) {
+            if (false) { // hexes[selectedUnit].unit.unitType == ARMOUR
               ajacentHexStore[j].forEach(function (k) {
                 if (e.target.id == k) {
                   isInRange = true;

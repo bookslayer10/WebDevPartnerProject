@@ -7,7 +7,7 @@
   <meta name="description" content="Template for PWA Website" />
   <meta name="theme-color" content="#ffffff" />
 
-  <title>TEMPLATE</title>
+  <title>Shadow Legends</title>
 
   <link rel="icon" type="image/x-icon" href="/images/favicon256.png" />
   <link rel="manifest" href="/manifest.json" />
@@ -21,7 +21,8 @@
   <script type="module" src="script.js"></script>
 
   <script type="module">
-    import { } from "./script.js";
+    import { startGame } from "./script.js";
+    window.startGame = startGame;
 
   </script>
 
@@ -32,6 +33,9 @@
     <div id="pass1"></div>
     <div id="pass2"></div>
     <div id="numplay"></div>
+    <button id="startbutton" onclick="startGame()">
+      Start Game
+    </button>
 
   </div>
   <div id="lightbox">
@@ -56,25 +60,25 @@
     </div>
   </div>
 
-<div id="r1">
-</div>
+  <div id="r1">
+  </div>
 
-<div id="r2">
-</div>
+  <div id="r2">
+  </div>
 
-<div id="r3">
-</div>
+  <div id="r3">
+  </div>
 
-<div id="r4">
-</div>
+  <div id="r4">
+  </div>
 
-<div id="r5">
-</div>
+  <div id="r5">
+  </div>
 
-<div id="r6">
-</div>
+  <div id="r6">
+  </div>
 
-<!--<div id="armydiv">
+  <!--<div id="armydiv">
 		<div id="infantinfo">
 		4:  <img src="soldier.svg" width="5vw">
 		</div>
@@ -130,6 +134,7 @@
     <div id="c23"></div>
   </div>
 
+  
 
 </body>
 

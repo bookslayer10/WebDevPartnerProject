@@ -65,7 +65,7 @@ class Unit {
       this.damage = 4;
     } else if (unitType == BASE) {
       this.actionMax = 0;
-      this.health = 20;
+      this.health = 16;
     } else {
       this.actionMax = 0;
       this.health = 2;
@@ -283,12 +283,15 @@ function passFunction() {
         hexes[1].unit = (new Unit(1, INFANTRY));
         hexes[2].unit = (new Unit(1, ARTILLERY));
         hexes[3].unit = (new Unit(1, ARMOUR));
+        hexes[19].unit = (new Unit(1, BASE));
         hexes[200].unit = (new Unit(3, INFANTRY));
         hexes[201].unit = (new Unit(3, ARTILLERY));
         hexes[202].unit = (new Unit(3, ARMOUR));
+        hexes[203].unit = (new Unit(3, BASE));
         hexes[397].unit = (new Unit(2, INFANTRY));
         hexes[396].unit = (new Unit(2, ARTILLERY));
         hexes[395].unit = (new Unit(2, ARMOUR));
+        hexes[379].unit = (new Unit(2, BASE));
         set(hexesRef, hexes);
       } else {
         console.log("Downloading array from firebase");
@@ -625,7 +628,7 @@ const hexRightClick = (e) => {
       }
 
       if (hexes[e.target.id].unit != null) {
-        hexes[e.target.id].unit.health -= 1;
+        hexes[e.target.id].unit.health -= hexes[selectedUnit].unit.damage;
         if (hexes[e.target.id].unit.health < 1) {
           audioDeath.play();
           hexes[e.target.id].unit = null;
@@ -678,6 +681,9 @@ function updateGameBoard() {
         case ARTILLERY:
           displayHexes[i].foregroundImage = "images/artillery.svg";
           break;
+        case BASE:
+          displayHexes[i].foregroundImage = "images/base.svg";
+          break;
       }
 
 
@@ -686,7 +692,7 @@ function updateGameBoard() {
         ajacentHexStore[i].forEach(function (j) {
           if (j != -1) {
             displayHexes[j].hidden = false;
-            if (hexes[i].unit.unitType == INFANTRY || hexes[i].unit.unitType == ARMOUR) {
+            if (hexes[i].unit.unitType == INFANTRY || hexes[i].unit.unitType == ARMOUR || hexes[i].unit.unitType == BASE) {
               ajacentHexStore[j].forEach(function (k) {
                 if (k != -1) {
                   displayHexes[k].hidden = false;

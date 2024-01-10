@@ -2,6 +2,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Stalinist+One&display=swap');
 /*https://pixabay.com/illustrations/camouflage-military-texture-1541188/*/
 
+body{
+	overflow:hidden;
+}
 
 #r1{
 	z-index:10;
@@ -14,11 +17,6 @@
 	height:12vh;
 	border-top:thick solid white;
 	
-}
-
-
-body::-webkit-scrollbar{
-	display:none;
 }
 
 #r2{
@@ -82,7 +80,6 @@ body::-webkit-scrollbar{
 
 
 body{
-	overflow:scroll;
 	background-color: black;
 }
 
@@ -103,7 +100,7 @@ body{
 	--f: calc(var(--s) * 1.732 + 4 * var(--m) - 1px);
 	user-select: none;
 
-	width: 4200px;
+	width:calc(var(--scale) * 1000px);
 }
 
 .container {
@@ -111,7 +108,6 @@ body{
 	/* disable white space between inline block element */
 	margin-left: auto;
 	margin-right: auto;
-
 }
 
 .container div {

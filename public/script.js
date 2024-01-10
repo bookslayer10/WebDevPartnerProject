@@ -277,6 +277,7 @@ function passFunction() {
 	document.getElementById("left").style.display = "initial";
 	document.getElementById("plus").style.display = "initial";
 	document.getElementById("minus").style.display = "initial";
+	
 
 
     onValue(numberOfPlayersRef, (data) => {
@@ -290,7 +291,7 @@ function passFunction() {
         set(numberOfPlayersRef, numberOfPlayers);
       }
 
-      document.getElementById("numplay").innerHTML = "Number of Players: " + numberOfPlayers;
+     
 
     }); // onValue numPlayers
 
@@ -299,16 +300,20 @@ function passFunction() {
       turnNumber = data.val();
       if (turnNumber > numberOfPlayers) {
         turnNumber = 1;
-        set(turnNumberRef, turnNumber);
+        set(turnNumberRef, turnNumber);	
+
         return;
       }
 
       
       console.log("turn updated to " + turnNumber);
+	  
+	  console.log(turnNumber + "yo");
+	  document.getElementById("turn").innerHTML = "Turn:" + turnNumber;
 
       if(turnNumber != null){
         document.getElementById("startbutton").classList.add("hidden");
-
+		 document.getElementById("numplay").innerHTML = "Number of Players: " + numberOfPlayers;
         if(turnNumber == playerID){
           console.log("adding actions to units");
           thisPlayerUnits.forEach((id) => {
@@ -512,6 +517,7 @@ function createNewHexArray() {
 
 export function startGame(){
   set(turnNumberRef, 1);
+document.getElementById("turn").style.display = "initial";
 
 }
 

@@ -261,9 +261,9 @@ function passFunction() {
         if(turnNumber == playerID){
           console.log("adding actions to units");
           thisPlayerUnits.forEach((id) => {
-            console.log(hexes[id].unit);
-            hexes[id].unit.actionNum = hexes[id].unit.actionMax;
             
+            hexes[id].unit.actionNum = hexes[id].unit.actionMax;
+            console.log(hexes[id].unit);
           });
           
         }
@@ -419,7 +419,6 @@ window.onload = function () {
   isBoardDivLoaded = true;
 
   updateGameBoard();
-  //set(turnNumberRef, turnNumber);
 
   // 397 hexagon elements created
 }

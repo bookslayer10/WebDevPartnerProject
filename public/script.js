@@ -202,7 +202,9 @@ let audioI = new Audio('images/infantry.mp3');
 let audioT = new Audio('images/tank.mp3');
 let audioA = new Audio('images/artillery.mp3');
 let audioDeath = new Audio('images/death.wav');
-let audioMove = new Audio('images/piece.wav');
+let audioInfMove = new Audio('images/step.wav');
+let audioTankMove = new Audio('images/tankengine1.wav');
+let audioArtMove = new Audio('images/artmove.wav');
 
 
 let mainStyle = document.getElementById("main").style;
@@ -212,6 +214,48 @@ let boardY = 50;
 mainStyle.setProperty("--scale", scale);
 
 document.getElementById("passbutton").addEventListener("click", passFunction);
+document.getElementById("up11").addEventListener("click", up);
+document.getElementById("right").addEventListener("click", right);
+document.getElementById("down").addEventListener("click", down);
+document.getElementById("left").addEventListener("click", left);
+document.getElementById("plus").addEventListener("click", plus);
+document.getElementById("minus").addEventListener("click", minus);
+
+function up(){
+    boardY += 0.8 * scale;
+    boardY = Math.min(boardY, 150);
+    mainStyle.setProperty("top", boardY + "%");
+	}
+function right(){
+	boardX -= 0.8 * scale;
+    boardX = Math.max(boardX, -10);
+    mainStyle.setProperty("left", boardX + "%");
+}
+
+function down(){
+	boardY -= 0.8 * scale;
+    boardY = Math.max(boardY, -50);
+    mainStyle.setProperty("top", boardY + "%");
+}
+
+function left(){
+    boardX += 0.8 * scale;
+    boardX = Math.min(boardX, 150);
+    mainStyle.setProperty("left", boardX + "%");
+}
+
+function plus(){
+	scale *= 1.05;
+    scale = Math.min(scale, 4);
+    mainStyle.setProperty('--scale', scale);
+}
+
+function minus(){
+	scale *= 0.95;
+    scale = Math.max(scale, 0.3);
+    mainStyle.setProperty('--scale', scale);
+}
+	
 
 function passFunction() {
   if (pass1.value != "" && pass2.value != "") {
@@ -227,6 +271,13 @@ function passFunction() {
     document.getElementById("numplay").style.display = "initial";
     document.getElementById("pass1").style.display = "initial";
     document.getElementById("pass2").style.display = "initial";
+	document.getElementById("up11").style.display = "initial";
+	document.getElementById("right").style.display = "initial";
+	document.getElementById("down").style.display = "initial";
+	document.getElementById("left").style.display = "initial";
+	document.getElementById("plus").style.display = "initial";
+	document.getElementById("minus").style.display = "initial";
+
 
     onValue(numberOfPlayersRef, (data) => {
 
@@ -343,6 +394,7 @@ function passFunction() {
     document.getElementById("error").innerHTML = "Please enter a lobby name and passphrase";
   }
 }
+
 
 window.onkeydown = (e) => {
   if (passphrase == undefined) {
@@ -511,16 +563,14 @@ const hexClick = (e) => {
 
     if (isInRange) {
       console.log("moving unit");
-      audioMove.play();
-
-      /*if(hexes[selectedUnit].unit.unitType == INFANTRY){
-        audioI.play();
-      }else if(hexes[selectedUnit].unit.unitType == ARMOUR){
-        audioT.play();
-      }else if(hexes[selectedUnit].unit.unitType == ARTILLERY){
-      audioA.play();
-      }*/
-
+	  	if(hexes[selectedUnit].unit.unitType == INFANTRY){
+		  audioInfMove.play();
+	  }else if(hexes[selectedUnit].unit.unitType == ARMOUR){
+		  audioTankMove.play();
+	  }else if(hexes[selectedUnit].unit.unitType == ARTILLERY){
+		 audioArtMove.play();
+	  }
+	  
       hexes[selectedUnit].unit.actionNum--;
       //console.log(hexes[selectedUnit].unit.actionNum);
 
@@ -536,7 +586,6 @@ const hexClick = (e) => {
           break;
         }
       }
-
 
       hexes[e.target.id].unit = hexes[selectedUnit].unit;
       hexes[selectedUnit].unit = null;

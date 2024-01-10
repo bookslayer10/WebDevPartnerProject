@@ -6,6 +6,7 @@ body{
 	overflow:hidden;
 }
 
+
 #r1{
 	z-index:10;
 	position:fixed;
@@ -14,7 +15,7 @@ body{
 	background-image: url('/images/camo.jpg');
 	background-size: cover;
 	width:100vw;
-	height:12vh;
+	height:17vh;
 	border-top:thick solid white;
 	
 }
@@ -63,7 +64,7 @@ body{
 	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url('/images/camo.jpg');
 	background-size: cover;
 	width:100vw;
-	height:12vh;
+	height:17vh;
 }
 
 
@@ -285,7 +286,7 @@ input {
 @media only screen and (min-width: 600px) {
 	
 	#r1,#r5{
-		height:16vh;
+		height:18vh;
 	}
 	
 	#r3{
@@ -356,4 +357,81 @@ h1{
     width:30%;
 }
 
+}
+
+#movebuttondiv{
+	position:absolute;
+	bottom:3vh;
+	z-index:101;
+}
+
+
+#up11{
+	position:fixed;
+	z-index:300;
+	bottom:10%;
+	right:34%;
+	display:none;
+	pointer-events:initial;
+	width:60px;
+	height:60px;
+}
+
+#right{
+	position:fixed;
+	z-index:300;
+	rotate: 90deg;
+	bottom:6.5%;
+	right:24%;
+	display:none;
+	pointer-events:initial;
+	width:60px;
+	height:60px;
+}
+
+#down{
+	position:fixed;
+	z-index:300;
+	rotate: 180deg;
+	bottom:3%;
+	right:34%;
+	display:none;
+	pointer-events:initial;
+	width:60px;
+	height:60px;
+}
+
+#left{
+	position:fixed;
+	z-index:300;
+	rotate: 270deg;
+	bottom:6.5%;
+	right:44%;
+	display:none;
+	pointer-events:initial;
+	width:60px;
+	height:60px;
+}
+
+#plus{
+	position:fixed;
+	z-index:300;
+	bottom:10%;
+	left:30%;
+	display:none;
+	pointer-events:initial;
+	width:60px;
+	height:60px;
+}
+
+#minus{
+	position:fixed;
+	z-index:300;
+	rotate: 180deg;
+	bottom:3%;
+	left:30%;
+	display:none;
+	pointer-events:initial;
+	width:60px;
+	height:60px;
 }

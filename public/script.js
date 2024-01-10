@@ -483,30 +483,6 @@ const hexClick = (e) => {
         return;
       }
 
-      /*
-      if (i != -1 && hexes[selectedUnit].unit.unitType == ARMOUR) {
-        ajacentHexStore[i].forEach(function (j) {
-          if (e.target.id == j) {
-            isInRange = true;
-            return;
-          }
-
-          if (j != -1) {
-            if (false) { // hexes[selectedUnit].unit.unitType == ARMOUR
-              ajacentHexStore[j].forEach(function (k) {
-                if (e.target.id == k) {
-                  isInRange = true;
-                  return;
-                }
-
-              });
-            }
-          }
-        });
-      }
-
-      */
-
     });
 
     if (isInRange) {
@@ -522,7 +498,6 @@ const hexClick = (e) => {
       }*/
 
       hexes[selectedUnit].unit.actionNum--;
-      //console.log(hexes[selectedUnit].unit.actionNum);
 
       for(let i = 0; ; i++){
         if(thisPlayerUnits.length <= i){
@@ -549,6 +524,7 @@ const hexClick = (e) => {
     console.log("selecting unit");
 
     selectedUnit = e.target.id;
+    console.log(hexes[selectedUnit].unit.actionNum);
   }
 }
 
@@ -604,7 +580,6 @@ const hexRightClick = (e) => {
       console.log("firing unit");
 
       hexes[selectedUnit].unit.actionNum--;
-      console.log(hexes[selectedUnit].unit.actionNum);
 
       for(let i = 0; ; i++){
         if(thisPlayerUnits.length <= i){
@@ -642,6 +617,7 @@ const hexRightClick = (e) => {
     console.log("selecting unit");
 
     selectedUnit = e.target.id;
+    console.log(hexes[selectedUnit].unit.actionNum);
   }
 }
 

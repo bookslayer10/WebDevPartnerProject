@@ -27,7 +27,6 @@ class Hex {
     if (this.hidden == true) {
       this.imgElement.classList.add("hidden");
       this.divElement.style.backgroundImage = "url(images/fogTile.svg)"; // using colored background for now instead of fog of war image
-      console.log(this.id);
     } else {
 
       if (this.foregroundImage != false) {
@@ -45,13 +44,36 @@ class Hex {
 const INFANTRY = 0;
 const ARMOUR = 1;
 const ARTILLERY = 2;
+const BASE = 3;
 
 class Unit {
-  constructor(ownerID, unitType, health) {
+  constructor(ownerID, unitType) {
     this.ownerID = ownerID;
     this.unitType = unitType;
-    this.health = health;
+
+    if (unitType == INFANTRY) {
+      this.actionMax = 2;
+      this.health = 3;
+      this.damage = 1;
+    } else if (unitType == ARMOUR) {
+      this.actionMax = 3;
+      this.health = 4;
+      this.damage = 1;
+    } else if (unitType == ARTILLERY) {
+      this.actionMax = 1;
+      this.health = 2;
+      this.damage = 4;
+    } else if (unitType == BASE) {
+      this.actionMax = 0;
+      this.health = 16;
+    } else {
+      this.actionMax = 0;
+      this.health = 2;
+    }
+
+    this.actionNum = 0; // start with no actionNum, only gain actionNum once it's the player's turn
   }
+
 }
 
 const BOARD_SIZE = 398;
@@ -173,6 +195,7 @@ let hexesRef;
 let numberOfPlayers = null;
 let playerID = null;
 let turnNumber = null;
+let thisPlayerUnits = [];
 
 let selectedUnit = null;
 let audioI = new Audio('images/infantry.mp3');
@@ -274,15 +297,32 @@ function passFunction() {
     onValue(turnNumberRef, (data) => {
 
       turnNumber = data.val();
-      if (turnNumber == null || turnNumber > numberOfPlayers) {
+      if (turnNumber > numberOfPlayers) {
         turnNumber = 1;
-        set(turnNumberRef, turnNumber)
+        set(turnNumberRef, turnNumber);
+        return;
+      }
+
+      
+      console.log("turn updated to " + turnNumber);
+
+      if(turnNumber != null){
+        document.getElementById("startbutton").classList.add("hidden");
+
+        if(turnNumber == playerID){
+          console.log("adding actions to units");
+          thisPlayerUnits.forEach((id) => {
+            
+            hexes[id].unit.actionNum = hexes[id].unit.actionMax;
+            console.log(hexes[id].unit);
+          });
+          
+        }
       }
 
     }); // onValue turnNumberRef
 
     onValue(hexesRef, (data) => {
-      console.log("onvalue");
 
       if (isUnloading) {
         return;
@@ -291,15 +331,18 @@ function passFunction() {
       if (data.val() == null) {
         console.log("Null array in firebase");
         createNewHexArray();
-        hexes[1].unit = (new Unit(1, INFANTRY, 1));
-        hexes[2].unit = (new Unit(1, ARTILLERY, 1));
-        hexes[3].unit = (new Unit(1, ARMOUR, 1));
-        hexes[200].unit = (new Unit(3, INFANTRY, 1));
-        hexes[201].unit = (new Unit(3, ARTILLERY, 1));
-        hexes[202].unit = (new Unit(3, ARMOUR, 1));
-        hexes[397].unit = (new Unit(2, INFANTRY, 1));
-        hexes[396].unit = (new Unit(2, ARTILLERY, 1));
-        hexes[395].unit = (new Unit(2, ARMOUR, 1));
+        hexes[1].unit = (new Unit(1, INFANTRY));
+        hexes[2].unit = (new Unit(1, ARTILLERY));
+        hexes[3].unit = (new Unit(1, ARMOUR));
+        hexes[19].unit = (new Unit(1, BASE));
+        hexes[200].unit = (new Unit(3, INFANTRY));
+        hexes[201].unit = (new Unit(3, ARTILLERY));
+        hexes[202].unit = (new Unit(3, ARMOUR));
+        hexes[203].unit = (new Unit(3, BASE));
+        hexes[397].unit = (new Unit(2, INFANTRY));
+        hexes[396].unit = (new Unit(2, ARTILLERY));
+        hexes[395].unit = (new Unit(2, ARMOUR));
+        hexes[379].unit = (new Unit(2, BASE));
         set(hexesRef, hexes);
       } else {
         console.log("Downloading array from firebase");
@@ -322,6 +365,16 @@ function passFunction() {
         }
       }
 
+      thisPlayerUnits = [];
+
+      for (let i = 1; i < BOARD_SIZE; i++) {
+        if (hexes[i].unit != undefined && hexes[i].unit.ownerID == playerID) {
+          thisPlayerUnits.push(i);
+        }
+      }
+
+      console.log("this player units:")
+      console.log(thisPlayerUnits);
       if (isBoardDivLoaded) updateGameBoard();
 
     }); // onValue numPlayers
@@ -418,7 +471,6 @@ window.onload = function () {
   isBoardDivLoaded = true;
 
   updateGameBoard();
-  //set(turnNumberRef, turnNumber);
 
   // 397 hexagon elements created
 }
@@ -439,7 +491,7 @@ function createHexElement(container, id) {
 }
 
 function createNewHexArray() {
-  let grassArray = ["images/grassTile1.svg", "images/grassTile2.svg", "images/grassTile3.svg"];
+  let grassArray = ["images/grassTile1.svg", "images/grassTile2.svg"]; // , "images/grassTile3.svg"
   let createID = 1;
 
   // k is the the column, i is the row
@@ -449,12 +501,18 @@ function createNewHexArray() {
         hexes[createID] = new Hex();
       }
       hexes[createID].id = createID;
-      hexes[createID].backgroundImage = grassArray[Math.floor(Math.random()*3)];
+      hexes[createID].backgroundImage = grassArray[Math.floor(Math.random() * 2)];
       hexes[createID].foregroundImage = false;
       hexes[createID].hidden = false;
 
     }
   }
+
+}
+
+export function startGame(){
+  set(turnNumberRef, 1);
+
 }
 
 const logHexName = (e) => {
@@ -469,7 +527,7 @@ const hexClick = (e) => {
   }
 
   // move unit, otherwise select unit
-  if (hexes[e.target.id].unit == null && selectedUnit != null) {
+  if (hexes[e.target.id].unit == null && selectedUnit != null && hexes[selectedUnit].unit.actionNum != 0) {
     let isInRange = false;
     ajacentHexStore[selectedUnit].forEach(function (i) {
       if (e.target.id == i) {
@@ -477,6 +535,7 @@ const hexClick = (e) => {
         return;
       }
 
+      /*
       if (i != -1 && hexes[selectedUnit].unit.unitType == ARMOUR) {
         ajacentHexStore[i].forEach(function (j) {
           if (e.target.id == j) {
@@ -497,11 +556,13 @@ const hexClick = (e) => {
           }
         });
       }
+
+      */
+
     });
 
     if (isInRange) {
       console.log("moving unit");
-	  
 	  	if(hexes[selectedUnit].unit.unitType == INFANTRY){
 		  audioInfMove.play();
 	  }else if(hexes[selectedUnit].unit.unitType == ARMOUR){
@@ -510,8 +571,21 @@ const hexClick = (e) => {
 		 audioArtMove.play();
 	  }
 	  
-      turnNumber++;
-      set(turnNumberRef, turnNumber);
+      hexes[selectedUnit].unit.actionNum--;
+      //console.log(hexes[selectedUnit].unit.actionNum);
+
+      for(let i = 0; ; i++){
+        if(thisPlayerUnits.length <= i){
+          turnNumber++;
+          set(turnNumberRef, turnNumber);
+
+          break;
+        }
+
+        if(hexes[thisPlayerUnits[i]].unit.actionNum != 0){
+          break;
+        }
+      }
 
       hexes[e.target.id].unit = hexes[selectedUnit].unit;
       hexes[selectedUnit].unit = null;
@@ -535,7 +609,7 @@ const hexRightClick = (e) => {
   }
 
   // fire unit, otherwise select unit
-  if (selectedUnit != null && (hexes[e.target.id].unit == null || hexes[e.target.id].unit.ownerID != playerID)) {
+  if (selectedUnit != null && (hexes[e.target.id].unit == null || hexes[e.target.id].unit.ownerID != playerID) && hexes[selectedUnit].unit.actionNum != 0) {
 
     let isInRange = false;
     ajacentHexStore[selectedUnit].forEach(function (i) {
@@ -577,25 +651,34 @@ const hexRightClick = (e) => {
 
     if (isInRange) {
       console.log("firing unit");
-      turnNumber++;
-	  
-	  if(hexes[selectedUnit].unit.unitType == INFANTRY){
-		  audioI.play();
-	  }else if(hexes[selectedUnit].unit.unitType == ARMOUR){
-		  audioT.play();
-	  }else if(hexes[selectedUnit].unit.unitType == ARTILLERY){
-		 audioA.play();
-	  }
-	  
-	  
 
-		  
-      set(turnNumberRef, turnNumber);
+      hexes[selectedUnit].unit.actionNum--;
+      console.log(hexes[selectedUnit].unit.actionNum);
+
+      for(let i = 0; ; i++){
+        if(thisPlayerUnits.length <= i){
+          turnNumber++;
+          set(turnNumberRef, turnNumber);
+          break;
+        }
+
+        if(hexes[thisPlayerUnits[i]].unit.actionNum != 0){
+          break;
+        }
+      }
+
+      if (hexes[selectedUnit].unit.unitType == INFANTRY) {
+        audioI.play();
+      } else if (hexes[selectedUnit].unit.unitType == ARMOUR) {
+        audioT.play();
+      } else if (hexes[selectedUnit].unit.unitType == ARTILLERY) {
+        audioA.play();
+      }
 
       if (hexes[e.target.id].unit != null) {
-        hexes[e.target.id].unit.health -= 1;
+        hexes[e.target.id].unit.health -= hexes[selectedUnit].unit.damage;
         if (hexes[e.target.id].unit.health < 1) {
-		 audioDeath.play();
+          audioDeath.play();
           hexes[e.target.id].unit = null;
         }
       }
@@ -646,6 +729,9 @@ function updateGameBoard() {
         case ARTILLERY:
           displayHexes[i].foregroundImage = "images/artillery.svg";
           break;
+        case BASE:
+          displayHexes[i].foregroundImage = "images/base.svg";
+          break;
       }
 
 
@@ -654,7 +740,7 @@ function updateGameBoard() {
         ajacentHexStore[i].forEach(function (j) {
           if (j != -1) {
             displayHexes[j].hidden = false;
-            if (hexes[i].unit.unitType == INFANTRY || hexes[i].unit.unitType == ARMOUR) {
+            if (hexes[i].unit.unitType == INFANTRY || hexes[i].unit.unitType == ARMOUR || hexes[i].unit.unitType == BASE) {
               ajacentHexStore[j].forEach(function (k) {
                 if (k != -1) {
                   displayHexes[k].hidden = false;

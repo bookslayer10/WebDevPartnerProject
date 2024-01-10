@@ -262,6 +262,18 @@ input {
 	display: none;
 }
 
+#turn{
+	font-family:'Black Ops One', cursive;
+	z-index:101;
+	color:white;
+	font-size:2.5vh;
+	position:fixed;
+	bottom:7%;
+	left:5%;
+	display: none;
+	
+}
+
 #numplay {
 	grid-area: three;
 }

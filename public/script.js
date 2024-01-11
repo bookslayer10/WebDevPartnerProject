@@ -213,7 +213,8 @@ let boardX = 50;
 let boardY = 50;
 mainStyle.setProperty("--scale", scale);
 
-document.getElementById("passbutton").addEventListener("click", passFunction);
+document.getElementById("passbutton").addEventListener("click", openRules);
+document.getElementById("ok").addEventListener("click", passFunction);
 document.getElementById("up11").addEventListener("click", up);
 document.getElementById("right").addEventListener("click", right);
 document.getElementById("down").addEventListener("click", down);
@@ -257,13 +258,8 @@ function minus(){
 }
 	
 
-function passFunction() {
-  if (pass1.value != "" && pass2.value != "") {
-    passphrase = pass1.value + pass2.value;
-
-    numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
-    hexesRef = ref(database, "hexes+" + passphrase);
-    turnNumberRef = ref(database, "turnNumber+" + passphrase);
+function passFunction(){
+	
     document.getElementById("message").style.display = "none";
     document.getElementById("lightbox").style.display = "none";
     document.getElementById("pass1").innerHTML = "Lobby: " + pass1.value;
@@ -277,6 +273,27 @@ function passFunction() {
 	document.getElementById("left").style.display = "initial";
 	document.getElementById("plus").style.display = "initial";
 	document.getElementById("minus").style.display = "initial";
+	document.getElementById("error").style.display = "none";
+}
+
+function openRules() {
+  if (pass1.value != "" && pass2.value != "") {
+    passphrase = pass1.value + pass2.value;
+
+    numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
+    hexesRef = ref(database, "hexes+" + passphrase);
+    turnNumberRef = ref(database, "turnNumber+" + passphrase);
+
+	
+		document.getElementById("passbutton").style.display = "none";
+	document.getElementById("passphrase").style.display = "none";
+	document.getElementById("passphrase2").style.display = "none";
+	document.getElementById("title").innerHTML = "Rules";
+	document.getElementById("text1").innerHTML = "Controls";
+	document.getElementById("text2").innerHTML = "Objective";
+	document.getElementById("ok").style.display = "initial";
+	document.getElementById("info1").style.display = "initial";
+	document.getElementById("info2").style.display = "initial";
 	
 
 

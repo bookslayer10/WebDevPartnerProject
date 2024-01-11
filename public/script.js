@@ -316,7 +316,6 @@ function passFunction() {
             hexes[id].unit.actionNum = hexes[id].unit.actionMax;
             console.log(hexes[id].unit);
           });
-          
         }
       }
 
@@ -335,14 +334,14 @@ function passFunction() {
         hexes[2].unit = (new Unit(1, ARTILLERY));
         hexes[3].unit = (new Unit(1, ARMOUR));
         hexes[19].unit = (new Unit(1, BASE));
-        hexes[200].unit = (new Unit(3, INFANTRY));
-        hexes[201].unit = (new Unit(3, ARTILLERY));
-        hexes[202].unit = (new Unit(3, ARMOUR));
-        hexes[203].unit = (new Unit(3, BASE));
         hexes[397].unit = (new Unit(2, INFANTRY));
         hexes[396].unit = (new Unit(2, ARTILLERY));
         hexes[395].unit = (new Unit(2, ARMOUR));
         hexes[379].unit = (new Unit(2, BASE));
+        hexes[200].unit = (new Unit(3, INFANTRY));
+        hexes[201].unit = (new Unit(3, ARTILLERY));
+        hexes[202].unit = (new Unit(3, ARMOUR));
+        hexes[203].unit = (new Unit(3, BASE));
         set(hexesRef, hexes);
       } else {
         console.log("Downloading array from firebase");
@@ -365,16 +364,6 @@ function passFunction() {
         }
       }
 
-      thisPlayerUnits = [];
-
-      for (let i = 1; i < BOARD_SIZE; i++) {
-        if (hexes[i].unit != undefined && hexes[i].unit.ownerID == playerID) {
-          thisPlayerUnits.push(i);
-        }
-      }
-
-      console.log("this player units:")
-      console.log(thisPlayerUnits);
       if (isBoardDivLoaded) updateGameBoard();
 
     }); // onValue numPlayers
@@ -549,6 +538,11 @@ const hexClick = (e) => {
 	  
       hexes[selectedUnit].unit.actionNum--;
 
+      hexes[e.target.id].unit = hexes[selectedUnit].unit;
+      hexes[selectedUnit].unit = null;
+
+      set(hexesRef, hexes);
+
       for(let i = 0; ; i++){
         if(thisPlayerUnits.length <= i){
           turnNumber++;
@@ -562,10 +556,6 @@ const hexClick = (e) => {
         }
       }
 
-      hexes[e.target.id].unit = hexes[selectedUnit].unit;
-      hexes[selectedUnit].unit = null;
-
-      set(hexesRef, hexes);
     }
   }
 
@@ -573,7 +563,7 @@ const hexClick = (e) => {
     console.log("selecting unit");
 
     selectedUnit = e.target.id;
-    console.log(hexes[selectedUnit].unit.actionNum);
+    console.log(hexes[selectedUnit].unit);
   }
 }
 
@@ -630,18 +620,6 @@ const hexRightClick = (e) => {
 
       hexes[selectedUnit].unit.actionNum--;
 
-      for(let i = 0; ; i++){
-        if(thisPlayerUnits.length <= i){
-          turnNumber++;
-          set(turnNumberRef, turnNumber);
-          break;
-        }
-
-        if(hexes[thisPlayerUnits[i]].unit.actionNum != 0){
-          break;
-        }
-      }
-
       if (hexes[selectedUnit].unit.unitType == INFANTRY) {
         audioI.play();
       } else if (hexes[selectedUnit].unit.unitType == ARMOUR) {
@@ -659,6 +637,20 @@ const hexRightClick = (e) => {
       }
 
       set(hexesRef, hexes);
+
+      for(let i = 0; ; i++){
+        if(thisPlayerUnits.length <= i){
+          turnNumber++;
+          set(turnNumberRef, turnNumber);
+
+          break;
+        }
+
+        if(hexes[thisPlayerUnits[i]].unit.actionNum != 0){
+          break;
+        }
+      }
+      
     }
   }
 
@@ -666,7 +658,7 @@ const hexRightClick = (e) => {
     console.log("selecting unit");
 
     selectedUnit = e.target.id;
-    console.log(hexes[selectedUnit].unit.actionNum);
+    console.log(hexes[selectedUnit].unit);
   }
 }
 
@@ -679,6 +671,17 @@ function updateGameBoard() {
     return;
 
   }
+
+  thisPlayerUnits = [];
+
+  for (let i = 1; i < BOARD_SIZE; i++) {
+    if (hexes[i].unit != undefined && hexes[i].unit.ownerID == playerID) {
+      thisPlayerUnits.push(i);
+    }
+  }
+
+  console.log("this player units:")
+  console.log(thisPlayerUnits);
 
   for (let i = 1; i < BOARD_SIZE; i++) {
     if (displayHexes[i] == undefined) {

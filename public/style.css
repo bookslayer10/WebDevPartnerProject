@@ -6,7 +6,6 @@ body{
 	overflow:hidden;
 }
 
-
 #r1{
 	z-index:10;
 	position:fixed;
@@ -15,7 +14,7 @@ body{
 	background-image: url('/images/camo.jpg');
 	background-size: cover;
 	width:100vw;
-	height:17vh;
+	height:12vh;
 	border-top:thick solid white;
 	
 }
@@ -64,7 +63,7 @@ body{
 	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url('/images/camo.jpg');
 	background-size: cover;
 	width:100vw;
-	height:17vh;
+	height:12vh;
 }
 
 
@@ -122,8 +121,6 @@ body{
 	background-image: url(images/fogTile.svg);
 	background-size: 100% 100%;
 }
-
-
 /*https://css-tricks.com/hexagons-and-beyond-flexible-responsive-grid-patterns-sans-media-queries/*/
 
 img {
@@ -137,7 +134,7 @@ img {
 	display: none;
 }
 
-#passbutton, #ok{
+#passbutton{
 	width:215px;
 	height:50px;
 	padding:5px;
@@ -154,12 +151,11 @@ img {
 	color:black;
 }
 
-#ok:hover{
-	background-color:white;
-	border:2px solid #222222;
-	color:black;
+#text{
+	font-size:20px;
+	color:white;
+	font-family:'Black Ops One', cursive;
 }
-
 
 #error {
 	font-size: 18px;
@@ -207,8 +203,8 @@ input {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding-left:30px;
-	padding-right:30px;
+    padding-left:10px;
+	padding-right:10px;
 	padding-top:100px;
 	padding-bottom:100px;
 	font-size:14px;
@@ -263,18 +259,6 @@ input {
 	display: none;
 }
 
-#turn{
-	font-family:'Black Ops One', cursive;
-	z-index:101;
-	color:white;
-	font-size:2.5vh;
-	position:fixed;
-	bottom:7%;
-	left:5%;
-	display: none;
-	
-}
-
 #numplay {
 	grid-area: three;
 }
@@ -299,7 +283,7 @@ input {
 @media only screen and (min-width: 600px) {
 	
 	#r1,#r5{
-		height:18vh;
+		height:16vh;
 	}
 	
 	#r3{
@@ -328,7 +312,7 @@ input {
     width:50%;
 }
 
-#passbutton, #ok{
+#passbutton{
 	font-size:25px;
 }
 
@@ -351,7 +335,7 @@ h1{
 	font-size:3vh;
 }
 
-#passbutton, #ok{
+#passbutton{
 	margin-top:10px;
 	padding:9px;
 }
@@ -370,103 +354,4 @@ h1{
     width:30%;
 }
 
-}
-
-#movebuttondiv{
-	position:absolute;
-	bottom:3vh;
-	z-index:101;
-}
-
-
-#up11{
-	position:fixed;
-	z-index:300;
-	bottom:10%;
-	right:34%;
-	display:none;
-	pointer-events:initial;
-	width:60px;
-	height:60px;
-}
-
-#right{
-	position:fixed;
-	z-index:300;
-	rotate: 90deg;
-	bottom:6.5%;
-	right:24%;
-	display:none;
-	pointer-events:initial;
-	width:60px;
-	height:60px;
-}
-
-#down{
-	position:fixed;
-	z-index:300;
-	rotate: 180deg;
-	bottom:3%;
-	right:34%;
-	display:none;
-	pointer-events:initial;
-	width:60px;
-	height:60px;
-}
-
-#left{
-	position:fixed;
-	z-index:300;
-	rotate: 270deg;
-	bottom:6.5%;
-	right:44%;
-	display:none;
-	pointer-events:initial;
-	width:60px;
-	height:60px;
-}
-
-#plus{
-	position:fixed;
-	z-index:300;
-	bottom:10%;
-	left:30%;
-	display:none;
-	pointer-events:initial;
-	width:60px;
-	height:60px;
-}
-
-#minus{
-	position:fixed;
-	z-index:300;
-	rotate: 180deg;
-	bottom:3%;
-	left:30%;
-	display:none;
-	pointer-events:initial;
-	width:60px;
-	height:60px;
-}
-
-#text1,#text2{
-	font-size:20px;
-	color:white;
-	font-family:'Black Ops One', cursive;
-}
-
-#ok{
-	display:none;
-}
-
-#info1{
-	color:white;
-	font-weight:500;
-	display:none;
-}
-
-#info2{
-	color:white;
-	font-weight:500;
-	display:none;
 }

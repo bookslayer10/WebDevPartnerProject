@@ -274,6 +274,7 @@ function passFunction(){
 	document.getElementById("plus").style.display = "initial";
 	document.getElementById("minus").style.display = "initial";
 	document.getElementById("error").style.display = "none";
+	document.getElementById("startbutton").style.display = "initial";
 }
 
 function openRules() {
@@ -530,9 +531,12 @@ function createNewHexArray() {
 }
 
 export function startGame(){
-  set(turnNumberRef, 1);
-document.getElementById("turn").style.display = "initial";
-
+	
+	//if(numberOfPlayers !=1){
+	set(turnNumberRef, 1);
+	document.getElementById("turn").style.display = "initial";
+	//} else return;
+	document.getElementById("startbutton").style.display = "none";
 }
 
 const logHexName = (e) => {
@@ -691,7 +695,6 @@ const hexRightClick = (e) => {
           break;
         }
       }
-
     }
   }
 

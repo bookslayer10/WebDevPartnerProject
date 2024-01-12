@@ -299,7 +299,16 @@ function openRules() {
 
     onValue(numberOfPlayersRef, (data) => {
 
+      if (isUnloading) {
+        return;
+      }
+
       numberOfPlayers = data.val();
+
+      console.log("num players?")
+      if(numberOfPlayers != null){
+        document.getElementById("numplay").innerHTML = "Number of Players: " + numberOfPlayers;
+      }
 
       if (playerID == null && numberOfPlayers < 7) {
         numberOfPlayers++;
@@ -314,6 +323,10 @@ function openRules() {
 
     onValue(turnNumberRef, (data) => {
 
+      if (isUnloading) {
+        return;
+      }
+
       turnNumber = data.val();
       if (turnNumber > numberOfPlayers) {
         turnNumber = 1;
@@ -322,15 +335,10 @@ function openRules() {
         return;
       }
 
-      
-      console.log("turn updated to " + turnNumber);
-	  
-	  console.log(turnNumber + "yo");
 	  document.getElementById("turn").innerHTML = "Turn:" + turnNumber;
 
       if(turnNumber != null){
         document.getElementById("startbutton").classList.add("hidden");
-		 document.getElementById("numplay").innerHTML = "Number of Players: " + numberOfPlayers;
         if(turnNumber == playerID){
           console.log("adding actions to units");
           thisPlayerUnits.forEach((id) => {
@@ -440,7 +448,7 @@ window.onkeydown = (e) => {
 
 }
 
-window.onbeforeunload = (event) => {
+window.onunload = (event) => {
   isUnloading = true;
 
   if (playerID != null) {
@@ -627,7 +635,17 @@ const hexRightClick = (e) => {
                     isInRange = true;
                     return;
                   }
+                  if (l != -1 && hexes[selectedUnit].unit.unitType == ARTILLERY) {
 
+                    ajacentHexStore[l].forEach(function (m) {
+                      if (e.target.id == m) {
+                        isInRange = true;
+                        return;
+                      }
+    
+                    });
+    
+                  }
                 });
 
               }
@@ -673,7 +691,7 @@ const hexRightClick = (e) => {
           break;
         }
       }
-      
+
     }
   }
 

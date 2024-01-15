@@ -6,7 +6,6 @@ body{
 	overflow:hidden;
 }
 
-
 #r1{
 	z-index:10;
 	position:fixed;
@@ -15,7 +14,7 @@ body{
 	background-image: url('/images/camo.jpg');
 	background-size: cover;
 	width:100vw;
-	height:17vh;
+	height:12vh;
 	border-top:thick solid white;
 	
 }
@@ -64,7 +63,7 @@ body{
 	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url('/images/camo.jpg');
 	background-size: cover;
 	width:100vw;
-	height:17vh;
+	height:12vh;
 }
 
 
@@ -122,8 +121,6 @@ body{
 	background-image: url(images/fogTile.svg);
 	background-size: 100% 100%;
 }
-
-
 /*https://css-tricks.com/hexagons-and-beyond-flexible-responsive-grid-patterns-sans-media-queries/*/
 
 img {
@@ -137,7 +134,7 @@ img {
 	display: none;
 }
 
-#passbutton, #ok{
+#passbutton{
 	width:215px;
 	height:50px;
 	padding:5px;
@@ -154,12 +151,11 @@ img {
 	color:black;
 }
 
-#ok:hover{
-	background-color:white;
-	border:2px solid #222222;
-	color:black;
+#text{
+	font-size:20px;
+	color:white;
+	font-family:'Black Ops One', cursive;
 }
-
 
 #error {
 	font-size: 18px;
@@ -207,8 +203,8 @@ input {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding-left:30px;
-	padding-right:30px;
+    padding-left:10px;
+	padding-right:10px;
 	padding-top:100px;
 	padding-bottom:100px;
 	font-size:14px;
@@ -254,7 +250,6 @@ input {
 	grid-area:start;
 	
 }
-
 #numplay {
 	grid-area: three;
 }
@@ -299,7 +294,7 @@ input {
     width:50%;
 }
 
-#passbutton, #ok{
+#passbutton{
 	font-size:25px;
 }
 
@@ -319,7 +314,7 @@ h1{
 
 @media only screen and (min-width: 1000px) {
 
-#passbutton, #ok{
+#passbutton{
 	margin-top:10px;
 	padding:9px;
 }

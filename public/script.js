@@ -351,6 +351,9 @@ function openRules() {
         console.log("change visibility");
         document.getElementById("startbutton").style.display = "none";
         document.getElementById("turn").style.display = "initial";
+        
+	      document.getElementById("totaldiv").style.width = "93%";
+	      document.getElementById("totaldiv").style.left = "10.5%";
 
         if(numberOfPlayers[turnNumber - 1] == playerID){
           console.log("adding actions to units");

@@ -242,14 +242,16 @@ input {
 
 
 #turn{
-	font-family:'Black Ops One', cursive;
-	z-index:101;
+	display:none;
+	padding:5px;
+	padding-top:33px;
+	text-align:center;
+    font-family:'Stalinist One', cursive;
+    border:2px solid white;
+	background-color:#222222;
 	color:white;
 	font-size:2.5vh;
-	position:fixed;
-	bottom:7%;
-	left:5%;
-	display: none;
+	grid-area:start;
 	
 }
 
@@ -277,7 +279,7 @@ input {
 @media only screen and (min-width: 600px) {
 	
 	#r1,#r5{
-		height:18vh;
+		height:19.3vh;
 	}
 	
 	#r3{
@@ -292,15 +294,6 @@ input {
 }
 
 @media only screen and (min-width: 800px) {
-	#infodiv{
-	top:5.5vh;
-	width:80vw;
-	right:50%;
-	left:10%;
-	text-align:center;
-	grid-template-areas: 
-	'one two three';
-}
 
 #message {
     width:50%;
@@ -325,9 +318,6 @@ h1{
 }
 
 @media only screen and (min-width: 1000px) {
-	#pass1,#pass2,#numplay{
-	font-size:3vh;
-}
 
 #passbutton, #ok{
 	margin-top:10px;
@@ -337,9 +327,6 @@ h1{
 }
 
 @media only screen and (min-width: 1200px) {
-	#pass1,#pass2,#numplay{
-	font-size:3.5vh;
-}
 
 }
 
@@ -449,20 +436,27 @@ h1{
 	display:none;
 }
 
+#totaldiv{
+	z-index:500;
+	display:grid;
+	grid-template-areas:
+	'info start turn';
+	position:fixed;
+	top:3vh;
+	left:11.5%;
+	width:84%;
+	
+}
+
 #startbutton{
 	display:initial;
-	width:40%;
-	height:100px;
 	padding:5px;
-    font-family:'Black Ops One', cursive;
+    font-family:'Stalinist One', cursive;
     border:2px solid white;
 	background-color:#222222;
 	color:white;
-	position:fixed;
 	font-size:2.5vh;
-	position:fixed;
-	right:7vh;
-	top:3vh;
+	grid-area:start;
 }
 
 #startbutton:hover{
@@ -481,7 +475,8 @@ h1{
 }
 
 #infodiv{
-	padding:10px;
+	padding:15px;
+	padding-left:15%;
 	border: 2px solid white;
 	z-index:99;
 	position:fixed;
@@ -492,4 +487,15 @@ h1{
 	'one'
 	'two'
 	'three';
+	grid-area:info;
+}
+
+#controldiv{
+	padding:15px;
+	z-index:101;
+	position:fixed;
+	bottom:2%;
+	width:75%;
+	height:120px;
+	left:10.4%;
 }

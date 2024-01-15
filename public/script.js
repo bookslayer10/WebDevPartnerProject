@@ -336,7 +336,7 @@ function openRules() {
         return;
       }
 
-	  document.getElementById("turn").innerHTML = "Turn:" + turnNumber;
+	  document.getElementById("turn").innerHTML = "Turn: " + turnNumber;
 
       if(turnNumber != null){
         document.getElementById("startbutton").classList.add("hidden");
@@ -537,6 +537,9 @@ export function startGame(){
 	document.getElementById("turn").style.display = "initial";
 	//} else return;
 	document.getElementById("startbutton").style.display = "none";
+	document.getElementById("totaldiv").style.width = "93%";
+	document.getElementById("totaldiv").style.left = "10.5%";
+	
 }
 
 const logHexName = (e) => {

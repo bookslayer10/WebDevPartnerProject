@@ -449,7 +449,7 @@ h1{
 }
 
 #startbutton{
-	display:none;
+	display:initial;
 	padding:5px;
     font-family:'Stalinist One', cursive;
     border:2px solid white;
@@ -478,7 +478,10 @@ h1{
 	padding:15px;
 	padding-left:15%;
 	border: 2px solid white;
-	z-index:101;
+	z-index:99;
+	position:fixed;
+    left: 7vh;
+	top:3vh;
 	display:grid;
 	grid-template-areas: 
 	'one'

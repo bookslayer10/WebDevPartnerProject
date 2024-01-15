@@ -450,7 +450,7 @@ h1{
 }
 
 #startbutton{
-	display:none;
+	display:initial;
 	width:40%;
 	height:100px;
 	padding:5px;
@@ -483,7 +483,7 @@ h1{
 #infodiv{
 	padding:10px;
 	border: 2px solid white;
-	z-index:101;
+	z-index:99;
 	position:fixed;
     left: 7vh;
 	top:3vh;

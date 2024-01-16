@@ -81,6 +81,10 @@ const BOARD_SIZE = 398;
 let hexDiv; //variable to create hexs
 let hexImg; //variable for the images within the hexes
 let isUnloading = false;
+let isARMOURSelected = 0;
+let isINFANTRYSelected = 0;
+let isARTILLERYSelected = 0;
+let selecDel = 0;
 //let numPlayers2 = 0;
 
 // hex array
@@ -196,6 +200,7 @@ let numberOfPlayers = [];
 let playerID = null;
 let turnNumber = null;
 let thisPlayerUnits = [];
+let isBaseAlive = true;
 
 let selectedUnit = null;
 let audioI = new Audio('images/infantry.mp3');
@@ -205,7 +210,6 @@ let audioDeath = new Audio('images/death.wav');
 let audioInfMove = new Audio('images/step.wav');
 let audioTankMove = new Audio('images/tankengine1.wav');
 let audioArtMove = new Audio('images/artmove.wav');
-
 
 let mainStyle = document.getElementById("main").style;
 let scale = 1.5;
@@ -319,12 +323,23 @@ function openRules() {
 
       if (playerID == null) {
         if(numberOfPlayers.length < 3){
+
+          // use a while loop to find the lowest playerID not yet in array
+          for(let i = 0; ; i++){
+            if(numberOfPlayers.includes(i)){
+              continue;
+            } else {
+              playerID = i;
+              break;
+            }
+          }
+
           playerID = numberOfPlayers[numberOfPlayers.length - 1] + 1;
           numberOfPlayers.push(playerID);
 
           set(numberOfPlayersRef, numberOfPlayers);
         } else {
-          // deny access
+          // deny access with lightbox
         }
       }
     }); // onValue numPlayers
@@ -356,12 +371,21 @@ function openRules() {
 	      document.getElementById("totaldiv").style.left = "10.5%";
 
         if(numberOfPlayers[turnNumber - 1] == playerID){
+
+          if(!isBaseAlive){
+            turnNumber++;
+            set(turnNumberRef, turnNumber);
+            return;
+          }
+
           console.log("adding actions to units");
           thisPlayerUnits.forEach((id) => {
             
             hexes[id].unit.actionNum = hexes[id].unit.actionMax;
             console.log(hexes[id].unit);
           });
+
+          
         }
       }
 
@@ -580,6 +604,20 @@ const hexClick = (e) => {
 
     if (isInRange) {
       console.log("moving unit");
+
+      if(isARMOURSelected == 1){
+        isARMOURSelected = 0;
+        hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
+      }
+      if(isARTILLERYSelected == 1){
+        isARTILLERYSelected = 0;
+        hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
+      }
+      if(isINFANTRYSelected == 1){
+        isINFANTRYSelected = 0;
+        hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
+      }
+
 	  	if(hexes[selectedUnit].unit.unitType == INFANTRY){
 		  audioInfMove.play();
 	  }else if(hexes[selectedUnit].unit.unitType == ARMOUR){
@@ -595,18 +633,7 @@ const hexClick = (e) => {
 
       set(hexesRef, hexes);
 
-      for(let i = 0; ; i++){
-        if(thisPlayerUnits.length <= i){
-          turnNumber++;
-          set(turnNumberRef, turnNumber);
-
-          break;
-        }
-
-        if(hexes[thisPlayerUnits[i]].unit.actionNum != 0){
-          break;
-        }
-      }
+      checkIfNextTurn();
 
     }
   }
@@ -616,6 +643,28 @@ const hexClick = (e) => {
 
     selectedUnit = e.target.id;
     console.log(hexes[selectedUnit].unit);
+
+    if(selecDel > 0){
+      hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
+      console.log(selectedUnit);
+    }
+    selecDel = 1;
+
+    if(isARMOURSelected == 0 && hexes[selectedUnit].unit.unitType == ARMOUR){
+      hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace(".svg", "Selected.svg");
+      isARMOURSelected = 1;
+      updateGameBoard();
+    }
+    if(isINFANTRYSelected == 0 && hexes[selectedUnit].unit.unitType == INFANTRY){
+      hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace(".svg", "Selected.svg");
+      isINFANTRYSelected = 1;
+      updateGameBoard();
+    }
+    if(isARTILLERYSelected == 0 && hexes[selectedUnit].unit.unitType == ARTILLERY){
+      hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace(".svg", "Selected.svg");
+      isARTILLERYSelected = 1;
+      updateGameBoard();
+    }
   }
 }
 
@@ -682,6 +731,18 @@ const hexRightClick = (e) => {
 
       hexes[selectedUnit].unit.actionNum--;
 
+      for(let i = 0; ; i++){
+        if(thisPlayerUnits.length <= i){
+          turnNumber++;
+          set(turnNumberRef, turnNumber);
+          break;
+        }
+
+        if(hexes[thisPlayerUnits[i]].unit.actionNum != 0){
+          break;
+        }
+      }
+
       if (hexes[selectedUnit].unit.unitType == INFANTRY) {
         audioI.play();
       } else if (hexes[selectedUnit].unit.unitType == ARMOUR) {
@@ -694,24 +755,21 @@ const hexRightClick = (e) => {
         hexes[e.target.id].unit.health -= hexes[selectedUnit].unit.damage;
         if (hexes[e.target.id].unit.health < 1) {
           audioDeath.play();
+
+          if(hexes[e.target.id].unit.unitType == BASE){
+            isBaseAlive = false;
+
+            // trigger game over lightbox
+
+          }
+
           hexes[e.target.id].unit = null;
         }
       }
 
       set(hexesRef, hexes);
 
-      for(let i = 0; ; i++){
-        if(thisPlayerUnits.length <= i){
-          turnNumber++;
-          set(turnNumberRef, turnNumber);
-
-          break;
-        }
-
-        if(hexes[thisPlayerUnits[i]].unit.actionNum != 0){
-          break;
-        }
-      }
+      checkIfNextTurn();
     }
   }
 
@@ -807,5 +865,20 @@ function updateGameBoard() {
   for (let i = 1; i < BOARD_SIZE; i++) {
     displayHexes[i].assignElements();
     displayHexes[i].updateImages();
+  }
+}
+
+function checkIfNextTurn(){
+  for(let i = 0; ; i++){
+    if(thisPlayerUnits.length <= i){
+      turnNumber++;
+      set(turnNumberRef, turnNumber);
+
+      break;
+    }
+
+    if(hexes[thisPlayerUnits[i]].unit.actionNum != 0){
+      break;
+    }
   }
 }

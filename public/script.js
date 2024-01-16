@@ -200,7 +200,6 @@ let numberOfPlayers = [];
 let playerID = null;
 let turnNumber = null;
 let thisPlayerUnits = [];
-let isBaseAlive = true;
 
 let selectedUnit = null;
 let audioI = new Audio('images/infantry.mp3');
@@ -359,12 +358,10 @@ function openRules() {
         return;
       }
 
-      console.log("turn " + turnNumber);
 	    document.getElementById("turn").innerHTML = "Turn:" + turnNumber;
 
       if(turnNumber != null){
 
-        console.log("change visibility");
         document.getElementById("startbutton").style.display = "none";
         document.getElementById("turn").style.display = "initial";
         
@@ -373,17 +370,25 @@ function openRules() {
 
         if(numberOfPlayers[turnNumber - 1] == playerID){
 
-          if(!isBaseAlive){
-            turnNumber++;
-            set(turnNumberRef, turnNumber);
-            return;
+          for(let i = 0; ; i++){
+            if(thisPlayerUnits.length <= i){
+              turnNumber++;
+  
+              console.log("this player is skipping their turn");
+              console.log(turnNumber);
+              set(turnNumberRef, turnNumber);
+              return;
+            } else if(thisPlayerUnits[i].unitType == BASE){
+              break;
+            }
           }
+          
+          
 
-          console.log("adding actions to units");
-          thisPlayerUnits.forEach((id) => {
-            
-            hexes[id].unit.actionNum = hexes[id].unit.actionMax;
-            console.log(hexes[id].unit);
+          
+
+          thisPlayerUnits.forEach((thisUnit) => {
+            thisUnit.actionNum = thisUnit.actionMax;
           });
 
           
@@ -560,21 +565,41 @@ function createNewHexArray() {
 
 export function startGame(){
   
-  hexes[1].unit = (new Unit(1, INFANTRY));
-  hexes[2].unit = (new Unit(1, ARTILLERY));
-  hexes[3].unit = (new Unit(1, ARMOUR));
+  if(numberOfPlayers.includes(1)){
 
+    hexes[19].unit = (new Unit(1, BASE));
+    hexes[6].unit = (new Unit(1, ARTILLERY));
+    hexes[7].unit = (new Unit(1, ARTILLERY));
+    hexes[18].unit = (new Unit(1, INFANTRY));
+    hexes[20].unit = (new Unit(1, INFANTRY));
+    hexes[32].unit = (new Unit(1, ARMOUR));
+    hexes[33].unit = (new Unit(1, ARMOUR));
 
-  hexes[19].unit = (new Unit(1, BASE));
+  }
 
-  hexes[397].unit = (new Unit(2, INFANTRY));
-  hexes[396].unit = (new Unit(2, ARTILLERY));
-  hexes[395].unit = (new Unit(2, ARMOUR));
-  hexes[379].unit = (new Unit(2, BASE));
-  hexes[200].unit = (new Unit(3, INFANTRY));
-  hexes[201].unit = (new Unit(3, ARTILLERY));
-  hexes[202].unit = (new Unit(3, ARMOUR));
-  hexes[203].unit = (new Unit(3, BASE));
+  if(numberOfPlayers.includes(2)){
+
+    hexes[294].unit = (new Unit(2, BASE));
+    hexes[293].unit = (new Unit(1, ARTILLERY));
+    hexes[311].unit = (new Unit(2, ARTILLERY));
+    hexes[275].unit = (new Unit(2, INFANTRY));
+    hexes[312].unit = (new Unit(2, INFANTRY));
+    hexes[276].unit = (new Unit(2, ARMOUR));
+    hexes[295].unit = (new Unit(2, ARMOUR));
+
+  }
+
+  if(numberOfPlayers.includes(3)){
+
+    hexes[309].unit = (new Unit(3, BASE));
+    hexes[310].unit = (new Unit(3, ARTILLERY));
+    hexes[327].unit = (new Unit(3, ARTILLERY));
+    hexes[291].unit = (new Unit(3, INFANTRY));
+    hexes[326].unit = (new Unit(3, INFANTRY));
+    hexes[290].unit = (new Unit(3, ARMOUR));
+    hexes[308].unit = (new Unit(3, ARMOUR));
+
+  }
 
   set(hexesRef, hexes);
 
@@ -604,7 +629,6 @@ const hexClick = (e) => {
     });
 
     if (isInRange) {
-      console.log("moving unit");
 
       if(isARMOURSelected == 1){
         isARMOURSelected = 0;
@@ -620,12 +644,12 @@ const hexClick = (e) => {
       }
 
 	  	if(hexes[selectedUnit].unit.unitType == INFANTRY){
-		  audioInfMove.play();
-	  }else if(hexes[selectedUnit].unit.unitType == ARMOUR){
-		  audioTankMove.play();
-	  }else if(hexes[selectedUnit].unit.unitType == ARTILLERY){
-		 audioArtMove.play();
-	  }
+        audioInfMove.play();
+      }else if(hexes[selectedUnit].unit.unitType == ARMOUR){
+        audioTankMove.play();
+      }else if(hexes[selectedUnit].unit.unitType == ARTILLERY){
+      audioArtMove.play();
+      }
 	  
       hexes[selectedUnit].unit.actionNum--;
 
@@ -637,10 +661,10 @@ const hexClick = (e) => {
       checkIfNextTurn();
 
     }
-  }
+  } // if trying to move
 
+  // select unit
   if (hexes[e.target.id].unit != null && hexes[e.target.id].unit.ownerID == playerID) {
-    console.log("selecting unit");
 
     selectedUnit = e.target.id;
     console.log(hexes[selectedUnit].unit);
@@ -666,7 +690,8 @@ const hexClick = (e) => {
       isARTILLERYSelected = 1;
       updateGameBoard();
     }
-  }
+
+  } // if selected
 }
 
 const hexRightClick = (e) => {
@@ -728,21 +753,8 @@ const hexRightClick = (e) => {
     });
 
     if (isInRange) {
-      console.log("firing unit");
 
       hexes[selectedUnit].unit.actionNum--;
-
-      for(let i = 0; ; i++){
-        if(thisPlayerUnits.length <= i){
-          turnNumber++;
-          set(turnNumberRef, turnNumber);
-          break;
-        }
-
-        if(hexes[thisPlayerUnits[i]].unit.actionNum != 0){
-          break;
-        }
-      }
 
       if (hexes[selectedUnit].unit.unitType == INFANTRY) {
         audioI.play();
@@ -758,10 +770,7 @@ const hexRightClick = (e) => {
           audioDeath.play();
 
           if(hexes[e.target.id].unit.unitType == BASE){
-            isBaseAlive = false;
-
-            // trigger game over lightbox
-
+            // game over lightbox
           }
 
           hexes[e.target.id].unit = null;
@@ -775,16 +784,12 @@ const hexRightClick = (e) => {
   }
 
   if (hexes[e.target.id].unit != null && hexes[e.target.id].unit.ownerID == playerID) {
-    console.log("selecting unit");
 
     selectedUnit = e.target.id;
-    console.log(hexes[selectedUnit].unit);
   }
 }
 
 function updateGameBoard() {
-
-  console.log("update board");
 
   // if hexes aren't defined, then don't try to update the board
   if (hexes[1] == undefined) {
@@ -796,7 +801,7 @@ function updateGameBoard() {
 
   for (let i = 1; i < BOARD_SIZE; i++) {
     if (hexes[i].unit != undefined && hexes[i].unit.ownerID == playerID) {
-      thisPlayerUnits.push(i);
+      thisPlayerUnits.push(hexes[i].unit);
     }
   }
 
@@ -878,7 +883,7 @@ function checkIfNextTurn(){
       break;
     }
 
-    if(hexes[thisPlayerUnits[i]].unit.actionNum != 0){
+    if(thisPlayerUnits[i].actionNum != 0){
       break;
     }
   }

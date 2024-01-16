@@ -192,7 +192,7 @@ let numberOfPlayersRef;
 let turnNumberRef;
 let hexesRef;
 
-let numberOfPlayers = [];
+let numberOfPlayers = null;
 let playerID = null;
 let turnNumber = null;
 let thisPlayerUnits = [];
@@ -274,6 +274,7 @@ function passFunction(){
 	document.getElementById("plus").style.display = "initial";
 	document.getElementById("minus").style.display = "initial";
 	document.getElementById("error").style.display = "none";
+	document.getElementById("startbutton").style.display = "initial";
 }
 
 function openRules() {
@@ -305,28 +306,20 @@ function openRules() {
 
       numberOfPlayers = data.val();
 
-      if(numberOfPlayers == null){
-        playerID = 1;
-        numberOfPlayers = [];
-        numberOfPlayers.push(playerID);
-        
+      console.log("num players?")
+      if(numberOfPlayers != null){
+        document.getElementById("numplay").innerHTML = "Number of Players: " + numberOfPlayers;
+      }
+
+      if (playerID == null && numberOfPlayers < 7) {
+        numberOfPlayers++;
+        playerID = numberOfPlayers;
+
         set(numberOfPlayersRef, numberOfPlayers);
-        return;
-      } else {
-
-        document.getElementById("numplay").innerHTML = "Number of Players: " + numberOfPlayers.length;
       }
 
-      if (playerID == null) {
-        if(numberOfPlayers.length < 3){
-          playerID = numberOfPlayers[numberOfPlayers.length - 1] + 1;
-          numberOfPlayers.push(playerID);
+     
 
-          set(numberOfPlayersRef, numberOfPlayers);
-        } else {
-          // deny access
-        }
-      }
     }); // onValue numPlayers
 
     onValue(turnNumberRef, (data) => {
@@ -336,26 +329,18 @@ function openRules() {
       }
 
       turnNumber = data.val();
-      if (turnNumber > numberOfPlayers.length) {
+      if (turnNumber > numberOfPlayers) {
         turnNumber = 1;
         set(turnNumberRef, turnNumber);	
 
         return;
       }
 
-      console.log("turn " + turnNumber);
-	    document.getElementById("turn").innerHTML = "Turn:" + turnNumber;
+	  document.getElementById("turn").innerHTML = "Turn: " + turnNumber;
 
       if(turnNumber != null){
-
-        console.log("change visibility");
-        document.getElementById("startbutton").style.display = "none";
-        document.getElementById("turn").style.display = "initial";
-        
-	      document.getElementById("totaldiv").style.width = "93%";
-	      document.getElementById("totaldiv").style.left = "10.5%";
-
-        if(numberOfPlayers[turnNumber - 1] == playerID){
+        document.getElementById("startbutton").classList.add("hidden");
+        if(turnNumber == playerID){
           console.log("adding actions to units");
           thisPlayerUnits.forEach((id) => {
             
@@ -376,6 +361,18 @@ function openRules() {
       if (data.val() == null) {
         console.log("Null array in firebase");
         createNewHexArray();
+        hexes[1].unit = (new Unit(1, INFANTRY));
+        hexes[2].unit = (new Unit(1, ARTILLERY));
+        hexes[3].unit = (new Unit(1, ARMOUR));
+        hexes[19].unit = (new Unit(1, BASE));
+        hexes[397].unit = (new Unit(2, INFANTRY));
+        hexes[396].unit = (new Unit(2, ARTILLERY));
+        hexes[395].unit = (new Unit(2, ARMOUR));
+        hexes[379].unit = (new Unit(2, BASE));
+        hexes[200].unit = (new Unit(3, INFANTRY));
+        hexes[201].unit = (new Unit(3, ARTILLERY));
+        hexes[202].unit = (new Unit(3, ARMOUR));
+        hexes[203].unit = (new Unit(3, BASE));
         set(hexesRef, hexes);
       } else {
         console.log("Downloading array from firebase");
@@ -456,10 +453,9 @@ window.onunload = (event) => {
   isUnloading = true;
 
   if (playerID != null) {
-    if (0 < numberOfPlayers.length) {
+    numberOfPlayers--;
 
-      numberOfPlayers.splice(numberOfPlayers.indexOf(playerID), 1); // remove the player's number
-
+    if (0 < numberOfPlayers) {
       set(numberOfPlayersRef, numberOfPlayers);
     } else {
       set(hexesRef, null);
@@ -490,6 +486,7 @@ window.onload = function () {
       id++;
     }
   }
+
 
   isBoardDivLoaded = true;
 
@@ -534,26 +531,15 @@ function createNewHexArray() {
 }
 
 export function startGame(){
-  
-  hexes[1].unit = (new Unit(1, INFANTRY));
-  hexes[2].unit = (new Unit(1, ARTILLERY));
-  hexes[3].unit = (new Unit(1, ARMOUR));
-
-
-  hexes[19].unit = (new Unit(1, BASE));
-
-  hexes[397].unit = (new Unit(2, INFANTRY));
-  hexes[396].unit = (new Unit(2, ARTILLERY));
-  hexes[395].unit = (new Unit(2, ARMOUR));
-  hexes[379].unit = (new Unit(2, BASE));
-  hexes[200].unit = (new Unit(3, INFANTRY));
-  hexes[201].unit = (new Unit(3, ARTILLERY));
-  hexes[202].unit = (new Unit(3, ARMOUR));
-  hexes[203].unit = (new Unit(3, BASE));
-
-  set(hexesRef, hexes);
-
+	
+	//if(numberOfPlayers !=1){
 	set(turnNumberRef, 1);
+	document.getElementById("turn").style.display = "initial";
+	//} else return;
+	document.getElementById("startbutton").style.display = "none";
+	//document.getElementById("totaldiv").style.width = "93%";
+	//document.getElementById("totaldiv").style.left = "10.5%";
+	
 }
 
 const logHexName = (e) => {
@@ -563,7 +549,7 @@ const logHexName = (e) => {
 const hexClick = (e) => {
   e.preventDefault();
 
-  if (numberOfPlayers[turnNumber - 1] != playerID) {
+  if (turnNumber != playerID) {
     return;
   }
 
@@ -622,7 +608,7 @@ const hexClick = (e) => {
 const hexRightClick = (e) => {
   e.preventDefault();
 
-  if (numberOfPlayers[turnNumber - 1] != playerID) {
+  if (turnNumber != playerID) {
     return;
   }
 

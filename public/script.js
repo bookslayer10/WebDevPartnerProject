@@ -313,32 +313,29 @@ function openRules() {
       console.log("num players?")
       if(numberOfPlayers != null){
         document.getElementById("numplay").innerHTML = "Number of Players: " + numberOfPlayers;
-      }
 
-      if (playerID == null) {
-        if(numberOfPlayers.length < 3){
-
-          // use a while loop to find the lowest playerID not yet in array
-          for(let i = 0; ; i++){
-            if(numberOfPlayers.includes(i)){
-              continue;
-            } else {
-              playerID = i;
-              break;
+        if (playerID == null) {
+          if(numberOfPlayers.length < 3){
+  
+            // use a while loop to find the lowest playerID not yet in array
+            for(let i = 0; ; i++){
+              if(numberOfPlayers.includes(i)){
+                continue;
+              } else {
+                playerID = i;
+                break;
+              }
             }
+  
+            playerID = numberOfPlayers[numberOfPlayers.length - 1] + 1;
+            numberOfPlayers.push(playerID);
+  
+            set(numberOfPlayersRef, numberOfPlayers);
+          } else {
+            // deny access with lightbox
           }
-
-          playerID = numberOfPlayers[numberOfPlayers.length - 1] + 1;
-          numberOfPlayers.push(playerID);
-
-          set(numberOfPlayersRef, numberOfPlayers);
-        } else {
-          // deny access with lightbox
         }
       }
-
-     
-
     }); // onValue numPlayers
 
     onValue(turnNumberRef, (data) => {

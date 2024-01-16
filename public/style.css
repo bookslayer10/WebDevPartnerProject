@@ -15,7 +15,7 @@ body{
 	background-image: url('/images/camo.jpg');
 	background-size: cover;
 	width:100vw;
-	height:17vh;
+	height:22vh;
 	border-top:thick solid white;
 	
 }
@@ -28,7 +28,7 @@ body{
 	left:0;
 	top:0;
 	width:100vw;
-	height:16vh;
+	height:25vh;
 	border-bottom:thick solid white;
 }
 
@@ -64,7 +64,7 @@ body{
 	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url('/images/camo.jpg');
 	background-size: cover;
 	width:100vw;
-	height:17vh;
+	height:22vh;
 }
 
 
@@ -76,7 +76,7 @@ body{
 	left:0;
 	top:0;
 	width:100vw;
-	height:16vh;
+	height:25vh;
 }
 
 
@@ -244,7 +244,8 @@ input {
 #turn{
 	display:none;
 	padding:5px;
-	padding-top:33px;
+	padding-top:20px;
+	padding-bottom:20px;
 	text-align:center;
     font-family:'Stalinist One', cursive;
     border:2px solid white;
@@ -348,7 +349,7 @@ h1{
 	position:fixed;
 	z-index:300;
 	bottom:10%;
-	right:34%;
+	right:26%;
 	display:none;
 	pointer-events:initial;
 	width:60px;
@@ -360,7 +361,7 @@ h1{
 	z-index:300;
 	rotate: 90deg;
 	bottom:6.5%;
-	right:24%;
+	right:8%;
 	display:none;
 	pointer-events:initial;
 	width:60px;
@@ -372,7 +373,7 @@ h1{
 	z-index:300;
 	rotate: 180deg;
 	bottom:3%;
-	right:34%;
+	right:26%;
 	display:none;
 	pointer-events:initial;
 	width:60px;
@@ -395,7 +396,7 @@ h1{
 	position:fixed;
 	z-index:300;
 	bottom:10%;
-	left:30%;
+	left:15%;
 	display:none;
 	pointer-events:initial;
 	width:60px;
@@ -407,7 +408,7 @@ h1{
 	z-index:300;
 	rotate: 180deg;
 	bottom:3%;
-	left:30%;
+	left:15%;
 	display:none;
 	pointer-events:initial;
 	width:60px;
@@ -440,16 +441,18 @@ h1{
 	z-index:500;
 	display:grid;
 	grid-template-areas:
-	'info start turn';
+	'info'
+	'start'
+	'turn';
 	position:fixed;
 	top:3vh;
-	left:11.5%;
+	left:8%;
 	width:84%;
 	
 }
 
 #startbutton{
-	display:initial;
+	display:none;
 	padding:5px;
     font-family:'Stalinist One', cursive;
     border:2px solid white;
@@ -457,6 +460,8 @@ h1{
 	color:white;
 	font-size:2.5vh;
 	grid-area:start;
+	padding-top:20px;
+	padding-bottom:20px;
 }
 
 #startbutton:hover{
@@ -478,10 +483,7 @@ h1{
 	padding:15px;
 	padding-left:15%;
 	border: 2px solid white;
-	z-index:99;
-	position:fixed;
-    left: 7vh;
-	top:3vh;
+	z-index:101;
 	display:grid;
 	grid-template-areas: 
 	'one'

@@ -65,7 +65,7 @@ class Unit {
       this.damage = 4;
     } else if (unitType == BASE) {
       this.actionMax = 0;
-      this.health = 1;
+      this.health = 16;
     } else {
       this.actionMax = 0;
       this.health = 2;
@@ -580,7 +580,7 @@ export function startGame(){
   if(numberOfPlayers.includes(2)){
 
     hexes[294].unit = (new Unit(2, BASE));
-    hexes[293].unit = (new Unit(1, ARTILLERY));
+    hexes[293].unit = (new Unit(2, ARTILLERY));
     hexes[311].unit = (new Unit(2, ARTILLERY));
     hexes[275].unit = (new Unit(2, INFANTRY));
     hexes[312].unit = (new Unit(2, INFANTRY));

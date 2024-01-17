@@ -544,7 +544,7 @@ function createHexElement(container, id) {
 }
 
 function createNewHexArray() {
-  let grassArray = ["images/grassTile1.svg", "images/grassTile2.svg"]; // , "images/grassTile3.svg"
+  let grassArray = ["images/grassTile1.svg", "images/grassTile2.svg", "images/mudTile1.svg", "images/mudTile2.svg"]
   let createID = 1;
 
   // k is the the column, i is the row
@@ -554,7 +554,7 @@ function createNewHexArray() {
         hexes[createID] = new Hex();
       }
       hexes[createID].id = createID;
-      hexes[createID].backgroundImage = grassArray[Math.floor(Math.random() * 2)];
+      hexes[createID].backgroundImage = grassArray[Math.floor(Math.random() * 4)];
       hexes[createID].foregroundImage = false;
       hexes[createID].hidden = false;
 

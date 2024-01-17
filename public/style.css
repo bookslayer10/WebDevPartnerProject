@@ -268,75 +268,7 @@ input {
 	grid-area:one;
 }
 
-@media only screen and (min-width: 460px) {
-	
-	#message{
-		padding-left:30px;
-		padding-right:30px;
-	}
 
-}
-
-@media only screen and (min-width: 600px) {
-	
-	#r1,#r5{
-		height:19.3vh;
-	}
-	
-	#r3{
-		width:11vw;
-	}
-	
-	#r4{
-		width:11vw;
-	}
-	
-
-}
-
-@media only screen and (min-width: 800px) {
-
-#message {
-    width:50%;
-}
-
-#passbutton, #ok{
-	font-size:25px;
-}
-
-h1{
-	font-size:30px;
-}
-
-#text{
-	font-size:25px;
-}
-
-#error{
-	font-size:23px;
-}
-
-}
-
-@media only screen and (min-width: 1000px) {
-
-#passbutton, #ok{
-	margin-top:10px;
-	padding:9px;
-}
-
-}
-
-@media only screen and (min-width: 1200px) {
-
-}
-
-@media only screen and (min-width: 1400px) {
-#message {
-    width:30%;
-}
-
-}
 
 #movebuttondiv{
 	position:absolute;
@@ -479,6 +411,7 @@ h1{
 }
 
 #infodiv{
+	column-gap:1rem;
 	padding:15px;
 	padding-left:15%;
 	border: 2px solid white;
@@ -499,4 +432,238 @@ h1{
 	width:75%;
 	height:120px;
 	left:10.4%;
+}
+
+@media only screen and (min-width: 460px) {
+	
+	#message{
+		padding-left:30px;
+		padding-right:30px;
+	}
+	
+	#plus,#minus{
+		left:20%;
+	}
+	
+	#right{
+		right:13%;
+	}
+	
+	#left{
+		right:43%;
+	}
+	
+	#up11,#down{
+		right:28%;
+	}
+
+}
+
+@media only screen and (min-width: 600px) {
+	
+	#r1,#r5{
+		height:22vh;
+	}
+	
+	#r3{
+		width:11vw;
+	}
+	
+	#r4{
+		width:11vw;
+	}
+	
+	#up11,#right,#left,#down,#plus,#minus{
+		width:70px;
+		height:70px;
+	}
+	
+	#up11,#plus{
+		bottom:12%;
+	}
+	
+	#right,#left{
+		bottom:7.5%;
+	}
+
+
+}
+
+@media only screen and (min-width: 700px) {
+	
+	#plus,#minus{
+		left:20%;
+	}
+	
+	#right{
+		right:16%;
+	}
+	
+	#left{
+		right:46%;
+	}
+	
+	#up11,#down{
+		right:31%;
+	}
+	
+		
+	#infodiv{
+	grid-template-areas: 
+	'one two three';
+	padding-left:7%;
+}
+
+#totaldiv{
+	top:6vh;
+}
+
+
+	
+
+}
+
+
+
+
+@media only screen and (min-width: 800px) {
+	
+	
+	#totaldiv{
+	grid-template-areas:
+	'info start turn';
+	left:10.5%;
+	width:90%;	
+}
+
+#turn{
+	padding-top:33px;
+	padding-right:3.6rem;
+	padding-left:3.6rem;
+}
+
+		#right{
+		right:19%;
+	}
+	
+	#left{
+		right:43%;
+	}
+
+
+	
+	#infodiv{
+	grid-template-areas: 
+	'one'
+	'two'
+	'three';
+	padding-left:15%;
+}	
+
+#message {
+    width:50%;
+}
+
+#passbutton, #ok{
+	font-size:25px;
+}
+
+h1{
+	font-size:30px;
+}
+
+#text{
+	font-size:25px;
+}
+
+#error{
+	font-size:23px;
+}
+
+	#plus,#minus{
+		left:25%;
+	}
+
+}
+
+@media only screen and (min-width: 917px) {
+
+    #totaldiv{
+	width:91%;
+
+}
+
+@media only screen and (min-width: 917px) {
+
+    #totaldiv{
+	width:92%;
+	}
+	
+			#right{
+		right:21%;
+	}
+	
+	#left{
+		right:41%;
+	}
+
+}
+
+@media only screen and (min-width: 1000px) {
+
+#passbutton, #ok{
+	margin-top:10px;
+	padding:9px;
+}
+
+    #totaldiv{
+	width:93%;
+	}
+
+}
+
+@media only screen and (min-width: 1080px) {
+	 #up11,#right,#down,#left,#plus,#minus{
+		 display:none;
+	 }
+	 
+	     #totaldiv{
+	width:95%;
+	}
+}
+
+@media only screen and (min-width: 1150px) {
+	 
+	     #totaldiv{
+	width:98%;
+	}
+}
+
+@media only screen and (min-width: 1250px) {
+	 
+	 #totaldiv{
+	width:100%;
+	}
+}
+
+
+
+
+@media only screen and (min-width: 1400px) {
+	#message {
+		width:30%;
+	}
+
+	     #totaldiv{
+	width:103%;
+	}
+
+}
+
+@media only screen and (min-width: 1600px) {
+
+	     #totaldiv{
+	width:105%;
+	}
+
 }

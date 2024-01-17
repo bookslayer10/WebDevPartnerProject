@@ -485,7 +485,7 @@ window.onunload = (event) => {
   isUnloading = true;
 
   if (playerID != null) {
-    if (0 < numberOfPlayers.length) {
+    if (1 < numberOfPlayers.length) {
 
       numberOfPlayers.splice(numberOfPlayers.indexOf(playerID), 1); // remove the player's number
 

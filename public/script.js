@@ -84,7 +84,6 @@ let isUnloading = false;
 let isARMOURSelected = 0;
 let isINFANTRYSelected = 0;
 let isARTILLERYSelected = 0;
-let selecDel = 0;
 //let numPlayers2 = 0;
 
 // hex array
@@ -630,6 +629,7 @@ const hexClick = (e) => {
 
     if (isInRange) {
 
+      /*
       if(isARMOURSelected == 1){
         isARMOURSelected = 0;
         hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
@@ -642,6 +642,9 @@ const hexClick = (e) => {
         isINFANTRYSelected = 0;
         hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
       }
+      */
+
+      hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
 
 	  	if(hexes[selectedUnit].unit.unitType == INFANTRY){
         audioInfMove.play();
@@ -656,6 +659,8 @@ const hexClick = (e) => {
       hexes[e.target.id].unit = hexes[selectedUnit].unit;
       hexes[selectedUnit].unit = null;
 
+      updateGameBoard();
+
       set(hexesRef, hexes);
 
       checkIfNextTurn();
@@ -665,18 +670,21 @@ const hexClick = (e) => {
 
   // select unit
   if (hexes[e.target.id].unit != null && hexes[e.target.id].unit.ownerID == playerID) {
-
-    selectedUnit = e.target.id;
-    console.log(hexes[selectedUnit].unit);
-
-    if(selecDel > 0){
+    
+    // first remove background from previos selection
+    if(selectedUnit != null){
       hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
-      console.log(selectedUnit);
     }
-    selecDel = 1;
-
-    if(isARMOURSelected == 0 && hexes[selectedUnit].unit.unitType == ARMOUR){
+    
+    if(selectedUnit != e.target.id){
+      selectedUnit = e.target.id;
       hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace(".svg", "Selected.svg");
+      updateGameBoard();
+    }
+    
+    /*
+    if(isARMOURSelected == 0 && hexes[selectedUnit].unit.unitType == ARMOUR){
+      
       isARMOURSelected = 1;
       updateGameBoard();
     }
@@ -690,6 +698,7 @@ const hexClick = (e) => {
       isARTILLERYSelected = 1;
       updateGameBoard();
     }
+    */
 
   } // if selected
 }

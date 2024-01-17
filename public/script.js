@@ -65,7 +65,7 @@ class Unit {
       this.damage = 4;
     } else if (unitType == BASE) {
       this.actionMax = 0;
-      this.health = 16;
+      this.health = 1;
     } else {
       this.actionMax = 0;
       this.health = 2;

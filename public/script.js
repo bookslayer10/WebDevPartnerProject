@@ -1,704 +1,888 @@
-@import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Stalinist+One&display=swap');
-/*https://pixabay.com/illustrations/camouflage-military-texture-1541188/*/
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
 
-body{
-	overflow:hidden;
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js"
+
+// Declaration of hex
+class Hex {
+
+  constructor(id, backgroundImage, foregroundImage, hidden) {
+    this.id = id;
+    this.hidden = hidden;
+    this.divElement = null;
+    this.imgElement = null;
+    this.backgroundImage = backgroundImage;
+    this.foregroundImage = foregroundImage;
+    this.unit = null;
+  }
+
+  assignElements() {
+    this.divElement = document.getElementById(this.id);
+    this.imgElement = document.getElementById("img" + this.id);
+  }
+
+  updateImages() {
+    if (this.hidden == true) {
+      this.imgElement.classList.add("hidden");
+      this.divElement.style.backgroundImage = "url(images/fogTile.svg)"; // using colored background for now instead of fog of war image
+    } else {
+
+      if (this.foregroundImage != false) {
+        this.imgElement.classList.remove("hidden");
+        this.imgElement.setAttribute("src", this.foregroundImage);
+        this.divElement.style.backgroundImage = "url(" + this.backgroundImage + ")";
+      } else {
+        this.imgElement.classList.add("hidden");
+        this.divElement.style.backgroundImage = "url(" + this.backgroundImage + ")";
+      }
+    }
+  }
 }
 
+const INFANTRY = 0;
+const ARMOUR = 1;
+const ARTILLERY = 2;
+const BASE = 3;
 
-#r1{
-	z-index:10;
-	position:fixed;
-	left:0;
-	bottom:0;
-	background-image: url('/images/camo.jpg');
-	background-size: cover;
-	width:100vw;
-	height:22vh;
-	border-top:thick solid white;
+class Unit {
+  constructor(ownerID, unitType) {
+    this.ownerID = ownerID;
+    this.unitType = unitType;
+
+    if (unitType == INFANTRY) {
+      this.actionMax = 2;
+      this.health = 3;
+      this.damage = 1;
+    } else if (unitType == ARMOUR) {
+      this.actionMax = 3;
+      this.health = 4;
+      this.damage = 1;
+    } else if (unitType == ARTILLERY) {
+      this.actionMax = 1;
+      this.health = 2;
+      this.damage = 4;
+    } else if (unitType == BASE) {
+      this.actionMax = 0;
+      this.health = 16;
+    } else {
+      this.actionMax = 0;
+      this.health = 2;
+    }
+
+    this.actionNum = 0; // start with no actionNum, only gain actionNum once it's the player's turn
+  }
+
+}
+
+const BOARD_SIZE = 398;
+
+let hexDiv; //variable to create hexs
+let hexImg; //variable for the images within the hexes
+let isUnloading = false;
+let isARMOURSelected = 0;
+let isINFANTRYSelected = 0;
+let isARTILLERYSelected = 0;
+let selecDel = 0;
+//let numPlayers2 = 0;
+
+// hex array
+let hexes = new Array(BOARD_SIZE);
+hexes[0] = null;
+let displayHexes = new Array(hexes.length);
+displayHexes[0] = null;
+
+let isBoardDivLoaded = false;
+
+let ajacentHexStore = new Array();
+ajacentHexStore.push(null);
+
+// k is the the column, i is the row
+let id = 1;
+for (let k = 1; k <= 23; k++) {
+  for (let i = 1; i <= 23 - Math.abs(k - 12); i++, id++) { // this for loop increment includes both i++ and id++
+
+    let edgesIsOn = new Array(); // 0 is top side, continue clockwise 0 - 5
+    edgesIsOn.push(k == 1);
+    edgesIsOn.push(i == 11 + k);
+    edgesIsOn.push(i == 35 - k);
+    edgesIsOn.push(k == 23);
+    edgesIsOn.push(i == 1 && 12 <= k);
+    edgesIsOn.push(i == 1 && k <= 12);
+
+    // hexagon is 12 across an edge, 23 across diameter, 23 columns, 12-23-12 rows
+    // array from 0 to 5 of the id of ajacent hexes, -1 if none ajacent
+    // ajacentHexes is ordered as the 30, 90, 150, 210, 270, 330
+    let ajacentHexes = new Array();
+
+    if (edgesIsOn[0] || edgesIsOn[1]) {
+      ajacentHexes.push(-1);
+    } else {
+      if (k <= 12) {
+        ajacentHexes.push(id - (10 + k));
+      } else {
+        ajacentHexes.push(id - (35 - k));
+      }
+    }
+
+    if (edgesIsOn[1] || edgesIsOn[2]) {
+      ajacentHexes.push(-1);
+    } else {
+      ajacentHexes.push(id + 1);
+    }
+
+    if (edgesIsOn[2] || edgesIsOn[3]) {
+      ajacentHexes.push(-1);
+    } else {
+      if (k <= 11) {
+        ajacentHexes.push(id + (12 + k));
+      } else {
+        ajacentHexes.push(id + (35 - k));
+      }
+    }
+
+    if (edgesIsOn[3] || edgesIsOn[4]) {
+      ajacentHexes.push(-1);
+    } else {
+      if (k <= 11) {
+        ajacentHexes.push(id + (11 + k));
+      } else {
+        ajacentHexes.push(id + (34 - k));
+      }
+    }
+
+    if (edgesIsOn[4] || edgesIsOn[5]) {
+      ajacentHexes.push(-1);
+    } else {
+      ajacentHexes.push(id - 1);
+    }
+
+    if (edgesIsOn[5] || edgesIsOn[0]) {
+      ajacentHexes.push(-1);
+    } else {
+      if (k <= 12) {
+        ajacentHexes.push(id - (11 + k));
+      } else {
+        ajacentHexes.push(id - (36 - k));
+      }
+    }
+
+    ajacentHexStore.push(ajacentHexes);
+  }
+}
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBlJCQXZh1S3fpxZqzGnp8VnG-04MO-O7M",
+  authDomain: "web-dev-partner-project.firebaseapp.com",
+  databaseURL: "https://web-dev-partner-project-default-rtdb.firebaseio.com",
+  projectId: "web-dev-partner-project",
+  storageBucket: "web-dev-partner-project.appspot.com",
+  messagingSenderId: "556366486052",
+  appId: "1:556366486052:web:860a1f7da246a91499d6b1"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+let pass1 = document.getElementById("passphrase");
+let pass2 = document.getElementById("passphrase2");
+
+let passphrase;
+
+let numberOfPlayersRef;
+let turnNumberRef;
+let hexesRef;
+
+let numberOfPlayers = [];
+let playerID = null;
+let turnNumber = null;
+let thisPlayerUnits = [];
+let isBaseAlive = true;
+
+let selectedUnit = null;
+let audioI = new Audio('images/infantry.mp3'); //Credits to https://mixkit.co/
+let audioT = new Audio('images/tank.mp3'); //Credits to https://www.sound-searcher.com/sound.php?id=8299
+let audioA = new Audio('images/artillery.mp3'); //Credits to https://www.freesoundeffects.com/free-sounds/artillery-10073/
+let audioDeath = new Audio('images/death.wav'); //Credits to https://mixkit.co/
+let audioInfMove = new Audio('images/step.wav'); //Credits to https://mixkit.co/
+let audioTankMove = new Audio('images/tankengine1.wav'); //Credits to https://mixkit.co/
+let audioArtMove = new Audio('images/artmove.wav'); //Credits to https://mixkit.co/
+
+let mainStyle = document.getElementById("main").style;
+let scale = 1.5;
+let boardX = 50;
+let boardY = 50;
+mainStyle.setProperty("--scale", scale);
+
+document.getElementById("passbutton").addEventListener("click", openRules);
+document.getElementById("ok").addEventListener("click", passFunction);
+document.getElementById("up11").addEventListener("click", up);
+document.getElementById("right").addEventListener("click", right);
+document.getElementById("down").addEventListener("click", down);
+document.getElementById("left").addEventListener("click", left);
+document.getElementById("plus").addEventListener("click", plus);
+document.getElementById("minus").addEventListener("click", minus);
+
+function up(){
+    boardY += 0.8 * scale;
+    boardY = Math.min(boardY, 150);
+    mainStyle.setProperty("top", boardY + "%");
+	}
+function right(){
+	boardX -= 0.8 * scale;
+    boardX = Math.max(boardX, -10);
+    mainStyle.setProperty("left", boardX + "%");
+}
+
+function down(){
+	boardY -= 0.8 * scale;
+    boardY = Math.max(boardY, -50);
+    mainStyle.setProperty("top", boardY + "%");
+}
+
+function left(){
+    boardX += 0.8 * scale;
+    boardX = Math.min(boardX, 150);
+    mainStyle.setProperty("left", boardX + "%");
+}
+
+function plus(){
+	scale *= 1.05;
+    scale = Math.min(scale, 4);
+    mainStyle.setProperty('--scale', scale);
+}
+
+function minus(){
+	scale *= 0.95;
+    scale = Math.max(scale, 0.3);
+    mainStyle.setProperty('--scale', scale);
+}
 	
+
+function passFunction(){
+	
+    document.getElementById("message").style.display = "none";
+    document.getElementById("lightbox").style.display = "none";
+    document.getElementById("pass1").innerHTML = "Lobby: " + pass1.value;
+    document.getElementById("pass2").innerHTML = "Passphrase: " + pass2.value;
+    document.getElementById("numplay").style.display = "initial";
+    document.getElementById("pass1").style.display = "initial";
+    document.getElementById("pass2").style.display = "initial";
+	document.getElementById("up11").style.display = "initial";
+	document.getElementById("right").style.display = "initial";
+	document.getElementById("down").style.display = "initial";
+	document.getElementById("left").style.display = "initial";
+	document.getElementById("plus").style.display = "initial";
+	document.getElementById("minus").style.display = "initial";
+	document.getElementById("error").style.display = "none";
 }
 
-#r2{
-	z-index:10;
-	background-image: url('/images/camo.jpg');
-	background-size: cover;
-	position:fixed;
-	left:0;
-	top:0;
-	width:100vw;
-	height:25vh;
-	border-bottom:thick solid white;
+function openRules() {
+  if (pass1.value != "" && pass2.value != "") {
+    passphrase = pass1.value + pass2.value;
+
+    numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
+    hexesRef = ref(database, "hexes+" + passphrase);
+    turnNumberRef = ref(database, "turnNumber+" + passphrase);
+
+	
+		document.getElementById("passbutton").style.display = "none";
+	document.getElementById("passphrase").style.display = "none";
+	document.getElementById("passphrase2").style.display = "none";
+	document.getElementById("title").innerHTML = "Rules";
+	document.getElementById("text1").innerHTML = "Controls";
+	document.getElementById("text2").innerHTML = "Objective";
+	document.getElementById("ok").style.display = "initial";
+	document.getElementById("info1").style.display = "initial";
+	document.getElementById("info2").style.display = "initial";
+	
+
+
+    onValue(numberOfPlayersRef, (data) => {
+
+      if (isUnloading) {
+        return;
+      }
+
+      numberOfPlayers = data.val();
+
+      if(numberOfPlayers == null){
+        playerID = 1;
+        numberOfPlayers = [];
+        numberOfPlayers.push(playerID);
+        
+        set(numberOfPlayersRef, numberOfPlayers);
+        return;
+      } else {
+
+        document.getElementById("numplay").innerHTML = "Number of Players: " + numberOfPlayers.length;
+
+        if (playerID == null) {
+          if(numberOfPlayers.length < 3){
+  
+            // use a while loop to find the lowest playerID not yet in array
+            for(let i = 0; ; i++){
+              if(numberOfPlayers.includes(i)){
+                continue;
+              } else {
+                playerID = i;
+                break;
+              }
+            }
+  
+            playerID = numberOfPlayers[numberOfPlayers.length - 1] + 1;
+            numberOfPlayers.push(playerID);
+  
+            set(numberOfPlayersRef, numberOfPlayers);
+          } else {
+            // deny access with lightbox
+          }
+        }
+
+      }
+    }); // onValue numPlayers
+
+    onValue(turnNumberRef, (data) => {
+
+      if (isUnloading) {
+        return;
+      }
+
+      turnNumber = data.val();
+      if (turnNumber > numberOfPlayers.length) {
+        turnNumber = 1;
+        set(turnNumberRef, turnNumber);	
+
+        return;
+      }
+
+      console.log("turn " + turnNumber);
+	    document.getElementById("turn").innerHTML = "Turn: " + turnNumber;
+
+
+      if(turnNumber != null){
+
+        console.log("change visibility");
+        document.getElementById("startbutton").style.display = "none";
+        document.getElementById("turn").style.display = "initial";
+        
+
+        if(numberOfPlayers[turnNumber - 1] == playerID){
+
+          if(!isBaseAlive){
+            turnNumber++;
+            set(turnNumberRef, turnNumber);
+            return;
+          }
+
+          console.log("adding actions to units");
+          thisPlayerUnits.forEach((id) => {
+            
+            hexes[id].unit.actionNum = hexes[id].unit.actionMax;
+            console.log(hexes[id].unit);
+          });
+
+          
+        }
+      }
+
+    }); // onValue turnNumberRef
+
+    onValue(hexesRef, (data) => {
+
+      if (isUnloading) {
+        return;
+      }
+
+      if (data.val() == null) {
+        console.log("Null array in firebase");
+        createNewHexArray();
+        set(hexesRef, hexes);
+      } else {
+        console.log("Downloading array from firebase");
+        for (let i = 1; i < BOARD_SIZE; i++) {
+          if (hexes[i] == undefined) {
+            hexes[i] = new Hex();
+          }
+          hexes[i].id = data.val()[i].id;
+          hexes[i].backgroundImage = data.val()[i].backgroundImage;
+          hexes[i].foregroundImage = data.val()[i].foregroundImage;
+          hexes[i].hidden = data.val()[i].hidden;
+
+          let tempUnit = data.val()[i].unit;
+          if (tempUnit != undefined) {
+            hexes[i].unit = tempUnit;
+          } else {
+            hexes[i].unit = null;
+          }
+
+        }
+      }
+
+      if (isBoardDivLoaded) updateGameBoard();
+
+    }); // onValue numPlayers
+
+
+
+    if (isBoardDivLoaded) updateGameBoard();
+
+  } else if (pass1.value != "" && pass2.value == "") {
+    document.getElementById("error").style.display = "initial";
+    document.getElementById("error").innerHTML = "Please put in a passphrase";
+  } else if (pass1.value == "" && pass2.value != "") {
+    document.getElementById("error").style.display = "initial";
+    document.getElementById("error").innerHTML = "Please put in a lobby name";
+  } else {
+    document.getElementById("error").style.display = "initial";
+    document.getElementById("error").innerHTML = "Please enter a lobby name and passphrase";
+  }
 }
 
-#r3{
-	z-index:11;
-	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url('/images/camo.jpg');
-	background-size: cover;
-	position:fixed;
-	left:0;
-	top:0;
-	width:9vw;
-	height:100vh;
-	border-right:thick solid white;
-}
 
-#r4{
-	z-index:11;
-	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url('/images/camo.jpg');
-	background-size: cover;
-	position:fixed;
-	right:0;
-	top:0;
-	width:9vw;
-	height:100vh;
-	border-left:thick solid white;
-}
+window.onkeydown = (e) => {
+  if (passphrase == undefined) {
+    return;
+  }
 
-#r5{
-	z-index:13;
-	position:fixed;
-	left:0;
-	bottom:0;
-	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url('/images/camo.jpg');
-	background-size: cover;
-	width:100vw;
-	height:22vh;
-}
-
-
-#r6{
-	z-index:13;
-	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/images/camo.jpg');/*https://www.youtube.com/watch?v=a2UnYs9AA_M*/
-	background-size: cover;
-	position:fixed;
-	left:0;
-	top:0;
-	width:100vw;
-	height:25vh;
-}
-
-
-body{
-	background-color: black;
-}
-
-
-
-#main {
-	display: grid;
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
-
-	--scale: 1;
-	--s: calc(var(--scale) * 40px);
-	/* size  */
-	--m: calc(var(--scale) * 1px);
-	/* margin */
-	--f: calc(var(--s) * 1.732 + 4 * var(--m) - 1px);
-	user-select: none;
-
-	width:calc(var(--scale) * 1000px);
-}
-
-.container {
-	font-size: 0;
-	/* disable white space between inline block element */
-	margin-left: auto;
-	margin-right: auto;
-}
-
-.container div {
-	width: var(--s);
-	margin: var(--m);
-	height: calc(var(--s) * 1.1547);
-	display: inline-block;
-	font-size: initial;
-	clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
-	margin-bottom: calc(var(--m) - var(--s) * 0.2885);
-	background-image: url(images/fogTile.svg);
-	background-size: 100% 100%;
-}
-
-
-/*https://css-tricks.com/hexagons-and-beyond-flexible-responsive-grid-patterns-sans-media-queries/*/
-
-img {
-	position: absolute;
-	pointer-events: none;
-	width: var(--s);
-	height: var(--s);
-}
-
-.hidden {
-	display: none;
-}
-
-#passbutton, #ok{
-	width:215px;
-	height:50px;
-	padding:5px;
-    font-size:20px;
-	background-color:#222222;
-	border:2px solid white;
-	color:white;
-	font-family:'Black Ops One', cursive;
-}
-
-#passbutton:hover{
-	background-color:white;
-	border:2px solid #222222;
-	color:black;
-}
-
-#ok:hover{
-	background-color:white;
-	border:2px solid #222222;
-	color:black;
-}
-
-
-#error {
-	font-size: 18px;
-	color: red;
-	display: none;
-	font-weight: 800;
-}
-
-h1{
-	font-size:25px;
-	color:white;
-	font-family: 'Stalinist One', cursive;
-}
-
-input {
-	width: 200px;
-	height: 45px;
-	padding-left: 5px;
-	padding-right: 5px;
-	font-size: 20px;
-	text-align: center;
-}
-
-#lightbox {
-  z-index:100;
-  position:fixed;
-  top:0px;
-  left:0px;
-  width:100%;
-  height:100%;
-  background-color:rgba(0,0,0,1);
+  if (e.key == 'q') {
+    scale *= 0.95;
+    scale = Math.max(scale, 0.3);
+    mainStyle.setProperty('--scale', scale);
+  } else if (e.key == 'e') {
+    scale *= 1.05;
+    scale = Math.min(scale, 4);
+    mainStyle.setProperty('--scale', scale);
+  } else if (e.key == 's') {
+    boardY -= 0.8 * scale;
+    boardY = Math.max(boardY, -50);
+    mainStyle.setProperty("top", boardY + "%");
+  } else if (e.key == 'w') {
+    boardY += 0.8 * scale;
+    boardY = Math.min(boardY, 150);
+    mainStyle.setProperty("top", boardY + "%");
+  } else if (e.key == 'd') {
+    boardX -= 0.8 * scale;
+    boardX = Math.max(boardX, -50);
+    mainStyle.setProperty("left", boardX + "%");
+  } else if (e.key == 'a') {
+    boardX += 0.8 * scale;
+    boardX = Math.min(boardX, 150);
+    mainStyle.setProperty("left", boardX + "%");
+  }
 
 }
 
-#message {
-    width:70%;
-	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url('/images/camo.jpg');
-    background-color:#777777;
-	border:3px solid white;
-    text-align:center;
-    font-family: 'PT Mono', monospace;
+window.onunload = (event) => {
+  isUnloading = true;
+
+  if (playerID != null) {
+    if (0 < numberOfPlayers.length) {
+
+      numberOfPlayers.splice(numberOfPlayers.indexOf(playerID), 1); // remove the player's number
+
+      set(numberOfPlayersRef, numberOfPlayers);
+    } else {
+      set(hexesRef, null);
+      set(turnNumberRef, null);
+      set(numberOfPlayersRef, null);
+    }
+  } // if
+} // onunload
+
+//AUTOMATE THE CREATION OF DIVS IN THE CONTAINER DIVS (CREATE FUNCTION).
+
+window.onload = function () {
+  let id = 1;
+  for (let k = 1; k < 13; k++) {
+    let container = document.getElementById("c" + (k));
+    container.setAttribute("class", "container");
+    for (let i = 1; i < 12 + k; i++) {
+      createHexElement(container, id);
+      id++;
+    }
+  }
+
+  for (let k = 1; k < 12; k++) {
+    let container = document.getElementById("c" + (k + 12));
+    container.setAttribute("class", "container");
+    for (let i = 1; i < 24 - k; i++) {
+      createHexElement(container, id);
+      id++;
+    }
+  }
+
+  isBoardDivLoaded = true;
+
+  updateGameBoard();
+
+  // 397 hexagon elements created
+}
+
+function createHexElement(container, id) {
+  hexDiv = document.createElement("div");
+  hexDiv.setAttribute("id", id);
+  hexDiv.addEventListener("click", hexClick);
+  hexDiv.addEventListener("contextmenu", hexRightClick);
+  hexDiv.addEventListener("click", logHexName);
+
+  hexImg = document.createElement("img");
+  hexImg.setAttribute("src", "/images/testImage.svg");
+  hexImg.setAttribute("id", "img" + id);
+
+  container.appendChild(hexDiv);
+  hexDiv.appendChild(hexImg);
+}
+
+function createNewHexArray() {
+  let grassArray = ["images/grassTile1.svg", "images/grassTile2.svg"]; // , "images/grassTile3.svg"
+  let createID = 1;
+
+  // k is the the column, i is the row
+  for (let k = 1; k <= 23; k++) {
+    for (let i = 1; i <= 23 - Math.abs(k - 12); i++, createID++) { // this for loop increment includes both i++ and id++
+      if (hexes[createID] == undefined) {
+        hexes[createID] = new Hex();
+      }
+      hexes[createID].id = createID;
+      hexes[createID].backgroundImage = grassArray[Math.floor(Math.random() * 2)];
+      hexes[createID].foregroundImage = false;
+      hexes[createID].hidden = false;
+
+    }
+  }
+
+}
+
+export function startGame(){
+document.getElementById("fired").style.display = "block";
+  
+  hexes[1].unit = (new Unit(1, INFANTRY));
+  hexes[2].unit = (new Unit(1, ARTILLERY));
+  hexes[3].unit = (new Unit(1, ARMOUR));
+
+
+  hexes[19].unit = (new Unit(1, BASE));
+
+  hexes[397].unit = (new Unit(2, INFANTRY));
+  hexes[396].unit = (new Unit(2, ARTILLERY));
+  hexes[395].unit = (new Unit(2, ARMOUR));
+  hexes[379].unit = (new Unit(2, BASE));
+  hexes[200].unit = (new Unit(3, INFANTRY));
+  hexes[201].unit = (new Unit(3, ARTILLERY));
+  hexes[202].unit = (new Unit(3, ARMOUR));
+  hexes[203].unit = (new Unit(3, BASE));
+
+  set(hexesRef, hexes);
+
+	set(turnNumberRef, 1);
+	
+	
+
+}
+
+const logHexName = (e) => {
+  console.log("ID of Hex clicked: " + e.target.id);
+}
+
+const hexClick = (e) => {
+  e.preventDefault();
+
+  if (numberOfPlayers[turnNumber - 1] != playerID) {
+    return;
+  }
+
+  // move unit, otherwise select unit
+  if (hexes[e.target.id].unit == null && selectedUnit != null && hexes[selectedUnit].unit.actionNum != 0) {
+    let isInRange = false;
+    ajacentHexStore[selectedUnit].forEach(function (i) {
+      if (e.target.id == i) {
+        isInRange = true;
+        return;
+      }
+
+    });
+
+    if (isInRange) {
+      console.log("moving unit");
+
+      if(isARMOURSelected == 1){
+        isARMOURSelected = 0;
+        hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
+      }
+      if(isARTILLERYSelected == 1){
+        isARTILLERYSelected = 0;
+        hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
+      }
+      if(isINFANTRYSelected == 1){
+        isINFANTRYSelected = 0;
+        hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
+      }
+
+	  	if(hexes[selectedUnit].unit.unitType == INFANTRY){
+		  audioInfMove.play();
+	  }else if(hexes[selectedUnit].unit.unitType == ARMOUR){
+		  audioTankMove.play();
+	  }else if(hexes[selectedUnit].unit.unitType == ARTILLERY){
+		 audioArtMove.play();
+	  }
+	  
+      hexes[selectedUnit].unit.actionNum--;
+
+      hexes[e.target.id].unit = hexes[selectedUnit].unit;
+      hexes[selectedUnit].unit = null;
+
+      set(hexesRef, hexes);
+
+      checkIfNextTurn();
+
+    }
+  }
+
+  if (hexes[e.target.id].unit != null && hexes[e.target.id].unit.ownerID == playerID) {
+    console.log("selecting unit");
+
+    selectedUnit = e.target.id;
+    console.log(hexes[selectedUnit].unit);
+
+    if(selecDel > 0){
+      hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
+      console.log(selectedUnit);
+    }
+    selecDel = 1;
+
+    if(isARMOURSelected == 0 && hexes[selectedUnit].unit.unitType == ARMOUR){
+      hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace(".svg", "Selected.svg");
+      isARMOURSelected = 1;
+      updateGameBoard();
+    }
+    if(isINFANTRYSelected == 0 && hexes[selectedUnit].unit.unitType == INFANTRY){
+      hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace(".svg", "Selected.svg");
+      isINFANTRYSelected = 1;
+      updateGameBoard();
+    }
+    if(isARTILLERYSelected == 0 && hexes[selectedUnit].unit.unitType == ARTILLERY){
+      hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace(".svg", "Selected.svg");
+      isARTILLERYSelected = 1;
+      updateGameBoard();
+    }
+  }
+}
+
+const hexRightClick = (e) => {
+  e.preventDefault();
+
+  if (numberOfPlayers[turnNumber - 1] != playerID) {
+    return;
+  }
+
+  // fire unit, otherwise select unit
+  if (selectedUnit != null && (hexes[e.target.id].unit == null || hexes[e.target.id].unit.ownerID != playerID) && hexes[selectedUnit].unit.actionNum != 0) {
+
+    let isInRange = false;
+    ajacentHexStore[selectedUnit].forEach(function (i) {
+      if (e.target.id == i) {
+        isInRange = true;
+        return;
+      }
+
+      if (i != -1) {
+        ajacentHexStore[i].forEach(function (j) {
+          if (e.target.id == j) {
+            isInRange = true;
+            return;
+          }
+
+          if (j != -1 && hexes[selectedUnit].unit.unitType == ARTILLERY) {
+            ajacentHexStore[j].forEach(function (k) {
+              if (e.target.id == k) {
+                isInRange = true;
+                return;
+              }
+              if (k != -1 && hexes[selectedUnit].unit.unitType == ARTILLERY) {
+
+                ajacentHexStore[k].forEach(function (l) {
+                  if (e.target.id == l) {
+                    isInRange = true;
+                    return;
+                  }
+                  if (l != -1 && hexes[selectedUnit].unit.unitType == ARTILLERY) {
+
+                    ajacentHexStore[l].forEach(function (m) {
+                      if (e.target.id == m) {
+                        isInRange = true;
+                        return;
+                      }
     
-    /* Center the message in the lightbox */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding-left:30px;
-	padding-right:30px;
-	padding-top:100px;
-	padding-bottom:100px;
-	font-size:14px;
+                    });
+    
+                  }
+                });
+
+              }
+
+            });
+          }
+        });
+      }
+    });
+
+    if (isInRange) {
+      console.log("firing unit");
+
+      hexes[selectedUnit].unit.actionNum--;
+
+      for(let i = 0; ; i++){
+        if(thisPlayerUnits.length <= i){
+          turnNumber++;
+          set(turnNumberRef, turnNumber);
+          break;
+        }
+
+        if(hexes[thisPlayerUnits[i]].unit.actionNum != 0){
+          break;
+        }
+      }
+
+      if (hexes[selectedUnit].unit.unitType == INFANTRY) {
+        audioI.play();
+      } else if (hexes[selectedUnit].unit.unitType == ARMOUR) {
+        audioT.play();
+      } else if (hexes[selectedUnit].unit.unitType == ARTILLERY) {
+        audioA.play();
+      }
+
+      if (hexes[e.target.id].unit != null) {
+        hexes[e.target.id].unit.health -= hexes[selectedUnit].unit.damage;
+        if (hexes[e.target.id].unit.health < 1) {
+          audioDeath.play();
+
+          if(hexes[e.target.id].unit.unitType == BASE){
+            isBaseAlive = false;
+
+            // trigger game over lightbox
+
+          }
+
+          hexes[e.target.id].unit = null;
+        }
+      }
+
+      set(hexesRef, hexes);
+
+      checkIfNextTurn();
+    }
+  }
+
+  if (hexes[e.target.id].unit != null && hexes[e.target.id].unit.ownerID == playerID) {
+    console.log("selecting unit");
+
+    selectedUnit = e.target.id;
+    console.log(hexes[selectedUnit].unit);
+  }
 }
 
+function updateGameBoard() {
+
+  console.log("update board");
+
+  // if hexes aren't defined, then don't try to update the board
+  if (hexes[1] == undefined) {
+    return;
+
+  }
+
+  thisPlayerUnits = [];
+
+  for (let i = 1; i < BOARD_SIZE; i++) {
+    if (hexes[i].unit != undefined && hexes[i].unit.ownerID == playerID) {
+      thisPlayerUnits.push(i);
+    }
+  }
+
+  console.log("this player units:")
+  console.log(thisPlayerUnits);
+
+  for (let i = 1; i < BOARD_SIZE; i++) {
+    if (displayHexes[i] == undefined) {
+      displayHexes[i] = new Hex();
+    }
+    displayHexes[i].id = hexes[i].id;
+    displayHexes[i].backgroundImage = hexes[i].backgroundImage;
+    displayHexes[i].foregroundImage = hexes[i].foregroundImage;
+    displayHexes[i].hidden = hexes[i].hidden;
 
 
+    displayHexes[i].hidden = true;
+  }
 
-#infantinfo{
-	grid-area:soldier;
+  for (let i = 1; i < BOARD_SIZE; i++) {
+    if (hexes[i].unit != null) {
+      switch (hexes[i].unit.unitType) {
+        case INFANTRY:
+          displayHexes[i].foregroundImage = "images/soldier.svg";
+          break;
+        case ARMOUR:
+          displayHexes[i].foregroundImage = "images/tank.svg";
+          break;
+        case ARTILLERY:
+          displayHexes[i].foregroundImage = "images/artillery.svg";
+          break;
+        case BASE:
+          displayHexes[i].foregroundImage = "images/base.svg";
+          break;
+      }
+
+
+      if (hexes[i].unit.ownerID == playerID) {
+        displayHexes[i].hidden = false;
+        ajacentHexStore[i].forEach(function (j) {
+          if (j != -1) {
+            displayHexes[j].hidden = false;
+            if (hexes[i].unit.unitType == INFANTRY || hexes[i].unit.unitType == ARMOUR || hexes[i].unit.unitType == BASE) {
+              ajacentHexStore[j].forEach(function (k) {
+                if (k != -1) {
+                  displayHexes[k].hidden = false;
+
+                  if (hexes[i].unit.unitType == INFANTRY) {
+                    ajacentHexStore[k].forEach(function (l) {
+                      if (l != -1) {
+                        displayHexes[l].hidden = false;
+
+                      }
+                    });
+                  }
+                }
+              });
+            }
+
+          }
+        });
+
+      }
+    }
+  }
+
+  for (let i = 1; i < BOARD_SIZE; i++) {
+    displayHexes[i].assignElements();
+    displayHexes[i].updateImages();
+  }
 }
 
-#tankinfo{
-	grid-area:tank;
-}
-
-#artinfo{
-	grid-area:artillery;
-}
-
-#armydiv{
-	z-index:101;
-	position:fixed;
-    left: 0;
-    right: 0;
-	bottom:5vh;
-	display:grid;
-	grid-template-areas: 
-	'soldier tank artillery';
-}
-
-
-#turn{
-	display:none;
-	padding:5px;
-	padding-top:20px;
-	padding-bottom:20px;
-	text-align:center;
-    font-family:'Stalinist One', cursive;
-    border:2px solid white;
-	background-color:#222222;
-	color:white;
-	font-size:2.5vh;
-	grid-area:start;
-	
-}
-
-#numplay {
-	grid-area: three;
-}
-
-#pass2 {
-	grid-area: two;
-}
-
-#pass1{
-	grid-area:one;
-}
-
-
-
-#movebuttondiv{
-	position:absolute;
-	bottom:3vh;
-	z-index:101;
-}
-
-
-#up11{
-	position:fixed;
-	z-index:300;
-	bottom:10%;
-	right:26%;
-	display:none;
-	pointer-events:initial;
-	width:60px;
-	height:60px;
-}
-
-#right{
-	position:fixed;
-	z-index:300;
-	rotate: 90deg;
-	bottom:6.5%;
-	right:8%;
-	display:none;
-	pointer-events:initial;
-	width:60px;
-	height:60px;
-}
-
-#down{
-	position:fixed;
-	z-index:300;
-	rotate: 180deg;
-	bottom:3%;
-	right:26%;
-	display:none;
-	pointer-events:initial;
-	width:60px;
-	height:60px;
-}
-
-#left{
-	position:fixed;
-	z-index:300;
-	rotate: 270deg;
-	bottom:6.5%;
-	right:44%;
-	display:none;
-	pointer-events:initial;
-	width:60px;
-	height:60px;
-}
-
-#plus{
-	position:fixed;
-	z-index:300;
-	bottom:10%;
-	left:15%;
-	display:none;
-	pointer-events:initial;
-	width:60px;
-	height:60px;
-}
-
-#minus{
-	position:fixed;
-	z-index:300;
-	rotate: 180deg;
-	bottom:3%;
-	left:15%;
-	display:none;
-	pointer-events:initial;
-	width:60px;
-	height:60px;
-}
-
-#text1,#text2{
-	font-size:20px;
-	color:white;
-	font-family:'Black Ops One', cursive;
-}
-
-#ok{
-	display:none;
-}
-
-#info1{
-	color:white;
-	font-weight:500;
-	display:none;
-}
-
-#info2{
-	color:white;
-	font-weight:500;
-	display:none;
-}
-
-#totaldiv{
-	z-index:90;
-	display:grid;
-	grid-template-areas:
-	'info info'
-	'start fire'
-	'turn fire';
-	position:fixed;
-	top:3vh;
-	left:8%;
-	width:84%;
-	
-}
-
-#startbutton{
-	padding:5px;
-    font-family:'Stalinist One', cursive;
-    border:2px solid white;
-	background-color:#222222;
-	color:white;
-	font-size:2.5vh;
-	grid-area:start;
-	padding-top:20px;
-	padding-bottom:20px;
-}
-
-#startbutton:hover{
-	background-color:white;
-	border:2px solid #222222;
-	color:black;
-}
-
-
-#pass1,#pass2,#numplay{
-	font-family:'Black Ops One', cursive;
-	z-index:101;
-	color:white;
-	font-size:2.1vh;
-	display: none;
-}
-
-#infodiv{
-	column-gap:1rem;
-	padding:15px;
-	padding-left:15%;
-	border: 2px solid white;
-	z-index:99;
-	display:grid;
-	grid-template-areas: 
-	'one'
-	'two'
-	'three';
-	grid-area:info;
-}
-
-#controldiv{
-	padding:15px;
-	z-index:101;
-	position:fixed;
-	bottom:2%;
-	width:75%;
-	height:120px;
-	left:10.4%;
-}
-
-@media only screen and (min-width: 460px) {
-	
-	#message{
-		padding-left:30px;
-		padding-right:30px;
-	}
-	
-	#plus,#minus{
-		left:20%;
-	}
-	
-	#right{
-		right:13%;
-	}
-	
-	#left{
-		right:43%;
-	}
-	
-	#up11,#down{
-		right:28%;
-	}
-
-}
-
-@media only screen and (min-width: 600px) {
-	
-	#r1,#r5{
-		height:22vh;
-	}
-	
-	#r3{
-		width:11vw;
-	}
-	
-	#r4{
-		width:11vw;
-	}
-	
-	#up11,#right,#left,#down,#plus,#minus{
-		width:70px;
-		height:70px;
-	}
-	
-	#up11,#plus{
-		bottom:12%;
-	}
-	
-	#right,#left{
-		bottom:7.5%;
-	}
-
-
-}
-
-@media only screen and (min-width: 700px) {
-	
-	#plus,#minus{
-		left:20%;
-	}
-	
-	#right{
-		right:16%;
-	}
-	
-	#left{
-		right:46%;
-	}
-	
-	#up11,#down{
-		right:31%;
-	}
-	
-		
-	#infodiv{
-	grid-template-areas: 
-	'one two three';
-	padding-left:7%;
-}
-
-#totaldiv{
-	top:6vh;
-}
-
-
-	
-
-}
-
-
-
-
-@media only screen and (min-width: 800px) {
-	
-	
-	#totaldiv{
-	grid-template-areas:
-	'info ifo'
-	'start turn fire';
-	left:10.5%;
-	width:90%;	
-}
-
-#turn{
-	padding-top:33px;
-	padding-right:3.6rem;
-	padding-left:3.6rem;
-}
-
-		#right{
-		right:19%;
-	}
-	
-	#left{
-		right:43%;
-	}
-
-
-	
-	#infodiv{
-	grid-template-areas: 
-	'one'
-	'two'
-	'three';
-	padding-left:15%;
-}	
-
-#message {
-    width:50%;
-}
-
-#passbutton, #ok{
-	font-size:25px;
-}
-
-h1{
-	font-size:30px;
-}
-
-#text{
-	font-size:25px;
-}
-
-#error{
-	font-size:23px;
-}
-
-	#plus,#minus{
-		left:25%;
-	}
-
-}
-
-@media only screen and (min-width: 917px) {
-
-    #totaldiv{
-	width:91%;
-
-}
-
-@media only screen and (min-width: 917px) {
-
-    #totaldiv{
-	width:92%;
-	}
-	
-			#right{
-		right:21%;
-	}
-	
-	#left{
-		right:41%;
-	}
-
-}
-
-@media only screen and (min-width: 1000px) {
-
-	#passbutton, #ok{
-		margin-top:10px;
-		padding:9px;
-	}
-
-    #totaldiv{
-	width:93%;
-	}
-	
-	#startbutton{
-		font-size:30px;
-	}
-	
-	#infodiv{
-		font-size:35px;
-	}
-	
-		 #controldiv{
-		 display:none;
-	 }
-
-}
-
-@media only screen and (min-width: 1080px) {
-
-	 
-	     #totaldiv{
-	width:95%;
-	}
-}
-
-
-@media only screen and (min-width: 1150px) {
-	 
-	     #totaldiv{
-	width:97%;
-	}
-}
-
-@media only screen and (min-width: 1250px) {
-	 
-	 #totaldiv{
-	width:99%;
-	}
-}
-
-
-
-
-@media only screen and (min-width: 1400px) {
-	#message {
-		width:30%;
-	}
-
-	     #totaldiv{
-	width:102%;
-	}
-
-}
-
-
-
-@media only screen and (min-width: 1600px) {
-
-	     #totaldiv{
-	width:105%;
-	}
-
-}
-
-#fired:hover{
-	background-color:white;
-	border:2px solid #222222;
-	color:black;
-}
-
-
-#fired{
-	display:none;
-	grid-area:fire;
-	padding:5px;
-    font-family:'Stalinist One', cursive;
-    border:2px solid white;
-	background-color:#222222;
-	color:white;
-	font-size:2.5vh;
-	grid-area:start;
-	padding-top:20px;
-	padding-bottom:20px;
+function checkIfNextTurn(){
+  for(let i = 0; ; i++){
+    if(thisPlayerUnits.length <= i){
+      turnNumber++;
+      set(turnNumberRef, turnNumber);
+
+      break;
+    }
+
+    if(hexes[thisPlayerUnits[i]].unit.actionNum != 0){
+      break;
+    }
+  }
 }

@@ -39,7 +39,13 @@
 	    <button id="startbutton" onclick="startGame()">
       Start Game
     </button>
-	<div id="turn"></div>
+	
+	<div id="turn">
+	</div>
+	
+	<button id="fired">
+	      TOGGLE FIRE
+    </button>
 
   </div>
   <div id="lightbox">
@@ -49,13 +55,21 @@
       <br>
       <div id="text1">Lobby:</div>
       <br>
-	  <div id="info1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce tempor nisi non metus vestibulum aliquet.</div>
+	  <div id="info1">
+		<b>Use W, A, S, D to navigate around the map</b><br><br>
+		<b>Use E to zoom into the map and Q to zoom out.</b><br><br>
+		<b>To move, left click on a piece and left click on the desired hex.</b><br><br>
+		<b>To shoot, left click on a piece and right click on the desired target.</b>
+	
+	  
+	  </div>
+	  
       <input type="text" id="passphrase" name="passphrase" maxlength="10">
       <br><br><br>
 
       <div id="text2">Passphrase:</div>
       <br>
-	  <div id="info2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce tempor nisi non metus vestibulum aliquet.</div>
+	  <div id="info2"><b>Destroy the enemy base using your pieces, infantry, tanks, and artillery while protecting your own base. You can destroy enemy pieces to clear your way to the base.</b></div>
       <input type="text" id="passphrase2" name="passphrase2" maxlength="10">
       <br><br>
       <button id="passbutton">Submit</button>

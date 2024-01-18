@@ -3,7 +3,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebas
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js"
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js"
 
 // Declaration of hex
 class Hex {
@@ -81,10 +81,6 @@ const BOARD_SIZE = 398;
 let hexDiv; //variable to create hexs
 let hexImg; //variable for the images within the hexes
 let isUnloading = false;
-let isARMOURSelected = 0;
-let isINFANTRYSelected = 0;
-let isARTILLERYSelected = 0;
-//let numPlayers2 = 0;
 
 // hex array
 let hexes = new Array(BOARD_SIZE);
@@ -213,6 +209,8 @@ let mainStyle = document.getElementById("main").style;
 let scale = 1.5;
 let boardX = 50;
 let boardY = 50;
+
+
 mainStyle.setProperty("--scale", scale);
 
 document.getElementById("passbutton").addEventListener("click", openRules);
@@ -302,6 +300,7 @@ function openRules() {
     onValue(numberOfPlayersRef, (data) => {
 
       if (isUnloading) {
+        
         return;
       }
 
@@ -449,6 +448,7 @@ function openRules() {
 
 
 window.onkeydown = (e) => {
+
   if (passphrase == undefined) {
     return;
   }
@@ -481,22 +481,32 @@ window.onkeydown = (e) => {
 
 }
 
-window.onunload = (event) => {
+window.addEventListener("beforeunload", function(){
   isUnloading = true;
-
+  
   if (playerID != null) {
     if (1 < numberOfPlayers.length) {
 
       numberOfPlayers.splice(numberOfPlayers.indexOf(playerID), 1); // remove the player's number
 
       set(numberOfPlayersRef, numberOfPlayers);
+      
+
     } else {
       set(hexesRef, null);
       set(turnNumberRef, null);
       set(numberOfPlayersRef, null);
+
     }
-  } // if
-} // onunload
+  }
+  console.log("finished leaving page");
+
+  event.returnValue = 'Please continue leaving the page, otherwise your webpage will not function.';
+}
+
+  
+
+); // onunload
 
 //AUTOMATE THE CREATION OF DIVS IN THE CONTAINER DIVS (CREATE FUNCTION).
 

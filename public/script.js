@@ -363,8 +363,6 @@ function openRules() {
         document.getElementById("startbutton").style.display = "none";
         document.getElementById("turn").style.display = "initial";
         
-	      document.getElementById("totaldiv").style.width = "93%";
-	      document.getElementById("totaldiv").style.left = "10.5%";
 
         if(numberOfPlayers[turnNumber - 1] == playerID){
 
@@ -573,7 +571,6 @@ function createNewHexArray() {
 }
 
 export function startGame(){
-  
   if(numberOfPlayers.includes(1)){
 
     hexes[19].unit = (new Unit(1, BASE));
@@ -610,9 +607,11 @@ export function startGame(){
 
   }
 
+
   set(hexesRef, hexes);
 
 	set(turnNumberRef, 1);
+  
 }
 
 const logHexName = (e) => {

@@ -197,6 +197,7 @@ let turnNumber = null;
 let thisPlayerUnits = [];
 
 let selectedUnit = null;
+let isMovingNotFiring = false;
 let audioI = new Audio('images/infantry.mp3');
 let audioT = new Audio('images/tank.mp3');
 let audioA = new Audio('images/artillery.mp3');
@@ -277,8 +278,19 @@ function passFunction(){
 }
 
 function openRules() {
-  if (pass1.value != "" && pass2.value != "") {
-    passphrase = pass1.value + pass2.value;
+  if (pass1.value != "" && pass2.value == "") {
+    document.getElementById("error").style.display = "initial";
+    document.getElementById("error").innerHTML = "Please put in a passphrase";
+  } else if (pass1.value == "" && pass2.value != "") {
+    document.getElementById("error").style.display = "initial";
+    document.getElementById("error").innerHTML = "Please put in a lobby name";
+  } else if (pass1.value == "" && pass2.value == "") {
+    document.getElementById("error").style.display = "initial";
+    document.getElementById("error").innerHTML = "Please enter a lobby name and passphrase";
+  } else {
+
+    let regex = new RegExp("\.|\#|\$|\[|\]", "gi");
+    passphrase = (pass1.value + pass2.value).replaceAll(regex, "");
 
     numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
     hexesRef = ref(database, "hexes+" + passphrase);
@@ -286,14 +298,14 @@ function openRules() {
 
 	
 		document.getElementById("passbutton").style.display = "none";
-	document.getElementById("passphrase").style.display = "none";
-	document.getElementById("passphrase2").style.display = "none";
-	document.getElementById("title").innerHTML = "Rules";
-	document.getElementById("text1").innerHTML = "Controls";
-	document.getElementById("text2").innerHTML = "Objective";
-	document.getElementById("ok").style.display = "initial";
-	document.getElementById("info1").style.display = "initial";
-	document.getElementById("info2").style.display = "initial";
+    document.getElementById("passphrase").style.display = "none";
+    document.getElementById("passphrase2").style.display = "none";
+    document.getElementById("title").innerHTML = "Rules";
+    document.getElementById("text1").innerHTML = "Controls";
+    document.getElementById("text2").innerHTML = "Objective";
+    document.getElementById("ok").style.display = "initial";
+    document.getElementById("info1").style.display = "initial";
+    document.getElementById("info2").style.display = "initial";
 	
 
 
@@ -432,15 +444,6 @@ function openRules() {
 
     if (isBoardDivLoaded) updateGameBoard();
 
-  } else if (pass1.value != "" && pass2.value == "") {
-    document.getElementById("error").style.display = "initial";
-    document.getElementById("error").innerHTML = "Please put in a passphrase";
-  } else if (pass1.value == "" && pass2.value != "") {
-    document.getElementById("error").style.display = "initial";
-    document.getElementById("error").innerHTML = "Please put in a lobby name";
-  } else {
-    document.getElementById("error").style.display = "initial";
-    document.getElementById("error").innerHTML = "Please enter a lobby name and passphrase";
   }
 }
 
@@ -539,7 +542,6 @@ function createHexElement(container, id) {
   hexDiv = document.createElement("div");
   hexDiv.setAttribute("id", id);
   hexDiv.addEventListener("click", hexClick);
-  hexDiv.addEventListener("contextmenu", hexRightClick);
   hexDiv.addEventListener("click", logHexName);
 
   hexImg = document.createElement("img");
@@ -571,6 +573,8 @@ function createNewHexArray() {
 }
 
 export function startGame(){
+  document.getElementById("fired").style.display = "block";
+
   if(numberOfPlayers.includes(1)){
 
     hexes[19].unit = (new Unit(1, BASE));
@@ -625,57 +629,11 @@ const hexClick = (e) => {
     return;
   }
 
-  // move unit, otherwise select unit
-  if (hexes[e.target.id].unit == null && selectedUnit != null && hexes[selectedUnit].unit.actionNum != 0) {
-    let isInRange = false;
-    ajacentHexStore[selectedUnit].forEach(function (i) {
-      if (e.target.id == i) {
-        isInRange = true;
-        return;
-      }
-
-    });
-
-    if (isInRange) {
-
-      /*
-      if(isARMOURSelected == 1){
-        isARMOURSelected = 0;
-        hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
-      }
-      if(isARTILLERYSelected == 1){
-        isARTILLERYSelected = 0;
-        hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
-      }
-      if(isINFANTRYSelected == 1){
-        isINFANTRYSelected = 0;
-        hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
-      }
-      */
-
-      hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
-
-	  	if(hexes[selectedUnit].unit.unitType == INFANTRY){
-        audioInfMove.play();
-      }else if(hexes[selectedUnit].unit.unitType == ARMOUR){
-        audioTankMove.play();
-      }else if(hexes[selectedUnit].unit.unitType == ARTILLERY){
-      audioArtMove.play();
-      }
-	  
-      hexes[selectedUnit].unit.actionNum--;
-
-      hexes[e.target.id].unit = hexes[selectedUnit].unit;
-      hexes[selectedUnit].unit = null;
-
-      updateGameBoard();
-
-      set(hexesRef, hexes);
-
-      checkIfNextTurn();
-
-    }
-  } // if trying to move
+  if(isMovingNotFiring){
+    move(e);
+  } else {
+    fire(e);
+  }
 
   // select unit
   if (hexes[e.target.id].unit != null && hexes[e.target.id].unit.ownerID == playerID) {
@@ -690,34 +648,51 @@ const hexClick = (e) => {
       hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace(".svg", "Selected.svg");
       updateGameBoard();
     }
-    
-    /*
-    if(isARMOURSelected == 0 && hexes[selectedUnit].unit.unitType == ARMOUR){
-      
-      isARMOURSelected = 1;
-      updateGameBoard();
-    }
-    if(isINFANTRYSelected == 0 && hexes[selectedUnit].unit.unitType == INFANTRY){
-      hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace(".svg", "Selected.svg");
-      isINFANTRYSelected = 1;
-      updateGameBoard();
-    }
-    if(isARTILLERYSelected == 0 && hexes[selectedUnit].unit.unitType == ARTILLERY){
-      hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace(".svg", "Selected.svg");
-      isARTILLERYSelected = 1;
-      updateGameBoard();
-    }
-    */
 
   } // if selected
+  
 }
 
-const hexRightClick = (e) => {
-  e.preventDefault();
+function move(e){
+  // move unit, otherwise select unit
+  if (hexes[e.target.id].unit == null && selectedUnit != null && hexes[selectedUnit].unit.actionNum != 0) {
+    let isInRange = false;
+    ajacentHexStore[selectedUnit].forEach(function (i) {
+      if (e.target.id == i) {
+        isInRange = true;
+        return;
+      }
 
-  if (numberOfPlayers[turnNumber - 1] != playerID) {
-    return;
-  }
+    });
+
+    if (isInRange) {
+
+      hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
+
+      if(hexes[selectedUnit].unit.unitType == INFANTRY){
+        audioInfMove.play();
+      }else if(hexes[selectedUnit].unit.unitType == ARMOUR){
+        audioTankMove.play();
+      }else if(hexes[selectedUnit].unit.unitType == ARTILLERY){
+      audioArtMove.play();
+      }
+    
+      hexes[selectedUnit].unit.actionNum--;
+
+      hexes[e.target.id].unit = hexes[selectedUnit].unit;
+      hexes[selectedUnit].unit = null;
+
+      updateGameBoard();
+
+      set(hexesRef, hexes);
+
+      checkIfNextTurn();
+
+    }
+  } // if trying to move
+}
+
+function fire(e){
 
   // fire unit, otherwise select unit
   if (selectedUnit != null && (hexes[e.target.id].unit == null || hexes[e.target.id].unit.ownerID != playerID) && hexes[selectedUnit].unit.actionNum != 0) {
@@ -800,12 +775,8 @@ const hexRightClick = (e) => {
       checkIfNextTurn();
     }
   }
-
-  if (hexes[e.target.id].unit != null && hexes[e.target.id].unit.ownerID == playerID) {
-
-    selectedUnit = e.target.id;
-  }
 }
+
 
 function updateGameBoard() {
 

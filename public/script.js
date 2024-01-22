@@ -225,18 +225,21 @@ document.getElementById("minus").addEventListener("click", minus);
 document.getElementById("toggle").addEventListener("click", toggle);
 
 function toggle(){
-	document.getElementById("toggle").innerHTML = "TOGGLE MOVE";
-    document.getElementById("toggle").addEventListener("click", toggleBack);
+	
+  document.getElementById("toggle").addEventListener("click", toggleBack);
 	document.getElementById("toggle").removeEventListener("click", toggle);
-	console.log("abandon");
+  isMovingNotFiring = false;
 
+  document.getElementById("toggle").innerHTML = "Click to Move Units";
 }
 
 function toggleBack(){
-	document.getElementById("toggle").innerHTML = "TOGGLE FIRE";
-    document.getElementById("toggle").addEventListener("click", toggle);
-    document.getElementById("toggle").removeEventListener("click", toggleBack);
-	console.log("ship");
+	
+  document.getElementById("toggle").addEventListener("click", toggle);
+  document.getElementById("toggle").removeEventListener("click", toggleBack);
+  isMovingNotFiring = true;
+
+  document.getElementById("toggle").innerHTML = "Click to Fire Units";
 }
 
 function up(){

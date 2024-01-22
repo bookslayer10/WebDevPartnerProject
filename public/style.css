@@ -2,6 +2,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Stalinist+One&display=swap');
 /*https://pixabay.com/illustrations/camouflage-military-texture-1541188/*/
 
+
+#toggle{
+	display:none;
+	grid-area:fire;
+	padding:5px;
+    font-family:'Stalinist One', cursive;
+    border:2px solid white;
+	background-color:#222222;
+	color:white;
+	font-size:1.7vh;
+	grid-area:start;
+	padding-top:20px;
+	padding-bottom:20px;
+	width:44vw;
+}
+
+#toggle:hover{
+	background-color:white;
+	border:2px solid #222222;
+	color:black;
+}
+
 body{
 	overflow:hidden;
 }
@@ -243,16 +265,15 @@ input {
 
 #turn{
 	display:none;
-	padding:5px;
-	padding-top:20px;
-	padding-bottom:20px;
+	padding:0px;
 	text-align:center;
     font-family:'Stalinist One', cursive;
     border:2px solid white;
 	background-color:#222222;
 	color:white;
-	font-size:2.5vh;
-	grid-area:start;
+	font-size:1.7vh;
+	grid-area:turn;
+	width:40vw;
 	
 }
 
@@ -368,14 +389,19 @@ input {
 	font-weight:500;
 	display:none;
 }
+#btndiv{
+	grid-area:btndiv;
+	display:grid;
+	grid-template-areas:
+	'start fire turn';
+}
 
 #totaldiv{
 	z-index:90;
 	display:grid;
 	grid-template-areas:
-	'info info'
-	'start fire'
-	'turn fire';
+	'info'
+	'btndiv';
 	position:fixed;
 	top:3vh;
 	left:8%;
@@ -383,12 +409,15 @@ input {
 	
 }
 
+
+
 #startbutton{
 	padding:5px;
     font-family:'Stalinist One', cursive;
     border:2px solid white;
 	background-color:#222222;
 	color:white;
+	width:84vw;
 	font-size:2.5vh;
 	grid-area:start;
 	padding-top:20px;
@@ -433,6 +462,8 @@ input {
 	height:120px;
 	left:10.4%;
 }
+
+
 
 @media only screen and (min-width: 460px) {
 	
@@ -529,12 +560,14 @@ input {
 @media only screen and (min-width: 800px) {
 	
 	
-	#totaldiv{
-	grid-template-areas:
-	'info ifo'
-	'start turn fire';
+	/*#totaldiv{
 	left:10.5%;
 	width:90%;	
+}
+*/
+
+#turn,#toggle{
+	font-size:2.5vh;
 }
 
 #turn{
@@ -553,13 +586,13 @@ input {
 
 
 	
-	#infodiv{
+	/*#infodiv{
 	grid-template-areas: 
 	'one'
 	'two'
 	'three';
 	padding-left:15%;
-}	
+}	*/
 
 #message {
     width:50%;
@@ -589,17 +622,9 @@ h1{
 
 @media only screen and (min-width: 917px) {
 
-    #totaldiv{
-	width:91%;
-	}
-
-}
-
-@media only screen and (min-width: 917px) {
-
-    #totaldiv{
+   /* #totaldiv{
 	width:92%;
-	}
+	}*/
 	
 			#right{
 		right:21%;
@@ -618,9 +643,6 @@ h1{
 		padding:9px;
 	}
 
-    #totaldiv{
-	width:93%;
-	}
 	
 	#startbutton{
 		font-size:30px;
@@ -633,32 +655,10 @@ h1{
 		 #controldiv{
 		 display:none;
 	 }
-
-}
-
-@media only screen and (min-width: 1080px) {
-
 	 
-	     #totaldiv{
-	width:95%;
-	}
-}
-
-
-@media only screen and (min-width: 1150px) {
 	 
-	     #totaldiv{
-	width:97%;
-	}
-}
 
-@media only screen and (min-width: 1250px) {
-	 
-	 #totaldiv{
-	width:99%;
-	}
 }
-
 
 
 
@@ -667,39 +667,8 @@ h1{
 		width:30%;
 	}
 
-	     #totaldiv{
+	    /* #totaldiv{
 	width:102%;
-	}
+	}*/
 
-}
-
-
-
-@media only screen and (min-width: 1600px) {
-
-	#totaldiv{
-		width:105%;
-	}
-
-}
-
-#fired:hover{
-	background-color:white;
-	border:2px solid #222222;
-	color:black;
-}
-
-
-#fired{
-	display:none;
-	grid-area:fire;
-	padding:5px;
-    font-family:'Stalinist One', cursive;
-    border:2px solid white;
-	background-color:#222222;
-	color:white;
-	font-size:2.5vh;
-	grid-area:start;
-	padding-top:20px;
-	padding-bottom:20px;
 }

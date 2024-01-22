@@ -590,7 +590,7 @@ function createNewHexArray() {
 }
 
 export function startGame(){
-  document.getElementById("fired").style.display = "block";
+  document.getElementById("toggle").style.display = "block";
 
   if(numberOfPlayers.includes(1)){
 

@@ -37,7 +37,7 @@ body{
 	background-image: url('/images/camo.jpg');
 	background-size: cover;
 	width:100vw;
-	height:22vh;
+	height:27vh;
 	border-top:thick solid white;
 	
 }
@@ -86,7 +86,7 @@ body{
 	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url('/images/camo.jpg');
 	background-size: cover;
 	width:100vw;
-	height:22vh;
+	height:27vh;
 }
 
 
@@ -271,10 +271,70 @@ input {
     border:2px solid white;
 	background-color:#222222;
 	color:white;
+	padding-top:20px;
+	padding-bottom:20px;
 	font-size:1.7vh;
 	grid-area:turn;
 	width:40vw;
 	
+}
+
+
+#bottombutton{
+	z-index:101;
+	display:grid;
+	position:fixed;
+	left:8%;
+	bottom:18%;
+	width:84%;
+	grid-template-areas:
+	'skip rules';
+	
+}
+
+
+#skip{
+	
+	display:none;
+	z-index:101;
+	text-align:center;
+    font-family:'Stalinist One', cursive;
+    border:2px solid white;
+	background-color:#222222;
+	color:white;
+	padding-top:20px;
+	font-size:1.7vh;
+	grid-area:skip;
+	padding-bottom:20px;
+	
+}
+
+#rules{
+	
+	display:none;
+	z-index:101;
+	text-align:center;
+    font-family:'Stalinist One', cursive;
+    border:2px solid white;
+	background-color:#222222;
+	color:white;
+	padding-top:20px;
+	padding-bottom:20px;
+	font-size:1.7vh;
+	grid-area:rules;
+	
+}
+
+#rules:hover{
+	background-color:white;
+	border:2px solid #222222;
+	color:black;
+}
+
+#skip:hover{
+	background-color:white;
+	border:2px solid #222222;
+	color:black;
 }
 
 #numplay {
@@ -493,7 +553,11 @@ input {
 @media only screen and (min-width: 600px) {
 	
 	#r1,#r5{
-		height:22vh;
+		height:29vh;
+	}
+	
+	#bottombutton{
+		bottom:20%
 	}
 	
 	#r3{
@@ -571,9 +635,7 @@ input {
 }
 
 #turn{
-	padding-top:33px;
-	padding-right:3.6rem;
-	padding-left:3.6rem;
+	padding-top:20px;
 }
 
 		#right{
@@ -619,13 +681,6 @@ h1{
 	}
 
 }
-
-@media only screen and (min-width: 917px) {
-
-   /* #totaldiv{
-	width:91%;
-
-}*/
 
 @media only screen and (min-width: 917px) {
 
@@ -679,10 +734,3 @@ h1{
 	}*/
 
 }
-
-
-
-
-
-
-

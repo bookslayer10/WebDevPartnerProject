@@ -214,15 +214,15 @@ let boardY = 50;
 
 mainStyle.setProperty("--scale", scale);
 
-document.getElementById("passbutton").addEventListener("click", openRules);
-document.getElementById("ok").addEventListener("click", passFunction);
+document.getElementById("passbutton").addEventListener("click", submitPasswordLightbox);
+document.getElementById("ok").addEventListener("click", closeLightbox);
 document.getElementById("up11").addEventListener("click", up);
 document.getElementById("right").addEventListener("click", right);
 document.getElementById("down").addEventListener("click", down);
 document.getElementById("left").addEventListener("click", left);
 document.getElementById("plus").addEventListener("click", plus);
 document.getElementById("minus").addEventListener("click", minus);
-document.getElementById("toggle").addEventListener("click", toggle);
+document.getElementById("toggle").addEventListener("click", openRules);
 
 function toggle(){
 	
@@ -278,15 +278,15 @@ function minus(){
 }
 	
 
-function passFunction(){
+function closeLightbox(){
 	
-    document.getElementById("message").style.display = "none";
-    document.getElementById("lightbox").style.display = "none";
-    document.getElementById("pass1").innerHTML = "Lobby: " + pass1.value;
-    document.getElementById("pass2").innerHTML = "Passphrase: " + pass2.value;
-    document.getElementById("numplay").style.display = "initial";
-    document.getElementById("pass1").style.display = "initial";
-    document.getElementById("pass2").style.display = "initial";
+  document.getElementById("message").style.display = "none";
+  document.getElementById("lightbox").style.display = "none";
+  document.getElementById("pass1").innerHTML = "Lobby: " + pass1.value;
+  document.getElementById("pass2").innerHTML = "Passphrase: " + pass2.value;
+  document.getElementById("numplay").style.display = "initial";
+  document.getElementById("pass1").style.display = "initial";
+  document.getElementById("pass2").style.display = "initial";
 	document.getElementById("up11").style.display = "initial";
 	document.getElementById("right").style.display = "initial";
 	document.getElementById("down").style.display = "initial";
@@ -296,7 +296,55 @@ function passFunction(){
 	document.getElementById("error").style.display = "none";
 }
 
-function openRules() {
+function openRules(){
+  document.getElementById("message").style.display = "initial";
+  document.getElementById("lightbox").style.display = "initial";
+  document.getElementById("passbutton").style.display = "none";
+  document.getElementById("passphrase").style.display = "none";
+  document.getElementById("passphrase2").style.display = "none";
+  document.getElementById("title").innerHTML = "Rules";
+  document.getElementById("text1").innerHTML = "Controls";
+  document.getElementById("text2").innerHTML = "Objective";
+  document.getElementById("ok").style.display = "initial";
+  document.getElementById("info1").style.display = "initial";
+  document.getElementById("info2").style.display = "initial";
+  document.getElementById("info1").innerHTML = "<b>Use W, A, S, D to navigate around the map<\/b><br><b>Use E to zoom into the map and Q to zoom out.<\/b><br><br><b>To move or fire a unit, first click to select it, then click on the hex you want to move to/shoot.<\/b><br><b>Then, you can toggle between movement and shooting with the toggle button at the top of the screen.<\/b><br><b>Every one of your units gets a set ammount of actions per turn, which can be spent on either movement or firing.<\/b><br><br><b>There are three types of units: Infantry, Armor, and Artillery.<\/b><br><b>Infantry can see three tiles, can shoot two tiles, have two actions per turn, and three health.<\/b><br><b>Armor can see two tiles, can shoot two tiles, have three actions per turn, and four health.<\/b><br><b>Artillery can see one tile, can shoot five tiles, have one action per turn, and deal four times the damage of infantry and armor.<\/b><br><br>";
+  document.getElementById("info2").innerHTML = "<b>Destroy the enemy base using your pieces, infantry, tanks, and artillery while protecting your own base. You can destroy enemy pieces to clear your way to the base.</b>";
+}
+
+function denyAccessLightbox(){
+  document.getElementById("message").style.display = "initial";
+  document.getElementById("lightbox").style.display = "initial";
+  document.getElementById("passbutton").style.display = "none";
+  document.getElementById("passphrase").style.display = "none";
+  document.getElementById("passphrase2").style.display = "none";
+  document.getElementById("title").innerHTML = "Access Denied";
+  document.getElementById("text1").innerHTML = "The lobby you are trying to Join is Full.";
+  document.getElementById("text2").innerHTML = "Please Close this Browser Tab.";
+  document.getElementById("ok").style.display = "none";
+  document.getElementById("info1").style.display = "none";
+  document.getElementById("info2").style.display = "none";
+  document.getElementById("info1").innerHTML = "";
+  document.getElementById("info2").innerHTML = "";
+}
+
+function gameOverLightbox(){
+  document.getElementById("message").style.display = "initial";
+  document.getElementById("lightbox").style.display = "initial";
+  document.getElementById("passbutton").style.display = "none";
+  document.getElementById("passphrase").style.display = "none";
+  document.getElementById("passphrase2").style.display = "none";
+  document.getElementById("title").innerHTML = "Game Over";
+  document.getElementById("text1").innerHTML = "You Have Lost Your Base and Been Defeated.";
+  document.getElementById("text2").innerHTML = "Please Close this Browser Tab.";
+  document.getElementById("ok").style.display = "none";
+  document.getElementById("info1").style.display = "none";
+  document.getElementById("info2").style.display = "none";
+  document.getElementById("info1").innerHTML = "";
+  document.getElementById("info2").innerHTML = "";
+}
+
+function submitPasswordLightbox() {
   if (pass1.value != "" && pass2.value == "") {
     document.getElementById("error").style.display = "initial";
     document.getElementById("error").innerHTML = "Please put in a passphrase";
@@ -316,19 +364,8 @@ function openRules() {
     hexesRef = ref(database, "hexes+" + passphrase);
     turnNumberRef = ref(database, "turnNumber+" + passphrase);
 
+    openRules();
 	
-		document.getElementById("passbutton").style.display = "none";
-    document.getElementById("passphrase").style.display = "none";
-    document.getElementById("passphrase2").style.display = "none";
-    document.getElementById("title").innerHTML = "Rules";
-    document.getElementById("text1").innerHTML = "Controls";
-    document.getElementById("text2").innerHTML = "Objective";
-    document.getElementById("ok").style.display = "initial";
-    document.getElementById("info1").style.display = "initial";
-    document.getElementById("info2").style.display = "initial";
-	
-
-
     onValue(numberOfPlayersRef, (data) => {
 
       if (isUnloading) {
@@ -367,7 +404,9 @@ function openRules() {
   
             set(numberOfPlayersRef, numberOfPlayers);
           } else {
+
             // deny access with lightbox
+            denyAccessLightbox();
           }
         }
 
@@ -400,10 +439,8 @@ function openRules() {
 
           for(let i = 0; ; i++){
             if(thisPlayerUnits.length <= i){
+              gameOverLightbox();
               turnNumber++;
-  
-              console.log("this player is skipping their turn");
-              console.log(turnNumber);
               set(turnNumberRef, turnNumber);
               return;
             } else if(thisPlayerUnits[i].unitType == BASE){
@@ -793,7 +830,7 @@ function fire(e){
           audioDeath.play();
 
           if(hexes[e.target.id].unit.unitType == BASE){
-            // game over lightbox
+            gameOverLightbox();
           }
 
           hexes[e.target.id].unit = null;

@@ -289,8 +289,9 @@ function openRules() {
     document.getElementById("error").innerHTML = "Please enter a lobby name and passphrase";
   } else {
 
-    let regex = new RegExp("\.|\#|\$|\[|\]", "gi");
-    passphrase = (pass1.value + pass2.value).replaceAll(regex, "");
+    let regex = /\.|\#|\$|\[|\]/gi;
+    passphrase = (pass1.value + pass2.value);
+    passphrase = passphrase.replaceAll(regex, "");
 
     numberOfPlayersRef = ref(database, "numberOfPlayers+" + passphrase);
     hexesRef = ref(database, "hexes+" + passphrase);
@@ -618,6 +619,16 @@ export function startGame(){
   
 }
 
+export function skipTurn(){
+  thisPlayerUnits.forEach((thisUnit) => {
+    thisUnit.actionNum = 0;
+    
+  });
+
+  turnNumber++;
+  set(turnNumberRef, turnNumber);
+}
+
 const logHexName = (e) => {
   console.log("ID of Hex clicked: " + e.target.id);
 }
@@ -814,16 +825,16 @@ function updateGameBoard() {
     if (hexes[i].unit != null) {
       switch (hexes[i].unit.unitType) {
         case INFANTRY:
-          displayHexes[i].foregroundImage = "images/soldier.svg";
+          displayHexes[i].foregroundImage = "images/Units/soldier" + hexes[i].unit.ownerID + ".svg";
           break;
         case ARMOUR:
-          displayHexes[i].foregroundImage = "images/tank.svg";
+          displayHexes[i].foregroundImage = "images/Units/tank" + hexes[i].unit.ownerID + ".svg";
           break;
         case ARTILLERY:
-          displayHexes[i].foregroundImage = "images/artillery.svg";
+          displayHexes[i].foregroundImage = "images/Units/artillery" + hexes[i].unit.ownerID + ".svg";
           break;
         case BASE:
-          displayHexes[i].foregroundImage = "images/base.svg";
+          displayHexes[i].foregroundImage = "images/Units/base" + hexes[i].unit.ownerID + ".svg";
           break;
       }
 

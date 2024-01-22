@@ -222,6 +222,22 @@ document.getElementById("down").addEventListener("click", down);
 document.getElementById("left").addEventListener("click", left);
 document.getElementById("plus").addEventListener("click", plus);
 document.getElementById("minus").addEventListener("click", minus);
+document.getElementById("toggle").addEventListener("click", toggle);
+
+function toggle(){
+	document.getElementById("toggle").innerHTML = "TOGGLE MOVE";
+    document.getElementById("toggle").addEventListener("click", toggleBack);
+	document.getElementById("toggle").removeEventListener("click", toggle);
+	console.log("abandon");
+
+}
+
+function toggleBack(){
+	document.getElementById("toggle").innerHTML = "TOGGLE FIRE";
+    document.getElementById("toggle").addEventListener("click", toggle);
+    document.getElementById("toggle").removeEventListener("click", toggleBack);
+	console.log("ship");
+}
 
 function up(){
     boardY += 0.8 * scale;

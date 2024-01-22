@@ -197,7 +197,7 @@ let turnNumber = null;
 let thisPlayerUnits = [];
 
 let selectedUnit = null;
-let isMovingNotFiring = false;
+let isMovingNotFiring = true;
 let audioI = new Audio('images/infantry.mp3');
 let audioT = new Audio('images/tank.mp3');
 let audioA = new Audio('images/artillery.mp3');
@@ -230,7 +230,7 @@ function toggle(){
 	document.getElementById("toggle").removeEventListener("click", toggle);
   isMovingNotFiring = false;
 
-  document.getElementById("toggle").innerHTML = "Click to Move Units";
+  document.getElementById("toggle").innerHTML = "Firing Units";
 }
 
 function toggleBack(){
@@ -239,7 +239,7 @@ function toggleBack(){
   document.getElementById("toggle").removeEventListener("click", toggleBack);
   isMovingNotFiring = true;
 
-  document.getElementById("toggle").innerHTML = "Click to Fire Units";
+  document.getElementById("toggle").innerHTML = "Moving Units";
 }
 
 function up(){

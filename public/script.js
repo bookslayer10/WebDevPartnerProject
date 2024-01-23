@@ -80,6 +80,8 @@ const BOARD_SIZE = 398;
 
 let hexDiv; //variable to create hexs
 let hexImg; //variable for the images within the hexes
+let healthDiv;
+let actionDiv;
 let isUnloading = false;
 
 // hex array
@@ -564,12 +566,22 @@ function createHexElement(container, id) {
   hexDiv.addEventListener("click", hexClick);
   hexDiv.addEventListener("click", logHexName);
 
+  healthDiv = document.createElement("h2");
+  healthDiv.setAttribute("id", "health" + id);
+  healthDiv.setAttribute("class", "unitHealth");
+
+  actionDiv = document.createElement("h2");
+  actionDiv.setAttribute("id", "action" + id);
+  actionDiv.setAttribute("class", "unitAction");
+
   hexImg = document.createElement("img");
   hexImg.setAttribute("src", "/images/testImage.svg");
   hexImg.setAttribute("id", "img" + id);
 
   container.appendChild(hexDiv);
   hexDiv.appendChild(hexImg);
+  hexDiv.appendChild(healthDiv);
+  hexDiv.appendChild(actionDiv);
 }
 
 function createNewHexArray() {
@@ -884,6 +896,16 @@ function updateGameBoard() {
         });
 
       }
+    }
+    if(hexes[i].unit != null){
+      document.getElementById("health" + i).innerHTML = hexes[i].unit.health;
+        if(hexes[i].unit.unitType != BASE){
+          document.getElementById("action" + i).innerHTML = hexes[i].unit.actionNum;
+      }
+    }
+    else{
+      document.getElementById("health" + i).innerHTML = "";
+      document.getElementById("action" + i).innerHTML = "";
     }
   }
 

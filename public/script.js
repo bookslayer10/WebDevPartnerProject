@@ -81,7 +81,9 @@ class Unit {
 const BOARD_SIZE = 398;
 
 let hexDiv; //variable to create hexs
-let hexImg; //variable for the images within the hexes
+let hexImg; //variable for the images within the hexeslet healthDiv;
+let healthDiv;
+let actionDiv;
 let isUnloading = false;
 
 // hex array
@@ -236,7 +238,7 @@ function toggle(){
   isMovingNotFiring = false;
 
   document.getElementById("toggle").innerHTML = "Firing Units";
-}
+}//toggle
 
 function toggleBack(){
 	
@@ -245,42 +247,43 @@ function toggleBack(){
   isMovingNotFiring = true;
 
   document.getElementById("toggle").innerHTML = "Moving Units";
-}
+}//toggleBack
 
 function up(){
     boardY += 0.8 * scale;
     boardY = Math.min(boardY, 150);
     mainStyle.setProperty("top", boardY + "%");
-	}
+	}//up
+
 function right(){
 	boardX -= 0.8 * scale;
     boardX = Math.max(boardX, -10);
     mainStyle.setProperty("left", boardX + "%");
-}
+}//right
 
 function down(){
 	boardY -= 0.8 * scale;
     boardY = Math.max(boardY, -50);
     mainStyle.setProperty("top", boardY + "%");
-}
+}//down
 
 function left(){
     boardX += 0.8 * scale;
     boardX = Math.min(boardX, 150);
     mainStyle.setProperty("left", boardX + "%");
-}
+}//left
 
 function plus(){
 	scale *= 1.05;
     scale = Math.min(scale, 4);
     mainStyle.setProperty('--scale', scale);
-}
+}//plus
 
 function minus(){
 	scale *= 0.95;
     scale = Math.max(scale, 0.3);
     mainStyle.setProperty('--scale', scale);
-}
+}//minus
 	
 
 function closeLightbox(){
@@ -299,7 +302,7 @@ function closeLightbox(){
 	document.getElementById("plus").style.display = "initial";
 	document.getElementById("minus").style.display = "initial";
 	document.getElementById("error").style.display = "none";
-}
+}//closeLightbox
 
 function openRules(){
   document.getElementById("message").style.display = "initial";
@@ -315,7 +318,7 @@ function openRules(){
   document.getElementById("info2").style.display = "initial";
   document.getElementById("info1").innerHTML = "<b>Use W, A, S, D to navigate around the map<\/b><br><b>Use E to zoom into the map and Q to zoom out.<\/b><br><br><b>To move or fire a unit, first click to select it, then click on the hex you want to move to/shoot.<\/b><br><b>Then, you can toggle between movement and shooting with the toggle button at the top of the screen.<\/b><br><b>Every one of your units gets a set ammount of actions per turn, which can be spent on either movement or firing.<\/b><br><br><b>There are three types of units: Infantry, Armor, and Artillery.<\/b><br><b>Infantry can see three tiles, can shoot two tiles, have two actions per turn, and three health.<\/b><br><b>Armor can see two tiles, can shoot two tiles, have three actions per turn, and four health.<\/b><br><b>Artillery can see one tile, can shoot five tiles, have one action per turn, and deal four times the damage of infantry and armor.<\/b><br><br>";
   document.getElementById("info2").innerHTML = "<b>Destroy the enemy base using your pieces, infantry, tanks, and artillery while protecting your own base. You can destroy enemy pieces to clear your way to the base.</b>";
-}
+}//openRules
 
 function denyAccessLightbox(){
   document.getElementById("message").style.display = "initial";
@@ -331,7 +334,7 @@ function denyAccessLightbox(){
   document.getElementById("info2").style.display = "none";
   document.getElementById("info1").innerHTML = "";
   document.getElementById("info2").innerHTML = "";
-}
+}//denyAccessLightbox
 
 function gameOverLightbox(){
   document.getElementById("message").style.display = "initial";
@@ -347,7 +350,7 @@ function gameOverLightbox(){
   document.getElementById("info2").style.display = "none";
   document.getElementById("info1").innerHTML = "";
   document.getElementById("info2").innerHTML = "";
-}
+}//gameOverLightbox
 
 function submitPasswordLightbox() {
   if (pass1.value != "" && pass2.value == "") {
@@ -505,7 +508,7 @@ function submitPasswordLightbox() {
     if (isBoardDivLoaded) updateGameBoard();
 
   }
-}
+}//submitPasswordLightbox
 
 
 window.onkeydown = (e) => {
@@ -540,7 +543,7 @@ window.onkeydown = (e) => {
     mainStyle.setProperty("left", boardX + "%");
   }
 
-}
+}//onkeydown
 
 window.addEventListener("beforeunload", function(){
   isUnloading = true;
@@ -566,7 +569,7 @@ window.addEventListener("beforeunload", function(){
 
   
 
-); // onunload
+); //onunload
 
 //AUTOMATE THE CREATION OF DIVS IN THE CONTAINER DIVS (CREATE FUNCTION).
 
@@ -595,7 +598,7 @@ window.onload = function () {
   updateGameBoard();
 
   // 397 hexagon elements created
-}
+}//onload
 
 function createHexElement(container, id) {
   hexDiv = document.createElement("div");
@@ -609,7 +612,7 @@ function createHexElement(container, id) {
 
   container.appendChild(hexDiv);
   hexDiv.appendChild(hexImg);
-}
+}//createHexElement
 
 function createNewHexArray() {
   let grassArray = ["images/grassTile1.svg", "images/grassTile2.svg", "images/mudTile1.svg", "images/mudTile2.svg"]
@@ -629,7 +632,7 @@ function createNewHexArray() {
     }
   }
 
-}
+}//createNewHexArray
 
 export function startGame(){
   document.getElementById("toggle").style.display = "block";
@@ -677,7 +680,7 @@ export function startGame(){
 
 	set(turnNumberRef, 1);
   
-}
+}//startGame
 
 export function skipTurn(){
   thisPlayerUnits.forEach((thisUnit) => {
@@ -687,7 +690,7 @@ export function skipTurn(){
 
   turnNumber++;
   set(turnNumberRef, turnNumber);
-}
+}//skipTurn
 
 const logHexName = (e) => {
   //console.log("ID of Hex clicked: " + e.target.id);
@@ -722,7 +725,7 @@ const hexClick = (e) => {
 
   } // if selected
   
-}
+}//hexClick
 
 function move(e){
   // move unit, otherwise select unit
@@ -761,7 +764,7 @@ function move(e){
 
     }
   } // if trying to move
-}
+}//move
 
 function fire(e){
 
@@ -846,7 +849,7 @@ function fire(e){
       checkIfNextTurn();
     }
   }
-}
+}//fire
 
 
 function updateGameBoard() {
@@ -929,7 +932,7 @@ function updateGameBoard() {
     displayHexes[i].assignElements();
     displayHexes[i].updateImages();
   }
-}
+} //updateGame
 
 function checkIfNextTurn(){
   for(let i = 0; ; i++){
@@ -944,4 +947,4 @@ function checkIfNextTurn(){
       break;
     }
   }
-}
+}//checkIfNextTurn

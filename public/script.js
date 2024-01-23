@@ -606,12 +606,22 @@ function createHexElement(container, id) {
   hexDiv.addEventListener("click", hexClick);
   hexDiv.addEventListener("click", logHexName);
 
+  healthDiv = document.createElement("h2");
+  healthDiv.setAttribute("id", "health" + id);
+  healthDiv.setAttribute("class", "unitHealth");
+
+  actionDiv = document.createElement("h2");
+  actionDiv.setAttribute("id", "action" + id);
+  actionDiv.setAttribute("class", "unitAction");
+
   hexImg = document.createElement("img");
   hexImg.setAttribute("src", "/images/testImage.svg");
   hexImg.setAttribute("id", "img" + id);
 
   container.appendChild(hexDiv);
   hexDiv.appendChild(hexImg);
+  hexDiv.appendChild(healthDiv);
+  hexDiv.appendChild(actionDiv);
 }//createHexElement
 
 function createNewHexArray() {
@@ -862,12 +872,14 @@ function updateGameBoard() {
 
   thisPlayerUnits = [];
 
+  // update player units
   for (let i = 1; i < BOARD_SIZE; i++) {
     if (hexes[i].unit != undefined && hexes[i].unit.ownerID == playerID) {
       thisPlayerUnits.push(hexes[i].unit);
     }
   }
 
+  // update the images on the units
   for (let i = 1; i < BOARD_SIZE; i++) {
     if (displayHexes[i] == undefined) {
       displayHexes[i] = new Hex();
@@ -881,6 +893,7 @@ function updateGameBoard() {
     displayHexes[i].hidden = true;
   }
 
+  // for each unit the player owns
   for (let i = 1; i < BOARD_SIZE; i++) {
     if (hexes[i].unit != null) {
       switch (hexes[i].unit.unitType) {
@@ -898,7 +911,7 @@ function updateGameBoard() {
           break;
       }
 
-
+      // remove fog of war around the units that the player controls
       if (hexes[i].unit.ownerID == playerID) {
         displayHexes[i].hidden = false;
         ajacentHexStore[i].forEach(function (j) {
@@ -925,6 +938,19 @@ function updateGameBoard() {
         });
 
       }
+
+      // update health and action div
+      if(hexes[i].unit != null){
+        document.getElementById("health" + i).innerHTML = hexes[i].unit.health;
+        if(hexes[i].unit.unitType != BASE){
+          document.getElementById("action" + i).innerHTML = hexes[i].unit.actionNum;
+        }
+      }
+      else{
+        document.getElementById("health" + i).innerHTML = "";
+        document.getElementById("action" + i).innerHTML = "";
+      }
+
     }
   }
 
@@ -934,6 +960,7 @@ function updateGameBoard() {
   }
 } //updateGame
 
+// if all the actions are used on this player's units, next turn
 function checkIfNextTurn(){
   for(let i = 0; ; i++){
     if(thisPlayerUnits.length <= i){

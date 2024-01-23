@@ -262,6 +262,24 @@ input {
 	'soldier tank artillery';
 }
 
+h2{
+	position:absolute;
+	font-size:calc(var(--scale) * 10px);
+	height:20px;
+	font-family: 'Stalinist One', cursive;
+	justify-content: center;
+	align-items: center;
+	pointer-events: none;
+}
+
+.unitHealth{
+	margin-top:calc(var(--scale) * 10px);
+	color: #00ff00;
+}
+.unitAction{
+	margin-top:calc(var(--scale) * 20px);
+	color: #ddbb44;
+}
 
 #turn{
 	display:none;

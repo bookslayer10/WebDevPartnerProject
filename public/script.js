@@ -545,11 +545,14 @@ window.onkeydown = (e) => {
 
 }//onkeydown
 
+// runs when page starts to close
 window.addEventListener("beforeunload", function(){
   isUnloading = true;
   
   if (playerID != null) {
     if (1 < numberOfPlayers.length) {
+
+      // if more than one player present, reduce player number by one
 
       numberOfPlayers.splice(numberOfPlayers.indexOf(playerID), 1); // remove the player's number
 
@@ -557,6 +560,9 @@ window.addEventListener("beforeunload", function(){
       
 
     } else {
+
+      // if only one player present, delete all variables previously used to clear space in firebase
+
       set(hexesRef, null);
       set(turnNumberRef, null);
       set(numberOfPlayersRef, null);
@@ -564,6 +570,7 @@ window.addEventListener("beforeunload", function(){
     }
   }
 
+  // used to buy time for the program to delete variables before the page closes
   event.returnValue = 'Please continue leaving the page, otherwise your webpage will not function.';
 }
 
@@ -572,7 +579,6 @@ window.addEventListener("beforeunload", function(){
 ); //onunload
 
 //AUTOMATE THE CREATION OF DIVS IN THE CONTAINER DIVS (CREATE FUNCTION).
-
 window.onload = function () {
   let id = 1;
   for (let k = 1; k < 13; k++) {
@@ -624,6 +630,7 @@ function createHexElement(container, id) {
   hexDiv.appendChild(actionDiv);
 }//createHexElement
 
+// create a new hexes array with terrain in it
 function createNewHexArray() {
   let grassArray = ["images/grassTile1.svg", "images/grassTile2.svg", "images/mudTile1.svg", "images/mudTile2.svg"]
   let createID = 1;
@@ -644,10 +651,13 @@ function createNewHexArray() {
 
 }//createNewHexArray
 
+// function that runs when the start game button is pressed
 export function startGame(){
   document.getElementById("toggle").style.display = "block";
   document.getElementById("rules").style.display = "block";
   document.getElementById("skip").style.display = "block";
+
+  // add units based on how many are playing
 
   if(numberOfPlayers.includes(1)){
 
@@ -689,9 +699,12 @@ export function startGame(){
   set(hexesRef, hexes);
 
 	set(turnNumberRef, 1);
+
+  updateGameBoard();
   
 }//startGame
 
+// funciton for skip turn button, removes actions from remaining units
 export function skipTurn(){
   thisPlayerUnits.forEach((thisUnit) => {
     thisUnit.actionNum = 0;
@@ -706,6 +719,7 @@ const logHexName = (e) => {
   //console.log("ID of Hex clicked: " + e.target.id);
 }
 
+// on left click function, either fires or moves the unit
 const hexClick = (e) => {
   e.preventDefault();
 
@@ -749,6 +763,7 @@ function move(e){
 
     });
 
+    // if player clicked on a hex within movement range
     if (isInRange) {
 
       hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
@@ -758,11 +773,12 @@ function move(e){
       }else if(hexes[selectedUnit].unit.unitType == ARMOUR){
         audioTankMove.play();
       }else if(hexes[selectedUnit].unit.unitType == ARTILLERY){
-      audioArtMove.play();
+        audioArtMove.play();
       }
     
       hexes[selectedUnit].unit.actionNum--;
 
+      // swap unit places
       hexes[e.target.id].unit = hexes[selectedUnit].unit;
       hexes[selectedUnit].unit = null;
 
@@ -781,6 +797,8 @@ function fire(e){
   // fire unit, otherwise select unit
   if (selectedUnit != null && (hexes[e.target.id].unit == null || hexes[e.target.id].unit.ownerID != playerID) && hexes[selectedUnit].unit.actionNum != 0) {
 
+    // massive for loop chain to find the hexes that a unit can shoot into, based on unit type
+
     let isInRange = false;
     ajacentHexStore[selectedUnit].forEach(function (i) {
       if (e.target.id == i) {
@@ -795,6 +813,7 @@ function fire(e){
             return;
           }
 
+          // only artillery can shoot beyond 2 units
           if (j != -1 && hexes[selectedUnit].unit.unitType == ARTILLERY) {
             ajacentHexStore[j].forEach(function (k) {
               if (e.target.id == k) {
@@ -829,6 +848,7 @@ function fire(e){
       }
     });
 
+    // if the hex clicked is within firing range
     if (isInRange) {
 
       hexes[selectedUnit].unit.actionNum--;
@@ -841,11 +861,13 @@ function fire(e){
         audioA.play();
       }
 
+      // deal damage to the target unit
       if (hexes[e.target.id].unit != null) {
         hexes[e.target.id].unit.health -= hexes[selectedUnit].unit.damage;
         if (hexes[e.target.id].unit.health < 1) {
           audioDeath.play();
 
+          // if the player doesn't have a base, they lose and get the game over lightbox
           if(hexes[e.target.id].unit.unitType == BASE){
             gameOverLightbox();
           }
@@ -861,7 +883,7 @@ function fire(e){
   }
 }//fire
 
-
+// update the graphics of the game board with the current version of hexes
 function updateGameBoard() {
 
   // if hexes aren't defined, then don't try to update the board
@@ -879,7 +901,7 @@ function updateGameBoard() {
     }
   }
 
-  // update the images on the units
+  // update "displayHexes", the per-player private hex grid where private information is calculated
   for (let i = 1; i < BOARD_SIZE; i++) {
     if (displayHexes[i] == undefined) {
       displayHexes[i] = new Hex();
@@ -896,6 +918,8 @@ function updateGameBoard() {
   // for each unit the player owns
   for (let i = 1; i < BOARD_SIZE; i++) {
     if (hexes[i].unit != null) {
+
+      // display the units on the board based on type
       switch (hexes[i].unit.unitType) {
         case INFANTRY:
           displayHexes[i].foregroundImage = "images/Units/soldier" + hexes[i].unit.ownerID + ".svg";
@@ -939,25 +963,26 @@ function updateGameBoard() {
 
       }
 
-      // update health and action div
-      if(hexes[i].unit != null){
-        document.getElementById("health" + i).innerHTML = hexes[i].unit.health;
-        if(hexes[i].unit.unitType != BASE){
-          document.getElementById("action" + i).innerHTML = hexes[i].unit.actionNum;
-        }
-      }
-      else{
-        document.getElementById("health" + i).innerHTML = "";
-        document.getElementById("action" + i).innerHTML = "";
+      // update the health and action display on each unit
+      document.getElementById("health" + i).innerHTML = hexes[i].unit.health;
+      if(hexes[i].unit.unitType != BASE){
+        document.getElementById("action" + i).innerHTML = hexes[i].unit.actionNum;
       }
 
+    } else{
+
+      // remove the health and action display if the hex in the for loop doesn't contain a unit
+      document.getElementById("health" + i).innerHTML = "";
+      document.getElementById("action" + i).innerHTML = "";
     }
   }
 
+  // update each individual hex
   for (let i = 1; i < BOARD_SIZE; i++) {
     displayHexes[i].assignElements();
     displayHexes[i].updateImages();
   }
+
 } //updateGame
 
 // if all the actions are used on this player's units, next turn

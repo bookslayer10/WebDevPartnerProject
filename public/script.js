@@ -41,6 +41,7 @@ class Hex {
   }
 }
 
+// unit type as constants
 const INFANTRY = 0;
 const ARMOUR = 1;
 const ARTILLERY = 2;
@@ -51,6 +52,7 @@ class Unit {
     this.ownerID = ownerID;
     this.unitType = unitType;
 
+    // different stats based on unit type
     if (unitType == INFANTRY) {
       this.actionMax = 2;
       this.health = 3;
@@ -93,6 +95,7 @@ let isBoardDivLoaded = false;
 let ajacentHexStore = new Array();
 ajacentHexStore.push(null);
 
+// this massive double for loop lists the hexes ajacent to any other hex for easy reference
 // k is the the column, i is the row
 let id = 1;
 for (let k = 1; k <= 23; k++) {
@@ -222,7 +225,9 @@ document.getElementById("down").addEventListener("click", down);
 document.getElementById("left").addEventListener("click", left);
 document.getElementById("plus").addEventListener("click", plus);
 document.getElementById("minus").addEventListener("click", minus);
-document.getElementById("toggle").addEventListener("click", openRules);
+document.getElementById("toggle").addEventListener("click", toggle);
+document.getElementById("skip").addEventListener("click", skipTurn);
+document.getElementById("rules").addEventListener("click", openRules);
 
 function toggle(){
 	
@@ -469,11 +474,9 @@ function submitPasswordLightbox() {
       }
 
       if (data.val() == null) {
-        console.log("Null array in firebase");
         createNewHexArray();
         set(hexesRef, hexes);
       } else {
-        console.log("Downloading array from firebase");
         for (let i = 1; i < BOARD_SIZE; i++) {
           if (hexes[i] == undefined) {
             hexes[i] = new Hex();
@@ -557,7 +560,6 @@ window.addEventListener("beforeunload", function(){
 
     }
   }
-  console.log("finished leaving page");
 
   event.returnValue = 'Please continue leaving the page, otherwise your webpage will not function.';
 }
@@ -631,6 +633,8 @@ function createNewHexArray() {
 
 export function startGame(){
   document.getElementById("toggle").style.display = "block";
+  document.getElementById("rules").style.display = "block";
+  document.getElementById("skip").style.display = "block";
 
   if(numberOfPlayers.includes(1)){
 
@@ -686,7 +690,7 @@ export function skipTurn(){
 }
 
 const logHexName = (e) => {
-  console.log("ID of Hex clicked: " + e.target.id);
+  //console.log("ID of Hex clicked: " + e.target.id);
 }
 
 const hexClick = (e) => {
@@ -860,9 +864,6 @@ function updateGameBoard() {
       thisPlayerUnits.push(hexes[i].unit);
     }
   }
-
-  console.log("this player units:")
-  console.log(thisPlayerUnits);
 
   for (let i = 1; i < BOARD_SIZE; i++) {
     if (displayHexes[i] == undefined) {

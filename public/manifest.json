@@ -1,7 +1,7 @@
 {
     "name": "Shadow Legends",
     "short_name": "Shadow Legends",
-    "start_url": "https://",
+    "start_url": "https://web-dev-partner-project.web.app",
     "display": "standalone",
     "background_color": "#222222",
     "theme_color": "#ffffff",
@@ -32,11 +32,11 @@
 		"purpose":"any maskable"
       }
     ],
-    
+
     "related_applications": [
       {
         "platform": "play",
-        "url": "https://"
+        "url": "https://web-dev-partner-project.web.app"
       }
     ]
   }

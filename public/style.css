@@ -426,7 +426,7 @@ h2{
 	position:fixed;
 	z-index:300;
 	bottom:12%;
-	left:5%;
+	left:8%;
 	display:none;
 	pointer-events:initial;
 	width:60px;
@@ -437,7 +437,7 @@ h2{
 	position:fixed;
 	z-index:300;
 	bottom:3%;
-	left:5%;
+	left:8%;
 	display:none;
 	pointer-events:initial;
 	width:60px;

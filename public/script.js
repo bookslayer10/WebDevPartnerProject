@@ -459,7 +459,6 @@ function submitPasswordLightbox() {
       // if turn number isn't null, the game has started
       if(turnNumber != null){
 
-        console.log("display buttons");
         document.getElementById("startbutton").style.display = "none";
         document.getElementById("turn").style.display = "initial";
         document.getElementById("toggle").style.display = "block";
@@ -721,9 +720,14 @@ export function startGame(){
 
 // funciton for skip turn button, removes actions from remaining units
 function skipTurn(){
+
+  // if it is not the player's turn, do nothing
+  if(numberOfPlayers[turnNumber - 1] != playerID){
+    return;
+  }
+
   thisPlayerUnits.forEach((thisUnit) => {
     thisUnit.actionNum = 0;
-    
   });
 
   turnNumber++;

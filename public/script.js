@@ -231,8 +231,8 @@ document.getElementById("toggle").addEventListener("click", toggle);
 document.getElementById("skip").addEventListener("click", skipTurn);
 document.getElementById("rules").addEventListener("click", openRules);
 
+// toggle left click to fire units
 function toggle(){
-	
   document.getElementById("toggle").addEventListener("click", toggleBack);
 	document.getElementById("toggle").removeEventListener("click", toggle);
   isMovingNotFiring = false;
@@ -240,6 +240,7 @@ function toggle(){
   document.getElementById("toggle").innerHTML = "Firing Units";
 }//toggle
 
+// toggle left click to move units
 function toggleBack(){
 	
   document.getElementById("toggle").addEventListener("click", toggle);
@@ -249,40 +250,40 @@ function toggleBack(){
   document.getElementById("toggle").innerHTML = "Moving Units";
 }//toggleBack
 
-function up(){
-    boardY += 0.8 * scale;
-    boardY = Math.min(boardY, 150);
-    mainStyle.setProperty("top", boardY + "%");
-	}//up
+function up(){ // move hex grid up
+  boardY += 0.8 * scale;
+  boardY = Math.min(boardY, 150);
+  mainStyle.setProperty("top", boardY + "%");
+}//up
 
-function right(){
+function right(){ // move hex grid right
 	boardX -= 0.8 * scale;
-    boardX = Math.max(boardX, -10);
-    mainStyle.setProperty("left", boardX + "%");
+  boardX = Math.max(boardX, -10);
+  mainStyle.setProperty("left", boardX + "%");
 }//right
 
-function down(){
+function down(){ // move hex grid down
 	boardY -= 0.8 * scale;
-    boardY = Math.max(boardY, -50);
-    mainStyle.setProperty("top", boardY + "%");
+  boardY = Math.max(boardY, -50);
+  mainStyle.setProperty("top", boardY + "%");
 }//down
 
-function left(){
-    boardX += 0.8 * scale;
-    boardX = Math.min(boardX, 150);
-    mainStyle.setProperty("left", boardX + "%");
+function left(){ // move hex grid left
+  boardX += 0.8 * scale;
+  boardX = Math.min(boardX, 150);
+  mainStyle.setProperty("left", boardX + "%");
 }//left
 
-function plus(){
+function plus(){ // zoom hex grid in
 	scale *= 1.05;
-    scale = Math.min(scale, 4);
-    mainStyle.setProperty('--scale', scale);
+  scale = Math.min(scale, 4);
+  mainStyle.setProperty('--scale', scale);
 }//plus
 
-function minus(){
+function minus(){ // zoom hex grid out
 	scale *= 0.95;
-    scale = Math.max(scale, 0.3);
-    mainStyle.setProperty('--scale', scale);
+  scale = Math.max(scale, 0.3);
+  mainStyle.setProperty('--scale', scale);
 }//minus
 	
 
@@ -364,6 +365,7 @@ function submitPasswordLightbox() {
     document.getElementById("error").innerHTML = "Please enter a lobby name and passphrase";
   } else {
 
+    // sanitise and parse password input, without any special characters
     let regex = /\.|\#|\$|\[|\]/gi;
     passphrase = (pass1.value + pass2.value);
     passphrase = passphrase.replaceAll(regex, "");
@@ -531,30 +533,18 @@ window.onkeydown = (e) => {
     return;
   }
 
-  if (e.key == 'q') { // zoom out hex grid
-    scale *= 0.95;
-    scale = Math.max(scale, 0.3);
-    mainStyle.setProperty('--scale', scale);
-  } else if (e.key == 'e') { // zoom in hex grid
-    scale *= 1.05;
-    scale = Math.min(scale, 4);
-    mainStyle.setProperty('--scale', scale);
-  } else if (e.key == 's') { // move hex grid down
-    boardY -= 0.8 * scale;
-    boardY = Math.max(boardY, -50);
-    mainStyle.setProperty("top", boardY + "%");
-  } else if (e.key == 'w') { // move hex grid up
-    boardY += 0.8 * scale;
-    boardY = Math.min(boardY, 150);
-    mainStyle.setProperty("top", boardY + "%");
-  } else if (e.key == 'd') { // move hex grid left
-    boardX -= 0.8 * scale;
-    boardX = Math.max(boardX, -50);
-    mainStyle.setProperty("left", boardX + "%");
-  } else if (e.key == 'a') { // move hex grid right
-    boardX += 0.8 * scale;
-    boardX = Math.min(boardX, 150);
-    mainStyle.setProperty("left", boardX + "%");
+  if (e.key == 'q') {
+    minus();
+  } else if (e.key == 'e') {
+    plus();
+  } else if (e.key == 's') {
+    down();
+  } else if (e.key == 'w') {
+    up();
+  } else if (e.key == 'd') {
+    right();
+  } else if (e.key == 'a') {
+    left();
   }
 
 }//onkeydown

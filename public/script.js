@@ -720,7 +720,7 @@ export function startGame(){
 }//startGame
 
 // funciton for skip turn button, removes actions from remaining units
-export function skipTurn(){
+function skipTurn(){
   thisPlayerUnits.forEach((thisUnit) => {
     thisUnit.actionNum = 0;
     

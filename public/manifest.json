@@ -8,25 +8,29 @@
     "description": "Legends in Shadows.",
     "icons": [
       {
-        "src": "/images/icons/icon192.png",
+        "src": "/images/icon192.png",
         "sizes": "192x192",
-        "type": "image/png",
-		    "purpose":"any"
+        "type": "image/png"
       },
       {
-        "src": "/images/icons/icon256.png",
+        "src": "/images/icon144.png",
+        "sizes": "144x144",
+        "type": "image/png"
+      },
+      {
+        "src": "/images/icon256.png",
         "sizes": "256x256",
         "type": "image/png",
 		    "purpose":"any maskable"
       },
       {
-        "src": "/images/icons/icon384.png",
+        "src": "/images/icon384.png",
         "sizes": "384x384",
         "type": "image/png",
-		    "purpose":"any maskable"
+		    "purpose":"maskable"
       },
       {
-        "src": "/images/icons/icon512.png",
+        "src": "/images/icon512.png",
         "sizes": "512x512",
         "type": "image/png",
 		    "purpose":"any maskable"

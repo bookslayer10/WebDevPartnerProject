@@ -374,10 +374,11 @@ function submitPasswordLightbox() {
 
     openRules();
 	
+    // runs if player list changes
     onValue(numberOfPlayersRef, (data) => {
 
+      // if page is actively closing, don't do anything
       if (isUnloading) {
-        
         return;
       }
 
@@ -421,13 +422,17 @@ function submitPasswordLightbox() {
       }
     }); // onValue numPlayers
 
+    // runs if turn number changes
     onValue(turnNumberRef, (data) => {
 
+      // if page is actively closing, don't do anything
       if (isUnloading) {
         return;
       }
 
       turnNumber = data.val();
+
+      // turn number can't go over the number of players present
       if (turnNumber > numberOfPlayers.length) {
         turnNumber = 1;
         set(turnNumberRef, turnNumber);	
@@ -437,10 +442,15 @@ function submitPasswordLightbox() {
 
 	    document.getElementById("turn").innerHTML = "Turn:" + turnNumber;
 
+      // if turn number isn't null, the game has started
       if(turnNumber != null){
 
+        console.log("display buttons");
         document.getElementById("startbutton").style.display = "none";
         document.getElementById("turn").style.display = "initial";
+        document.getElementById("toggle").style.display = "block";
+        document.getElementById("rules").style.display = "block";
+        document.getElementById("skip").style.display = "block";
         
 
         if(numberOfPlayers[turnNumber - 1] == playerID){
@@ -456,10 +466,6 @@ function submitPasswordLightbox() {
             }
           }
           
-          
-
-          
-
           thisPlayerUnits.forEach((thisUnit) => {
             thisUnit.actionNum = thisUnit.actionMax;
           });
@@ -470,16 +476,24 @@ function submitPasswordLightbox() {
 
     }); // onValue turnNumberRef
 
+    // runs if hex array changes
     onValue(hexesRef, (data) => {
 
+      // if page is actively closing, don't do anything
       if (isUnloading) {
         return;
       }
 
+      
       if (data.val() == null) {
+        
+        // if hex array is unassigned, generate a new one
         createNewHexArray();
         set(hexesRef, hexes);
+
       } else {
+        
+        // else, copy it into the current hex array
         for (let i = 1; i < BOARD_SIZE; i++) {
           if (hexes[i] == undefined) {
             hexes[i] = new Hex();
@@ -517,27 +531,27 @@ window.onkeydown = (e) => {
     return;
   }
 
-  if (e.key == 'q') {
+  if (e.key == 'q') { // zoom out hex grid
     scale *= 0.95;
     scale = Math.max(scale, 0.3);
     mainStyle.setProperty('--scale', scale);
-  } else if (e.key == 'e') {
+  } else if (e.key == 'e') { // zoom in hex grid
     scale *= 1.05;
     scale = Math.min(scale, 4);
     mainStyle.setProperty('--scale', scale);
-  } else if (e.key == 's') {
+  } else if (e.key == 's') { // move hex grid down
     boardY -= 0.8 * scale;
     boardY = Math.max(boardY, -50);
     mainStyle.setProperty("top", boardY + "%");
-  } else if (e.key == 'w') {
+  } else if (e.key == 'w') { // move hex grid up
     boardY += 0.8 * scale;
     boardY = Math.min(boardY, 150);
     mainStyle.setProperty("top", boardY + "%");
-  } else if (e.key == 'd') {
+  } else if (e.key == 'd') { // move hex grid left
     boardX -= 0.8 * scale;
     boardX = Math.max(boardX, -50);
     mainStyle.setProperty("left", boardX + "%");
-  } else if (e.key == 'a') {
+  } else if (e.key == 'a') { // move hex grid right
     boardX += 0.8 * scale;
     boardX = Math.min(boardX, 150);
     mainStyle.setProperty("left", boardX + "%");
@@ -606,6 +620,7 @@ window.onload = function () {
   // 397 hexagon elements created
 }//onload
 
+// create a new hex element in the specified grid container and id
 function createHexElement(container, id) {
   hexDiv = document.createElement("div");
   hexDiv.setAttribute("id", id);
@@ -621,6 +636,7 @@ function createHexElement(container, id) {
   actionDiv.setAttribute("class", "unitAction");
 
   hexImg = document.createElement("img");
+  hexImg.setAttribute("alt", "");
   hexImg.setAttribute("src", "/images/testImage.svg");
   hexImg.setAttribute("id", "img" + id);
 
@@ -653,11 +669,8 @@ function createNewHexArray() {
 
 // function that runs when the start game button is pressed
 export function startGame(){
-  document.getElementById("toggle").style.display = "block";
-  document.getElementById("rules").style.display = "block";
-  document.getElementById("skip").style.display = "block";
 
-  // add units based on how many are playing
+  // add units based on how many players need them
 
   if(numberOfPlayers.includes(1)){
 
@@ -723,6 +736,7 @@ const logHexName = (e) => {
 const hexClick = (e) => {
   e.preventDefault();
 
+  // if it is not the player's turn, do nothing
   if (numberOfPlayers[turnNumber - 1] != playerID) {
     return;
   }
@@ -766,8 +780,11 @@ function move(e){
     // if player clicked on a hex within movement range
     if (isInRange) {
 
+      // remove highlight
       hexes[selectedUnit].backgroundImage = hexes[selectedUnit].backgroundImage.replace("Selected.svg", ".svg");
 
+
+      // play sound effect based on unit type
       if(hexes[selectedUnit].unit.unitType == INFANTRY){
         audioInfMove.play();
       }else if(hexes[selectedUnit].unit.unitType == ARMOUR){
@@ -776,12 +793,14 @@ function move(e){
         audioArtMove.play();
       }
     
+      // each move takes one action
       hexes[selectedUnit].unit.actionNum--;
 
       // swap unit places
       hexes[e.target.id].unit = hexes[selectedUnit].unit;
       hexes[selectedUnit].unit = null;
 
+      // update graphics and backend for everyone
       updateGameBoard();
 
       set(hexesRef, hexes);
@@ -851,8 +870,10 @@ function fire(e){
     // if the hex clicked is within firing range
     if (isInRange) {
 
+      // each shot takes one action
       hexes[selectedUnit].unit.actionNum--;
 
+      // play sound effect based on unit type
       if (hexes[selectedUnit].unit.unitType == INFANTRY) {
         audioI.play();
       } else if (hexes[selectedUnit].unit.unitType == ARMOUR) {
@@ -864,18 +885,21 @@ function fire(e){
       // deal damage to the target unit
       if (hexes[e.target.id].unit != null) {
         hexes[e.target.id].unit.health -= hexes[selectedUnit].unit.damage;
-        if (hexes[e.target.id].unit.health < 1) {
-          audioDeath.play();
 
-          // if the player doesn't have a base, they lose and get the game over lightbox
+        // if unit is out of health, kill it
+        if (hexes[e.target.id].unit.health < 1) {
+          
+          // if the base dies, the player gets the game over lightbox
           if(hexes[e.target.id].unit.unitType == BASE){
             gameOverLightbox();
           }
-
+          
+          audioDeath.play();
           hexes[e.target.id].unit = null;
         }
       }
 
+      // update backend
       set(hexesRef, hexes);
 
       checkIfNextTurn();
@@ -889,12 +913,12 @@ function updateGameBoard() {
   // if hexes aren't defined, then don't try to update the board
   if (hexes[1] == undefined) {
     return;
-
   }
+
+  // update player units
 
   thisPlayerUnits = [];
 
-  // update player units
   for (let i = 1; i < BOARD_SIZE; i++) {
     if (hexes[i].unit != undefined && hexes[i].unit.ownerID == playerID) {
       thisPlayerUnits.push(hexes[i].unit);
@@ -906,12 +930,11 @@ function updateGameBoard() {
     if (displayHexes[i] == undefined) {
       displayHexes[i] = new Hex();
     }
+
     displayHexes[i].id = hexes[i].id;
     displayHexes[i].backgroundImage = hexes[i].backgroundImage;
     displayHexes[i].foregroundImage = hexes[i].foregroundImage;
     displayHexes[i].hidden = hexes[i].hidden;
-
-
     displayHexes[i].hidden = true;
   }
 
@@ -963,12 +986,19 @@ function updateGameBoard() {
 
       }
 
-      // update the health and action display on each unit
-      document.getElementById("health" + i).innerHTML = hexes[i].unit.health;
-      if(hexes[i].unit.unitType != BASE){
-        document.getElementById("action" + i).innerHTML = hexes[i].unit.actionNum;
+      if(!displayHexes[i].hidden){
+        
+        // update the health and action display on each unit
+        document.getElementById("health" + i).innerHTML = hexes[i].unit.health;
+        if(hexes[i].unit.unitType != BASE){
+          document.getElementById("action" + i).innerHTML = hexes[i].unit.actionNum;
+        }
+      } else {
+        // remove the health and action display if the hex in the for loop isn't hidden
+        document.getElementById("health" + i).innerHTML = "";
+        document.getElementById("action" + i).innerHTML = "";
       }
-
+      
     } else{
 
       // remove the health and action display if the hex in the for loop doesn't contain a unit

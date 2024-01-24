@@ -389,7 +389,7 @@ h2{
 #right{
 	position:fixed;
 	z-index:300;
-	rotate: 90deg;
+	transform: rotate(90deg);
 	bottom:6.5%;
 	right:8%;
 	display:none;
@@ -401,7 +401,7 @@ h2{
 #down{
 	position:fixed;
 	z-index:300;
-	rotate: 180deg;
+	transform: rotate(180deg);
 	bottom:3%;
 	right:26%;
 	display:none;
@@ -413,7 +413,7 @@ h2{
 #left{
 	position:fixed;
 	z-index:300;
-	rotate: 270deg;
+	transform: rotate(270deg);
 	bottom:6.5%;
 	right:44%;
 	display:none;
@@ -436,7 +436,6 @@ h2{
 #minus{
 	position:fixed;
 	z-index:300;
-	rotate: 180deg;
 	bottom:3%;
 	left:15%;
 	display:none;

@@ -618,6 +618,22 @@ h2{
 		right:31%;
 	}
 	
+	#r1,#r5{
+		height:30vw;
+	}
+	
+		#r2,#r6{
+		height:27vh;
+	}
+	
+		#r1,#r5{
+		height:33vh;
+	}
+	
+	#bottombutton{
+		bottom:23%;
+	}
+	
 		
 	#infodiv{
 	grid-template-areas: 

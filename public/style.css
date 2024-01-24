@@ -231,9 +231,9 @@ input {
     transform: translate(-50%, -50%);
     padding-left:30px;
 	padding-right:30px;
-	padding-top:100px;
-	padding-bottom:100px;
-	font-size:14px;
+	padding-top: 50px;
+	padding-bottom:50px;
+	font-size:0.7em;
 }
 
 

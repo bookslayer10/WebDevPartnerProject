@@ -250,25 +250,25 @@ function toggleBack(){
 }//toggleBack
 
 function up(){ // move hex grid up
-  boardY += 0.8 * scale;
+  boardY += 2 * scale;
   boardY = Math.min(boardY, 150);
   mainStyle.setProperty("top", boardY + "%");
 }//up
 
 function right(){ // move hex grid right
-	boardX -= 0.8 * scale;
+	boardX -= 2 * scale;
   boardX = Math.max(boardX, -10);
   mainStyle.setProperty("left", boardX + "%");
 }//right
 
 function down(){ // move hex grid down
-	boardY -= 0.8 * scale;
+	boardY -= 2 * scale;
   boardY = Math.max(boardY, -50);
   mainStyle.setProperty("top", boardY + "%");
 }//down
 
 function left(){ // move hex grid left
-  boardX += 0.8 * scale;
+  boardX += 2 * scale;
   boardX = Math.min(boardX, 150);
   mainStyle.setProperty("left", boardX + "%");
 }//left

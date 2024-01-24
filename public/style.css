@@ -37,7 +37,7 @@ body{
 	background-image: url('/images/camo.jpg');
 	background-size: cover;
 	width:100vw;
-	height:27vh;
+	height:34vh;
 	border-top:thick solid white;
 	
 }
@@ -50,7 +50,7 @@ body{
 	left:0;
 	top:0;
 	width:100vw;
-	height:25vh;
+	height:29vh;
 	border-bottom:thick solid white;
 }
 
@@ -86,7 +86,7 @@ body{
 	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url('/images/camo.jpg');
 	background-size: cover;
 	width:100vw;
-	height:27vh;
+	height:34vh;
 }
 
 
@@ -98,7 +98,7 @@ body{
 	left:0;
 	top:0;
 	width:100vw;
-	height:25vh;
+	height:29vh;
 }
 
 
@@ -302,7 +302,7 @@ h2{
 	display:grid;
 	position:fixed;
 	left:8%;
-	bottom:18%;
+	bottom:23%;
 	width:84%;
 	grid-template-areas:
 	'skip rules';
@@ -378,7 +378,7 @@ h2{
 #up11{
 	position:fixed;
 	z-index:300;
-	bottom:10%;
+	bottom:12%;
 	right:26%;
 	display:none;
 	pointer-events:initial;
@@ -391,7 +391,7 @@ h2{
 	z-index:300;
 	transform: rotate(90deg);
 	bottom:6.5%;
-	right:8%;
+	right:5%;
 	display:none;
 	pointer-events:initial;
 	width:60px;
@@ -415,7 +415,7 @@ h2{
 	z-index:300;
 	transform: rotate(270deg);
 	bottom:6.5%;
-	right:44%;
+	right:47%;
 	display:none;
 	pointer-events:initial;
 	width:60px;
@@ -425,8 +425,8 @@ h2{
 #plus{
 	position:fixed;
 	z-index:300;
-	bottom:10%;
-	left:15%;
+	bottom:12%;
+	left:5%;
 	display:none;
 	pointer-events:initial;
 	width:60px;
@@ -437,7 +437,7 @@ h2{
 	position:fixed;
 	z-index:300;
 	bottom:3%;
-	left:15%;
+	left:5%;
 	display:none;
 	pointer-events:initial;
 	width:60px;

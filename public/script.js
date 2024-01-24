@@ -220,7 +220,6 @@ let boardY = 50;
 mainStyle.setProperty("--scale", scale);
 
 document.getElementById("passbutton").addEventListener("click", submitPasswordLightbox);
-document.getElementById("ok").addEventListener("click", closeLightbox);
 document.getElementById("up11").addEventListener("click", up);
 document.getElementById("right").addEventListener("click", right);
 document.getElementById("down").addEventListener("click", down);
@@ -302,6 +301,9 @@ function closeLightbox(){
 	document.getElementById("plus").style.display = "initial";
 	document.getElementById("minus").style.display = "initial";
 	document.getElementById("error").style.display = "none";
+	 document.getElementById("skip").style.display = "block";
+   document.getElementById("rules").style.display = "block";
+   	 document.getElementById("controldiv").style.display = "block";
 }//closeLightbox
 
 function openRules(){
@@ -311,14 +313,24 @@ function openRules(){
   document.getElementById("passphrase").style.display = "none";
   document.getElementById("passphrase2").style.display = "none";
   document.getElementById("title").innerHTML = "Rules";
+  document.getElementById("skip").style.display = "none";
+   document.getElementById("rules").style.display = "none";
   document.getElementById("text1").innerHTML = "Controls";
   document.getElementById("text2").innerHTML = "Objective";
-  document.getElementById("ok").style.display = "initial";
   document.getElementById("info1").style.display = "initial";
   document.getElementById("info2").style.display = "initial";
   document.getElementById("info1").innerHTML = "<b>Use W, A, S, D to navigate around the map</b><br> <b>Use E to zoom into the map and Q to zoom out.</b><br><br><b>To move or fire a unit, first click to select it, then click on the hex you want to move to/shoot.</b><br><b>Then, you can toggle between movement and shooting with the toggle button at the top of the screen.</b><br> <b>Every one of your units gets a set ammount of actions per turn, which can be spent on either movement or firing.</b><br><br><b>Infantry - Range:2 - Health:3 - Actions:2</b><br><b>Armour - Range:2 - Health:4 - Actions:3</b><br><b>Artillery - Range:5 - Health:2 - Actions:1</b>";
   document.getElementById("info2").innerHTML = "<b>Destroy the enemy base using your pieces, infantry, tanks, and artillery while protecting your own base. You can destroy enemy pieces to clear your way to the base.</b>";
+     	 document.getElementById("controldiv").style.display = "none";
+  const myTimeout = setTimeout(clickLightBox, 500);
+  
+
 }//openRules
+
+
+	function clickLightBox(){
+		document.getElementById("message").addEventListener("click", closeLightbox);
+	}
 
 function denyAccessLightbox(){
   document.getElementById("message").style.display = "initial";
